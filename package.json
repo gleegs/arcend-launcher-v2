@@ -31,7 +31,8 @@
     "package": "electron-forge package",
     "make": "electron-builder --win",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "commit": "cz"
   },
   "keywords": [],
   "author": {
@@ -39,6 +40,8 @@
     "email": "gleegs.agency@gmail.com"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
     "@electron-forge/cli": "^7.11.2",
     "@electron-forge/maker-deb": "^7.11.2",
     "@electron-forge/maker-rpm": "^7.11.2",
@@ -55,6 +58,8 @@
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "autoprefixer": "^10.5.0",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "electron": "^42.3.0",
     "electron-builder": "^26.8.1",
     "eslint": "^8.57.1",
@@ -62,11 +67,17 @@
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
+    "universalify": "^2.0.1",
     "vite": "^5.4.21"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
