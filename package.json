@@ -32,7 +32,8 @@
     "make": "electron-builder --win",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "commit": "cz"
+    "commit": "cz",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": {
@@ -64,6 +65,8 @@
     "electron-builder": "^26.8.1",
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.32.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
     "postcss": "^8.5.15",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
@@ -79,5 +82,10 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix"
+    ]
   }
 }
