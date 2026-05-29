@@ -10,6 +10,8 @@ const defaults: AppConfig = {
     width: 1280,
     height: 720,
   },
+  encryptedRefreshToken: undefined,
+  cachedProfile: undefined,
 }
 
 let storeInstance: Store<AppConfig> | null = null
@@ -29,7 +31,11 @@ export function getConfig<K extends keyof AppConfig>(key: K): AppConfig[K] {
 }
 
 export function setConfig<K extends keyof AppConfig>(key: K, value: AppConfig[K]): void {
-  getStore().set(key, value)
+  if (value === undefined) {
+    getStore().delete(key)
+  } else {
+    getStore().set(key, value)
+  }
 }
 
 export function initStore(): void {
