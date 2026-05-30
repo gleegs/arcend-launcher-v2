@@ -81,14 +81,15 @@ function cleanupArcInstall(arcId: string, arcPath: string): void {
   saveRegistry(registry)
 }
 
-async function runPackwiz(arcPath: string, packwizUrl: string): Promise<void> {
+async function runPackwiz(mcPath: string, packwizUrl: string): Promise<void> {
   await ensureJava('21')
   const packwizJar = getJarPath()
   const javaPath = getJavaExecutable('21')
 
   return new Promise((resolve, reject) => {
-    const args = ['-jar', packwizJar, packwizUrl, arcPath]
-    const process = spawn(javaPath, args)
+    const args = ['-Dfile.encoding=UTF-8', '-jar', packwizJar, '--no-gui', packwizUrl]
+
+    const process = spawn(javaPath, args, { cwd: mcPath })
 
     let stdout = ''
     let stderr = ''
@@ -121,6 +122,7 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
   }
 
   const arcPath = getArcPath(arcId)
+  const mcPath = path.join(arcPath, 'minecraft')
 
   try {
     await ensurePackwiz()
@@ -130,11 +132,11 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
     if (fs.existsSync(arcPath)) {
       fs.rmSync(arcPath, { recursive: true, force: true })
     }
-    fs.mkdirSync(arcPath, { recursive: true })
+    fs.mkdirSync(mcPath, { recursive: true })
 
     sendProgress({ arcId, percent: 25, status: 'syncing_packwiz' })
 
-    await runPackwiz(arcPath, metadata.packwizUrl)
+    await runPackwiz(mcPath, metadata.packwizUrl)
 
     sendProgress({ arcId, percent: 75, status: 'creating_metadata' })
 
