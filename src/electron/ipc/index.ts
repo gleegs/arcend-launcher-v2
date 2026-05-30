@@ -3,6 +3,7 @@ import { registerStoreIpc } from './store.ipc'
 import { registerAuthIpc } from './auth.ipc'
 import { registerJavaIpc } from './java.ipc'
 import { registerPackwizIpc } from './packwiz.ipc'
+import { registerArcIpc } from './arc.ipc'
 
 export function registerAllIpcHandlers(): void {
   registerWindowIpc()
@@ -10,4 +11,5 @@ export function registerAllIpcHandlers(): void {
   registerAuthIpc()
   registerJavaIpc()
   registerPackwizIpc()
+  registerArcIpc()
 }

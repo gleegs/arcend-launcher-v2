@@ -1,8 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import { IpcChannels } from './electron/types/ipc'
-import type { ElectronApi, AppConfig, AuthState } from './electron/types/ipc'
+import type { ElectronApi, AppConfig, AuthState, ArcMetadata } from './electron/types/ipc'
 import type { JavaInstallProgress } from './electron/types/java'
 import type { PackwizInstallProgress } from './electron/types/packwiz'
+import type { ArcInstallProgress } from './electron/types/arc'
 
 const electronApi: ElectronApi = {
   windowMinimize: () => ipcRenderer.invoke(IpcChannels.WINDOW_MINIMIZE),
@@ -42,6 +43,20 @@ const electronApi: ElectronApi = {
     ipcRenderer.on(IpcChannels.PACKWIZ_ON_INSTALL_PROGRESS, handler)
     return () => {
       ipcRenderer.removeListener(IpcChannels.PACKWIZ_ON_INSTALL_PROGRESS, handler)
+    }
+  },
+  arcGetRegistry: () => ipcRenderer.invoke(IpcChannels.ARC_GET_REGISTRY),
+  arcInstall: (arcId: string, metadata: ArcMetadata) =>
+    ipcRenderer.invoke(IpcChannels.ARC_INSTALL, arcId, metadata),
+  arcUninstall: (arcId: string) => ipcRenderer.invoke(IpcChannels.ARC_UNINSTALL, arcId),
+  arcIsInstalled: (arcId: string) => ipcRenderer.invoke(IpcChannels.ARC_IS_INSTALLED, arcId),
+  arcGetPath: (arcId: string) => ipcRenderer.invoke(IpcChannels.ARC_GET_PATH, arcId),
+  onArcInstallProgress: (callback: (progress: ArcInstallProgress) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, progress: ArcInstallProgress) =>
+      callback(progress)
+    ipcRenderer.on(IpcChannels.ARC_ON_INSTALL_PROGRESS, handler)
+    return () => {
+      ipcRenderer.removeListener(IpcChannels.ARC_ON_INSTALL_PROGRESS, handler)
     }
   },
 }

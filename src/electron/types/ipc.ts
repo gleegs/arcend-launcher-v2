@@ -1,5 +1,6 @@
 import type { JavaInstallation, JavaInstallProgress, JavaRegistry } from './java'
 import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
+import type { ArcInstallation, ArcInstallProgress } from './arc'
 
 export interface WindowBounds {
   x?: number
@@ -47,6 +48,12 @@ export const IpcChannels = {
   PACKWIZ_IS_INSTALLED: 'packwiz:isInstalled',
   PACKWIZ_GET_JAR_PATH: 'packwiz:getJarPath',
   PACKWIZ_ON_INSTALL_PROGRESS: 'packwiz:onInstallProgress',
+  ARC_GET_REGISTRY: 'arc:getRegistry',
+  ARC_INSTALL: 'arc:install',
+  ARC_UNINSTALL: 'arc:uninstall',
+  ARC_IS_INSTALLED: 'arc:isInstalled',
+  ARC_GET_PATH: 'arc:getPath',
+  ARC_ON_INSTALL_PROGRESS: 'arc:onInstallProgress',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -74,4 +81,19 @@ export interface ElectronApi {
   packwizIsInstalled: () => Promise<boolean>
   packwizGetJarPath: () => Promise<string>
   onPackwizInstallProgress: (callback: (progress: PackwizInstallProgress) => void) => () => void
+  arcGetRegistry: () => Promise<ArcInstallation[]>
+  arcInstall: (arcId: string, metadata: ArcMetadata) => Promise<ArcInstallation>
+  arcUninstall: (arcId: string) => Promise<void>
+  arcIsInstalled: (arcId: string) => Promise<boolean>
+  arcGetPath: (arcId: string) => Promise<string>
+  onArcInstallProgress: (callback: (progress: ArcInstallProgress) => void) => () => void
+}
+
+export interface ArcMetadata {
+  arcId: string
+  name: string
+  version: string
+  packwizUrl: string
+  description?: string
+  cover?: string
 }
