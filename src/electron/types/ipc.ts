@@ -1,3 +1,5 @@
+import type { JavaInstallation, JavaInstallProgress, JavaRegistry } from './java'
+
 export interface WindowBounds {
   x?: number
   y?: number
@@ -33,6 +35,12 @@ export const IpcChannels = {
   AUTH_LOGOUT: 'auth:logout',
   AUTH_REFRESH: 'auth:refresh',
   AUTH_GET_STATE: 'auth:getState',
+  JAVA_GET_REGISTRY: 'java:getRegistry',
+  JAVA_ENSURE: 'java:ensure',
+  JAVA_INSTALL: 'java:install',
+  JAVA_IS_INSTALLED: 'java:isInstalled',
+  JAVA_GET_EXECUTABLE: 'java:getExecutable',
+  JAVA_ON_INSTALL_PROGRESS: 'java:onInstallProgress',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -49,4 +57,10 @@ export interface ElectronApi {
   authLogout: () => Promise<void>
   authRefresh: () => Promise<AuthState>
   authGetState: () => Promise<AuthState>
+  javaGetRegistry: () => Promise<JavaRegistry>
+  javaEnsure: (version: string) => Promise<JavaInstallation>
+  javaInstall: (version: string) => Promise<JavaInstallation>
+  javaIsInstalled: (version: string) => Promise<boolean>
+  javaGetExecutable: (version: string) => Promise<string>
+  onJavaInstallProgress: (callback: (progress: JavaInstallProgress) => void) => () => void
 }

@@ -1,0 +1,12 @@
+import { app } from 'electron'
+import path from 'node:path'
+
+const arcendDir = path.join(app.getPath('appData'), '.arcend')
+
+export const configDir = path.join(arcendDir, 'config')
+export const runtimeDir = path.join(arcendDir, 'runtime')
+export const arcsDir = path.join(arcendDir, 'arcs')
+export const cacheDir = path.join(arcendDir, 'cache')
+
+export const javaRegistryPath = path.join(configDir, 'java.json')
+export const launcherConfigPath = configDir
