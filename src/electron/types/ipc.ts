@@ -1,5 +1,4 @@
 import type { JavaInstallation, JavaInstallProgress, JavaRegistry } from './java'
-import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
 
 export interface WindowBounds {
   x?: number
@@ -42,11 +41,6 @@ export const IpcChannels = {
   JAVA_IS_INSTALLED: 'java:isInstalled',
   JAVA_GET_EXECUTABLE: 'java:getExecutable',
   JAVA_ON_INSTALL_PROGRESS: 'java:onInstallProgress',
-  PACKWIZ_ENSURE: 'packwiz:ensure',
-  PACKWIZ_INSTALL: 'packwiz:install',
-  PACKWIZ_IS_INSTALLED: 'packwiz:isInstalled',
-  PACKWIZ_GET_JAR_PATH: 'packwiz:getJarPath',
-  PACKWIZ_ON_INSTALL_PROGRESS: 'packwiz:onInstallProgress',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -69,9 +63,4 @@ export interface ElectronApi {
   javaIsInstalled: (version: string) => Promise<boolean>
   javaGetExecutable: (version: string) => Promise<string>
   onJavaInstallProgress: (callback: (progress: JavaInstallProgress) => void) => () => void
-  packwizEnsure: () => Promise<PackwizInstallation>
-  packwizInstall: () => Promise<PackwizInstallation>
-  packwizIsInstalled: () => Promise<boolean>
-  packwizGetJarPath: () => Promise<string>
-  onPackwizInstallProgress: (callback: (progress: PackwizInstallProgress) => void) => () => void
 }
