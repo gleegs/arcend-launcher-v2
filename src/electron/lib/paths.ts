@@ -8,5 +8,7 @@ export const runtimeDir = path.join(arcendDir, 'runtime')
 export const arcsDir = path.join(arcendDir, 'arcs')
 export const cacheDir = path.join(arcendDir, 'cache')
 
+export const packwizDir = path.join(runtimeDir, 'packwiz')
 export const javaRegistryPath = path.join(configDir, 'java.json')
+export const packwizRegistryPath = path.join(configDir, 'packwiz.json')
 export const launcherConfigPath = configDir
