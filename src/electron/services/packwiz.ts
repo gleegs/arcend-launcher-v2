@@ -6,10 +6,10 @@ import { IpcChannels } from '../types/ipc'
 import { packwizDir, packwizRegistryPath } from '../lib/paths'
 import type { PackwizInstallation, PackwizInstallProgress, PackwizRegistry } from '../types/packwiz'
 
-const PACKWIZ_VERSION = '0.5.14'
-const PACKWIZ_JAR_NAME = 'packwiz-installer.jar'
-const PACKWIZ_DOWNLOAD_URL = `https://github.com/packwiz/packwiz-installer/releases/download/v${PACKWIZ_VERSION}/packwiz-installer.jar`
-const PACKWIZ_JAR_SIZE = 4378828
+const PACKWIZ_VERSION = '0.0.3'
+const PACKWIZ_JAR_NAME = 'packwiz-installer-bootstrap.jar'
+const PACKWIZ_DOWNLOAD_URL = `https://github.com/packwiz/packwiz-installer/releases/download/v${PACKWIZ_VERSION}/packwiz-installer-bootstrap.jar`
+const PACKWIZ_JAR_SIZE = 98_989
 
 function getEmptyRegistry(): PackwizRegistry {
   return { installation: null }
