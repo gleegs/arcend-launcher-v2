@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 import { IpcChannels } from './electron/types/ipc'
 import type { ElectronApi, AppConfig, AuthState } from './electron/types/ipc'
 import type { JavaInstallProgress } from './electron/types/java'
+import type { PackwizInstallProgress } from './electron/types/packwiz'
 
 const electronApi: ElectronApi = {
   windowMinimize: () => ipcRenderer.invoke(IpcChannels.WINDOW_MINIMIZE),
@@ -29,6 +30,18 @@ const electronApi: ElectronApi = {
     ipcRenderer.on(IpcChannels.JAVA_ON_INSTALL_PROGRESS, handler)
     return () => {
       ipcRenderer.removeListener(IpcChannels.JAVA_ON_INSTALL_PROGRESS, handler)
+    }
+  },
+  packwizEnsure: () => ipcRenderer.invoke(IpcChannels.PACKWIZ_ENSURE),
+  packwizInstall: () => ipcRenderer.invoke(IpcChannels.PACKWIZ_INSTALL),
+  packwizIsInstalled: () => ipcRenderer.invoke(IpcChannels.PACKWIZ_IS_INSTALLED),
+  packwizGetJarPath: () => ipcRenderer.invoke(IpcChannels.PACKWIZ_GET_JAR_PATH),
+  onPackwizInstallProgress: (callback: (progress: PackwizInstallProgress) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, progress: PackwizInstallProgress) =>
+      callback(progress)
+    ipcRenderer.on(IpcChannels.PACKWIZ_ON_INSTALL_PROGRESS, handler)
+    return () => {
+      ipcRenderer.removeListener(IpcChannels.PACKWIZ_ON_INSTALL_PROGRESS, handler)
     }
   },
 }
