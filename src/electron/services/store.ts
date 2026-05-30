@@ -1,9 +1,6 @@
 import Store from 'electron-store'
-import { app } from 'electron'
-import path from 'node:path'
 import type { AppConfig } from '../types/ipc'
-
-const configDir = path.join(app.getPath('appData'), '.arcend')
+import { launcherConfigPath } from '../lib/paths'
 
 const defaults: AppConfig = {
   windowBounds: {
@@ -19,7 +16,7 @@ let storeInstance: Store<AppConfig> | null = null
 function getStore(): Store<AppConfig> {
   if (!storeInstance) {
     storeInstance = new Store<AppConfig>({
-      cwd: configDir,
+      cwd: launcherConfigPath,
       defaults,
     })
   }
