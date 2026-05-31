@@ -4,6 +4,7 @@ import type { ElectronApi, AppConfig, AuthState, ArcMetadata } from './electron/
 import type { JavaInstallProgress } from './electron/types/java'
 import type { PackwizInstallProgress } from './electron/types/packwiz'
 import type { ArcInstallProgress } from './electron/types/arc'
+import type { LaunchOptions, LaunchProgress } from './electron/types/launcher'
 
 const electronApi: ElectronApi = {
   windowMinimize: () => ipcRenderer.invoke(IpcChannels.WINDOW_MINIMIZE),
@@ -57,6 +58,16 @@ const electronApi: ElectronApi = {
     ipcRenderer.on(IpcChannels.ARC_ON_INSTALL_PROGRESS, handler)
     return () => {
       ipcRenderer.removeListener(IpcChannels.ARC_ON_INSTALL_PROGRESS, handler)
+    }
+  },
+  launchGame: (options: LaunchOptions) => ipcRenderer.invoke(IpcChannels.LAUNCH_GAME, options),
+  launchIsRunning: () => ipcRenderer.invoke(IpcChannels.LAUNCH_IS_RUNNING) as Promise<boolean>,
+  onLaunchProgress: (callback: (progress: LaunchProgress) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, progress: LaunchProgress) =>
+      callback(progress)
+    ipcRenderer.on(IpcChannels.LAUNCH_ON_PROGRESS, handler)
+    return () => {
+      ipcRenderer.removeListener(IpcChannels.LAUNCH_ON_PROGRESS, handler)
     }
   },
 }
