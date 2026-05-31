@@ -1,5 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import https from 'node:https'
+import http from 'node:http'
 import { spawn } from 'node:child_process'
 import { getMainWindow } from './window'
 import { IpcChannels } from '../types/ipc'
@@ -116,6 +118,51 @@ async function runPackwiz(mcPath: string, packwizUrl: string): Promise<void> {
   })
 }
 
+function fetchText(url: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const client = url.startsWith('https') ? https : http
+    client
+      .get(url, (res) => {
+        if (
+          res.statusCode &&
+          res.statusCode >= 300 &&
+          res.statusCode < 400 &&
+          res.headers.location
+        ) {
+          fetchText(res.headers.location).then(resolve).catch(reject)
+          return
+        }
+        if (res.statusCode && res.statusCode >= 400) {
+          reject(new Error(`HTTP ${res.statusCode} pour ${url}`))
+          return
+        }
+        let data = ''
+        res.on('data', (chunk: Buffer) => (data += chunk))
+        res.on('end', () => resolve(data))
+        res.on('error', reject)
+      })
+      .on('error', reject)
+  })
+}
+
+function parsePackToml(content: string): { mcVersion: string } {
+  const mcVersionMatch = content.match(/minecraft\s*=\s*"([^"]+)"/)
+  if (!mcVersionMatch) {
+    throw new Error('Version Minecraft non trouvée dans pack.toml')
+  }
+
+  return { mcVersion: mcVersionMatch[1] }
+}
+
+async function resolveMetadata(metadata: ArcMetadata): Promise<ArcMetadata> {
+  if (metadata.mcVersion) return metadata
+
+  const packToml = await fetchText(metadata.packwizUrl)
+  const { mcVersion } = parsePackToml(packToml)
+
+  return { ...metadata, mcVersion }
+}
+
 export async function installArc(arcId: string, metadata: ArcMetadata): Promise<ArcInstallation> {
   if (!fs.existsSync(arcsDir)) {
     fs.mkdirSync(arcsDir, { recursive: true })
@@ -129,6 +176,8 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
 
     sendProgress({ arcId, percent: 0, status: 'creating_folder' })
 
+    const resolvedMetadata = await resolveMetadata(metadata)
+
     if (fs.existsSync(arcPath)) {
       fs.rmSync(arcPath, { recursive: true, force: true })
     }
@@ -136,12 +185,12 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
 
     sendProgress({ arcId, percent: 25, status: 'syncing_packwiz' })
 
-    await runPackwiz(mcPath, metadata.packwizUrl)
+    await runPackwiz(mcPath, resolvedMetadata.packwizUrl)
 
     sendProgress({ arcId, percent: 75, status: 'creating_metadata' })
 
     const arcJsonPath = path.join(arcPath, 'arc.json')
-    fs.writeFileSync(arcJsonPath, JSON.stringify(metadata, null, 2), 'utf-8')
+    fs.writeFileSync(arcJsonPath, JSON.stringify(resolvedMetadata, null, 2), 'utf-8')
 
     const size = getDirectorySize(arcPath)
 
@@ -149,7 +198,7 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
       arcId,
       path: arcPath,
       installedAt: new Date().toISOString(),
-      metadata,
+      metadata: resolvedMetadata,
       size,
     }
 
