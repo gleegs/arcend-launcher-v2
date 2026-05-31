@@ -87,6 +87,7 @@
     "adm-zip": "^0.5.17",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
+    "minecraft-launcher-core": "^3.18.2",
     "msmc": "^5.0.5",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
