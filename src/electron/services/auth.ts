@@ -4,14 +4,14 @@ import { getConfig, setConfig } from './store'
 import { getMainWindow } from './window'
 import type { AuthState, CachedProfile } from '../types/ipc'
 
-const auth = new Auth('login')
+export const auth = new Auth('login')
 
 function encryptToken(plainToken: string): string {
   const encrypted = safeStorage.encryptString(plainToken)
   return encrypted.toString('base64')
 }
 
-function decryptToken(encryptedBase64: string): string | null {
+export function decryptToken(encryptedBase64: string): string | null {
   try {
     const buffer = Buffer.from(encryptedBase64, 'base64')
     return safeStorage.decryptString(buffer)

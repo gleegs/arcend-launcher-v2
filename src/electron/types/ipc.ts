@@ -1,6 +1,7 @@
 import type { JavaInstallation, JavaInstallProgress, JavaRegistry } from './java'
 import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
-import type { ArcInstallation, ArcInstallProgress } from './arc'
+import type { ArcInstallation, ArcInstallProgress, ArcMetadata } from './arc'
+import type { LaunchOptions, LaunchProgress } from './launcher'
 
 export interface WindowBounds {
   x?: number
@@ -54,6 +55,9 @@ export const IpcChannels = {
   ARC_IS_INSTALLED: 'arc:isInstalled',
   ARC_GET_PATH: 'arc:getPath',
   ARC_ON_INSTALL_PROGRESS: 'arc:onInstallProgress',
+  LAUNCH_GAME: 'launch:game',
+  LAUNCH_IS_RUNNING: 'launch:isRunning',
+  LAUNCH_ON_PROGRESS: 'launch:onProgress',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -87,13 +91,10 @@ export interface ElectronApi {
   arcIsInstalled: (arcId: string) => Promise<boolean>
   arcGetPath: (arcId: string) => Promise<string>
   onArcInstallProgress: (callback: (progress: ArcInstallProgress) => void) => () => void
+  launchGame: (options: LaunchOptions) => Promise<void>
+  launchIsRunning: () => Promise<boolean>
+  onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
 }
 
-export interface ArcMetadata {
-  arcId: string
-  name: string
-  version: string
-  packwizUrl: string
-  description?: string
-  cover?: string
-}
+export type { ArcMetadata } from './arc'
+export type { ArcModLoader } from './arc'

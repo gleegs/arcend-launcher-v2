@@ -1,8 +1,16 @@
+export interface ArcModLoader {
+  type: string
+  version: string
+  installerUrl: string
+}
+
 export interface ArcMetadata {
   arcId: string
   name: string
   version: string
   packwizUrl: string
+  mcVersion: string
+  modLoader?: ArcModLoader
   description?: string
   cover?: string
 }
