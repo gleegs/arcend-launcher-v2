@@ -1,13 +1,12 @@
-import { ipcMain } from 'electron'
 import { IpcChannels } from '../types/ipc'
 import type { AppConfig } from '../types/ipc'
 import { getConfig, setConfig } from '../services/store'
+import { safeHandle } from './utils'
 
 export function registerStoreIpc(): void {
-  ipcMain.handle(IpcChannels.STORE_GET, (_event, key: keyof AppConfig) => getConfig(key))
+  safeHandle(IpcChannels.STORE_GET, (key: unknown) => getConfig(key as keyof AppConfig))
 
-  ipcMain.handle(
-    IpcChannels.STORE_SET,
-    (_event, key: keyof AppConfig, value: AppConfig[typeof key]) => setConfig(key, value)
+  safeHandle(IpcChannels.STORE_SET, (key: unknown, value: unknown) =>
+    setConfig(key as keyof AppConfig, value as AppConfig[keyof AppConfig])
   )
 }

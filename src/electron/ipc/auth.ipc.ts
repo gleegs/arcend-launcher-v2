@@ -1,10 +1,10 @@
-import { ipcMain } from 'electron'
 import { IpcChannels } from '../types/ipc'
 import { login, logout, refresh, getAuthState } from '../services/auth'
+import { safeHandle } from './utils'
 
 export function registerAuthIpc(): void {
-  ipcMain.handle(IpcChannels.AUTH_LOGIN, () => login())
-  ipcMain.handle(IpcChannels.AUTH_LOGOUT, () => logout())
-  ipcMain.handle(IpcChannels.AUTH_REFRESH, () => refresh())
-  ipcMain.handle(IpcChannels.AUTH_GET_STATE, () => getAuthState())
+  safeHandle(IpcChannels.AUTH_LOGIN, () => login())
+  safeHandle(IpcChannels.AUTH_LOGOUT, () => logout())
+  safeHandle(IpcChannels.AUTH_REFRESH, () => refresh())
+  safeHandle(IpcChannels.AUTH_GET_STATE, () => getAuthState())
 }
