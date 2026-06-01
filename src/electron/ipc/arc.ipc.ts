@@ -1,4 +1,3 @@
-import { ipcMain } from 'electron'
 import { IpcChannels } from '../types/ipc'
 import {
   getInstalledArcs,
@@ -8,17 +7,18 @@ import {
   getArcPath,
 } from '../services/arc'
 import type { ArcMetadata } from '../types/arc'
+import { safeHandle } from './utils'
 
 export function registerArcIpc(): void {
-  ipcMain.handle(IpcChannels.ARC_GET_REGISTRY, () => getInstalledArcs())
+  safeHandle(IpcChannels.ARC_GET_REGISTRY, () => getInstalledArcs())
 
-  ipcMain.handle(IpcChannels.ARC_INSTALL, (_event, arcId: string, metadata: ArcMetadata) =>
-    installArc(arcId, metadata)
+  safeHandle(IpcChannels.ARC_INSTALL, (arcId: unknown, metadata: unknown) =>
+    installArc(arcId as string, metadata as ArcMetadata)
   )
 
-  ipcMain.handle(IpcChannels.ARC_UNINSTALL, (_event, arcId: string) => uninstallArc(arcId))
+  safeHandle(IpcChannels.ARC_UNINSTALL, (arcId: unknown) => uninstallArc(arcId as string))
 
-  ipcMain.handle(IpcChannels.ARC_IS_INSTALLED, (_event, arcId: string) => isInstalled(arcId))
+  safeHandle(IpcChannels.ARC_IS_INSTALLED, (arcId: unknown) => isInstalled(arcId as string))
 
-  ipcMain.handle(IpcChannels.ARC_GET_PATH, (_event, arcId: string) => getArcPath(arcId))
+  safeHandle(IpcChannels.ARC_GET_PATH, (arcId: unknown) => getArcPath(arcId as string))
 }

@@ -62,37 +62,43 @@ export const IpcChannels = {
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
 
+export interface IpcResult<T> {
+  ok: boolean
+  data?: T
+  error?: string
+}
+
 export interface ElectronApi {
-  windowMinimize: () => Promise<void>
-  windowMaximize: () => Promise<void>
-  windowClose: () => Promise<void>
-  windowHide: () => Promise<void>
-  windowRestore: () => Promise<void>
-  storeGet: <K extends keyof AppConfig>(key: K) => Promise<AppConfig[K]>
-  storeSet: <K extends keyof AppConfig>(key: K, value: AppConfig[K]) => Promise<void>
-  authLogin: () => Promise<AuthState>
-  authLogout: () => Promise<void>
-  authRefresh: () => Promise<AuthState>
-  authGetState: () => Promise<AuthState>
-  javaGetRegistry: () => Promise<JavaRegistry>
-  javaEnsure: (version: string) => Promise<JavaInstallation>
-  javaInstall: (version: string) => Promise<JavaInstallation>
-  javaIsInstalled: (version: string) => Promise<boolean>
-  javaGetExecutable: (version: string) => Promise<string>
+  windowMinimize: () => Promise<IpcResult<void>>
+  windowMaximize: () => Promise<IpcResult<void>>
+  windowClose: () => Promise<IpcResult<void>>
+  windowHide: () => Promise<IpcResult<void>>
+  windowRestore: () => Promise<IpcResult<void>>
+  storeGet: <K extends keyof AppConfig>(key: K) => Promise<IpcResult<AppConfig[K]>>
+  storeSet: <K extends keyof AppConfig>(key: K, value: AppConfig[K]) => Promise<IpcResult<void>>
+  authLogin: () => Promise<IpcResult<AuthState>>
+  authLogout: () => Promise<IpcResult<void>>
+  authRefresh: () => Promise<IpcResult<AuthState>>
+  authGetState: () => Promise<IpcResult<AuthState>>
+  javaGetRegistry: () => Promise<IpcResult<JavaRegistry>>
+  javaEnsure: (version: string) => Promise<IpcResult<JavaInstallation>>
+  javaInstall: (version: string) => Promise<IpcResult<JavaInstallation>>
+  javaIsInstalled: (version: string) => Promise<IpcResult<boolean>>
+  javaGetExecutable: (version: string) => Promise<IpcResult<string>>
   onJavaInstallProgress: (callback: (progress: JavaInstallProgress) => void) => () => void
-  packwizEnsure: () => Promise<PackwizInstallation>
-  packwizInstall: () => Promise<PackwizInstallation>
-  packwizIsInstalled: () => Promise<boolean>
-  packwizGetJarPath: () => Promise<string>
+  packwizEnsure: () => Promise<IpcResult<PackwizInstallation>>
+  packwizInstall: () => Promise<IpcResult<PackwizInstallation>>
+  packwizIsInstalled: () => Promise<IpcResult<boolean>>
+  packwizGetJarPath: () => Promise<IpcResult<string>>
   onPackwizInstallProgress: (callback: (progress: PackwizInstallProgress) => void) => () => void
-  arcGetRegistry: () => Promise<ArcInstallation[]>
-  arcInstall: (arcId: string, metadata: ArcMetadata) => Promise<ArcInstallation>
-  arcUninstall: (arcId: string) => Promise<void>
-  arcIsInstalled: (arcId: string) => Promise<boolean>
-  arcGetPath: (arcId: string) => Promise<string>
+  arcGetRegistry: () => Promise<IpcResult<ArcInstallation[]>>
+  arcInstall: (arcId: string, metadata: ArcMetadata) => Promise<IpcResult<ArcInstallation>>
+  arcUninstall: (arcId: string) => Promise<IpcResult<void>>
+  arcIsInstalled: (arcId: string) => Promise<IpcResult<boolean>>
+  arcGetPath: (arcId: string) => Promise<IpcResult<string>>
   onArcInstallProgress: (callback: (progress: ArcInstallProgress) => void) => () => void
-  launchGame: (options: LaunchOptions) => Promise<void>
-  launchIsRunning: () => Promise<boolean>
+  launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
+  launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
 }
 

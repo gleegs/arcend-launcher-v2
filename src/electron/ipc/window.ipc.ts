@@ -1,4 +1,3 @@
-import { ipcMain } from 'electron'
 import { IpcChannels } from '../types/ipc'
 import {
   minimizeWindow,
@@ -7,11 +6,12 @@ import {
   hideWindow,
   restoreWindow,
 } from '../services/window'
+import { safeHandle } from './utils'
 
 export function registerWindowIpc(): void {
-  ipcMain.handle(IpcChannels.WINDOW_MINIMIZE, () => minimizeWindow())
-  ipcMain.handle(IpcChannels.WINDOW_MAXIMIZE, () => maximizeWindow())
-  ipcMain.handle(IpcChannels.WINDOW_CLOSE, () => closeWindow())
-  ipcMain.handle(IpcChannels.WINDOW_HIDE, () => hideWindow())
-  ipcMain.handle(IpcChannels.WINDOW_RESTORE, () => restoreWindow())
+  safeHandle(IpcChannels.WINDOW_MINIMIZE, () => minimizeWindow())
+  safeHandle(IpcChannels.WINDOW_MAXIMIZE, () => maximizeWindow())
+  safeHandle(IpcChannels.WINDOW_CLOSE, () => closeWindow())
+  safeHandle(IpcChannels.WINDOW_HIDE, () => hideWindow())
+  safeHandle(IpcChannels.WINDOW_RESTORE, () => restoreWindow())
 }
