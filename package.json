@@ -84,7 +84,9 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.107.0",
     "adm-zip": "^0.5.17",
+    "dotenv": "^17.4.2",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
     "minecraft-launcher-core": "^3.18.2",

@@ -158,15 +158,16 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
 
   sendProgress({ status: 'preparing_launch', percent: 30 })
 
-  const { mcVersion, modLoader } = installation.metadata
+  const { mcVersion, modLoader, javaVersion } = installation.metadata
 
   let forgePath: string | undefined
   if (modLoader) {
     forgePath = await ensureModLoaderInstaller(arcPath, modLoader)
   }
 
-  await ensureJava('21')
-  const javaPath = getJavaExecutable('21')
+  const resolvedJavaVersion = javaVersion || '21'
+  await ensureJava(resolvedJavaVersion)
+  const javaPath = getJavaExecutable(resolvedJavaVersion)
 
   const launcher = new Client()
   activeLauncher = launcher

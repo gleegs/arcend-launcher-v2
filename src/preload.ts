@@ -5,6 +5,7 @@ import type {
   AppConfig,
   AuthState,
   ArcMetadata,
+  RemoteArc,
   IpcResult,
 } from './electron/types/ipc'
 import type { JavaInstallProgress, JavaInstallation, JavaRegistry } from './electron/types/java'
@@ -81,6 +82,10 @@ const electronApi: ElectronApi = {
       ipcRenderer.removeListener(IpcChannels.ARC_ON_INSTALL_PROGRESS, handler)
     }
   },
+  arcFetchRemote: () =>
+    ipcRenderer.invoke(IpcChannels.ARC_FETCH_REMOTE) as Promise<IpcResult<RemoteArc[]>>,
+  arcFetchActive: () =>
+    ipcRenderer.invoke(IpcChannels.ARC_FETCH_ACTIVE) as Promise<IpcResult<RemoteArc | null>>,
   launchGame: (options: LaunchOptions) =>
     ipcRenderer.invoke(IpcChannels.LAUNCH_GAME, options) as Promise<IpcResult<void>>,
   launchIsRunning: () =>

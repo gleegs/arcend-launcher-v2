@@ -1,6 +1,6 @@
 import type { JavaInstallation, JavaInstallProgress, JavaRegistry } from './java'
 import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
-import type { ArcInstallation, ArcInstallProgress, ArcMetadata } from './arc'
+import type { ArcInstallation, ArcInstallProgress, ArcMetadata, RemoteArc } from './arc'
 import type { LaunchOptions, LaunchProgress } from './launcher'
 
 export interface WindowBounds {
@@ -55,6 +55,8 @@ export const IpcChannels = {
   ARC_IS_INSTALLED: 'arc:isInstalled',
   ARC_GET_PATH: 'arc:getPath',
   ARC_ON_INSTALL_PROGRESS: 'arc:onInstallProgress',
+  ARC_FETCH_REMOTE: 'arc:fetchRemote',
+  ARC_FETCH_ACTIVE: 'arc:fetchActive',
   LAUNCH_GAME: 'launch:game',
   LAUNCH_IS_RUNNING: 'launch:isRunning',
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
@@ -97,10 +99,12 @@ export interface ElectronApi {
   arcIsInstalled: (arcId: string) => Promise<IpcResult<boolean>>
   arcGetPath: (arcId: string) => Promise<IpcResult<string>>
   onArcInstallProgress: (callback: (progress: ArcInstallProgress) => void) => () => void
+  arcFetchRemote: () => Promise<IpcResult<RemoteArc[]>>
+  arcFetchActive: () => Promise<IpcResult<RemoteArc | null>>
   launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
 }
 
-export type { ArcMetadata } from './arc'
+export type { ArcMetadata, RemoteArc } from './arc'
 export type { ArcModLoader } from './arc'
