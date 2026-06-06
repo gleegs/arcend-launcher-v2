@@ -36,6 +36,9 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "commit": "cz",
     "prepare": "husky",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "release": "standard-version",
     "release:first": "standard-version --first-release"
   },
@@ -57,12 +60,17 @@
     "@electron-forge/plugin-vite": "^7.11.2",
     "@electron/fuses": "^1.8.0",
     "@tailwindcss/postcss": "^4.3.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/adm-zip": "^0.5.8",
     "@types/electron-squirrel-startup": "^1.0.2",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-v8": "^4.1.8",
     "autoprefixer": "^10.5.0",
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
@@ -74,6 +82,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "husky": "^9.1.7",
+    "jsdom": "^29.1.1",
     "lint-staged": "^17.0.5",
     "postcss": "^8.5.15",
     "prettier": "^3.8.3",
@@ -81,7 +90,8 @@
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3",
     "universalify": "^2.0.1",
-    "vite": "^5.4.21"
+    "vite": "^5.4.21",
+    "vitest": "^4.1.8"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.107.0",
@@ -106,6 +116,9 @@
     ],
     "*.{json,css,md}": [
       "prettier --write"
+    ],
+    "src/**/*.{test,spec}.{ts,tsx}": [
+      "vitest related --run"
     ]
   }
 }
