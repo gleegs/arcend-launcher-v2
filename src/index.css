@@ -20,9 +20,7 @@
   --color-black: #151013;
   --color-white: #fff0e6;
 
-  --color-surface: oklch(0.95 0.01 60 / 0.05);
-  --color-surface-hover: oklch(0.95 0.01 60 / 0.1);
-  --color-surface-active: oklch(0.95 0.01 60 / 0.15);
+  --color-surface: rgba(21, 16, 19, 0.3);
   --color-border: oklch(0.95 0.01 60 / 0.1);
   --color-border-hover: oklch(0.95 0.01 60 / 0.2);
 
