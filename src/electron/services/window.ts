@@ -18,7 +18,8 @@ export function createMainWindow(): BrowserWindow {
     x: bounds.x,
     y: bounds.y,
     frame: false,
-    resizable: true,
+    transparent: true,
+    resizable: false,
     minWidth: 900,
     minHeight: 600,
     webPreferences: {

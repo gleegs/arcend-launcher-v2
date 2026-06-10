@@ -91,18 +91,21 @@
     "typescript": "^5.9.3",
     "universalify": "^2.0.1",
     "vite": "^5.4.21",
+    "vite-plugin-svgr": "^5.2.0",
     "vitest": "^4.1.8"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.107.0",
     "adm-zip": "^0.5.17",
+    "clsx": "^2.1.1",
     "dotenv": "^17.4.2",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
     "minecraft-launcher-core": "^3.18.2",
     "msmc": "^5.0.5",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "zustand": "^5.0.14"
   },
   "config": {
     "commitizen": {

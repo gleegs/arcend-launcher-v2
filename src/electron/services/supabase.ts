@@ -4,6 +4,42 @@ import { remoteArcsCachePath, cacheDir } from '../lib/paths'
 import { isActiveArc } from '../types/arc'
 import type { RemoteArc } from '../types/arc'
 
+interface SupabaseArcRow {
+  slug: string
+  name: string | null
+  description: string | null
+  version: string | null
+  start_date: string | null
+  end_date: string | null
+  mc_version: string | null
+  java_version: string | null
+  loader: string | null
+  loader_version: string | null
+  loader_install_url: string | null
+  modpack_url: string | null
+  cover_image: string | null
+  created_at: string
+}
+
+function toRemoteArc(row: SupabaseArcRow): RemoteArc {
+  return {
+    slug: row.slug,
+    name: row.name,
+    description: row.description,
+    version: row.version,
+    startDate: row.start_date,
+    endDate: row.end_date,
+    mcVersion: row.mc_version,
+    javaVersion: row.java_version,
+    loader: row.loader,
+    loaderVersion: row.loader_version,
+    loaderInstallUrl: row.loader_install_url,
+    modpackUrl: row.modpack_url,
+    coverImage: row.cover_image,
+    createdAt: row.created_at,
+  }
+}
+
 let client: SupabaseClient | null = null
 
 function getSupabaseClient(): SupabaseClient {
@@ -38,14 +74,15 @@ async function fetchArcsFromApi(): Promise<RemoteArc[]> {
     throw new Error(`Supabase fetch error: ${error.message}`)
   }
 
-  return (data ?? []) as RemoteArc[]
+  return (data ?? []).map(toRemoteArc)
 }
 
 function readCache(): RemoteArc[] | null {
   try {
     if (!fs.existsSync(remoteArcsCachePath)) return null
     const raw = fs.readFileSync(remoteArcsCachePath, 'utf-8')
-    return JSON.parse(raw) as RemoteArc[]
+    const rows = JSON.parse(raw) as SupabaseArcRow[]
+    return rows.map(toRemoteArc)
   } catch {
     return null
   }
