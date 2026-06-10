@@ -1,1 +1,51 @@
 @import 'tailwindcss';
+
+@font-face {
+  font-family: 'Goia';
+  src: url('./app/assets/fonts/goia-regular-font.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Goia';
+  src: url('./app/assets/fonts/goia-black-font.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --color-black: #151013;
+  --color-white: #fff0e6;
+
+  --color-surface: oklch(0.95 0.01 60 / 0.05);
+  --color-surface-hover: oklch(0.95 0.01 60 / 0.1);
+  --color-surface-active: oklch(0.95 0.01 60 / 0.15);
+  --color-border: oklch(0.95 0.01 60 / 0.1);
+  --color-border-hover: oklch(0.95 0.01 60 / 0.2);
+
+  --font-sans: 'Goia', sans-serif;
+
+  --shadow-glass: 0 8px 32px oklch(0.05 0.02 330 / 0.3);
+  --shadow-glass-sm: 0 4px 16px oklch(0.05 0.02 330 / 0.2);
+  --shadow-glass-lg: 0 16px 48px oklch(0.05 0.02 330 / 0.4);
+
+  --blur-glass: 16px;
+  --blur-glass-heavy: 24px;
+}
+
+@layer base {
+  #root {
+    background-color: transparent;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  body {
+    background-color: transparent;
+    color: var(--color-white);
+    font-family: var(--font-sans);
+  }
+}
