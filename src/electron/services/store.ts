@@ -9,6 +9,7 @@ const defaults: AppConfig = {
   },
   encryptedRefreshToken: undefined,
   cachedProfile: undefined,
+  showConsole: false,
 }
 
 let storeInstance: Store<AppConfig> | null = null
