@@ -26,7 +26,7 @@
 
   --font-sans: 'Goia', sans-serif;
 
-  --shadow-glass: 0 8px 32px oklch(0.05 0.02 330 / 0.3);
+  --shadow-button: 0 4px 4px 0 rgba(21, 16, 19, 0.5);
   --shadow-glass-sm: 0 4px 16px oklch(0.05 0.02 330 / 0.2);
   --shadow-glass-lg: 0 16px 48px oklch(0.05 0.02 330 / 0.4);
 
