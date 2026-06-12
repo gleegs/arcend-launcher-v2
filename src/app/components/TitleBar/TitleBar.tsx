@@ -2,14 +2,17 @@ import SettingsIcon from '../../assets/icon/settings-icon.svg?react'
 import MinusIcon from '../../assets/icon/minus-icon.svg?react'
 import CrossIcon from '../../assets/icon/cross-icon.svg?react'
 import { useWindowStore } from '../../store/window'
+import { useSettingsStore } from '../../store/settings'
 
 export default function TitleBar() {
   const minimize = useWindowStore((s) => s.minimize)
   const close = useWindowStore((s) => s.close)
+  const toggleSettings = useSettingsStore((s) => s.toggleSettings)
 
   return (
     <div className="space-x-3">
       <button
+        onClick={toggleSettings}
         className="cursor-pointer rounded-full bg-black p-2 border border-transparent hover:border-white transition-colors duration-250"
         style={{ WebkitAppRegion: 'no-drag' }}
       >

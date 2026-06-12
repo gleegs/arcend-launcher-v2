@@ -98,6 +98,8 @@ const electronApi: ElectronApi = {
       ipcRenderer.removeListener(IpcChannels.LAUNCH_ON_PROGRESS, handler)
     }
   },
+  shellOpenPath: (path: string) =>
+    ipcRenderer.invoke(IpcChannels.SHELL_OPEN_PATH, path) as Promise<IpcResult<void>>,
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronApi)
