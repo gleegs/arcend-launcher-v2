@@ -1,7 +1,7 @@
 import { app } from 'electron'
 import path from 'node:path'
 
-const arcendDir = path.join(app.getPath('appData'), '.arcend')
+export const arcendDir = path.join(app.getPath('appData'), '.arcend')
 
 export const configDir = path.join(arcendDir, 'config')
 export const runtimeDir = path.join(arcendDir, 'runtime')

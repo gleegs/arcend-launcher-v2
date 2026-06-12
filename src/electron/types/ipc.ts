@@ -24,6 +24,7 @@ export interface AppConfig {
   windowBounds: WindowBounds
   encryptedRefreshToken?: string
   cachedProfile?: CachedProfile
+  showConsole: boolean
 }
 
 export const IpcChannels = {
@@ -60,6 +61,7 @@ export const IpcChannels = {
   LAUNCH_GAME: 'launch:game',
   LAUNCH_IS_RUNNING: 'launch:isRunning',
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
+  SHELL_OPEN_PATH: 'shell:openPath',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -104,6 +106,7 @@ export interface ElectronApi {
   launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
+  shellOpenPath: (path: string) => Promise<IpcResult<void>>
 }
 
 export type { ArcMetadata, RemoteArc } from './arc'
