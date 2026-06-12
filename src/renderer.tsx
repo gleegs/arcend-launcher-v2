@@ -6,6 +6,7 @@ import { useArcStore } from './app/store/arc'
 import { useWindowStore } from './app/store/window'
 import TitleBar from './app/components/TitleBar/TitleBar'
 import AuthButton from './app/components/AuthButton/AuthButton'
+import SettingsPanel from './app/components/SettingsPanel/SettingsPanel'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -34,6 +35,7 @@ const App = () => {
           <AuthButton />
           <TitleBar />
         </div>
+        <SettingsPanel />
       </main>
     </div>
   )
