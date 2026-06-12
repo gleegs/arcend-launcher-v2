@@ -5,6 +5,7 @@ import Sidebar from './app/components/Sidebar/Sidebar'
 import { useArcStore } from './app/store/arc'
 import { useWindowStore } from './app/store/window'
 import TitleBar from './app/components/TitleBar/TitleBar'
+import AuthButton from './app/components/AuthButton/AuthButton'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -29,7 +30,8 @@ const App = () => {
           alt={selectedArc?.name ?? ''}
           className="w-full h-full object-cover"
         />
-        <div className="absolute top-0 right-0 p-8">
+        <div className="absolute top-0 right-0 p-8 flex gap-8">
+          <AuthButton />
           <TitleBar />
         </div>
       </main>
