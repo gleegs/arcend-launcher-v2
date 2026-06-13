@@ -144,7 +144,7 @@ describe('packwiz service', () => {
       mockFsReadFileSync.mockReturnValue(
         JSON.stringify({
           installation: {
-            version: '0.0.3',
+            version: 'v0.0.3',
             jarPath: '/runtime/packwiz/packwiz-installer-bootstrap.jar',
             installedAt: '2026-01-01',
           },
@@ -171,7 +171,7 @@ describe('packwiz service', () => {
       mockFsReadFileSync.mockReturnValue(
         JSON.stringify({
           installation: {
-            version: '0.0.3',
+            version: 'v0.0.3',
             jarPath: '/runtime/packwiz/packwiz-installer-bootstrap.jar',
             installedAt: '2026-01-01',
           },
@@ -208,7 +208,7 @@ describe('packwiz service', () => {
       const { installPackwiz } = await import('./packwiz')
       const result = await installPackwiz()
 
-      expect(result.version).toBe('0.0.3')
+      expect(result.version).toBe('v0.0.3')
       expect(result.jarPath).toBe(path.join(fakePackwizDir, 'packwiz-installer-bootstrap.jar'))
       expect(result.installedAt).toBeDefined()
       expect(mockFsWriteFileSync).toHaveBeenCalled()
@@ -294,7 +294,7 @@ describe('packwiz service', () => {
       const result = await installPackwiz()
 
       expect(mockGet).toHaveBeenCalledTimes(2)
-      expect(result.version).toBe('0.0.3')
+      expect(result.version).toBe('v0.0.3')
     })
 
     it('rejects on HTTP error status 4xx', async () => {
@@ -369,7 +369,7 @@ describe('packwiz service', () => {
       const { ensurePackwiz } = await import('./packwiz')
       const result = await ensurePackwiz()
 
-      expect(result.version).toBe('0.0.3')
+      expect(result.version).toBe('v0.0.3')
       expect(mockFsWriteFileSync).toHaveBeenCalled()
     })
 
@@ -382,7 +382,7 @@ describe('packwiz service', () => {
       mockFsReadFileSync.mockReturnValue(
         JSON.stringify({
           installation: {
-            version: '0.0.3',
+            version: 'v0.0.3',
             jarPath: '/runtime/packwiz/packwiz-installer-bootstrap.jar',
             installedAt: '2026-01-01',
           },
@@ -406,7 +406,7 @@ describe('packwiz service', () => {
       const { ensurePackwiz } = await import('./packwiz')
       const result = await ensurePackwiz()
 
-      expect(result.version).toBe('0.0.3')
+      expect(result.version).toBe('v0.0.3')
       expect(mockFsWriteFileSync).toHaveBeenCalled()
     })
   })
@@ -467,7 +467,7 @@ describe('packwiz service', () => {
       const { installPackwiz } = await import('./packwiz')
       const result = await installPackwiz()
 
-      expect(result.version).toBe('0.0.3')
+      expect(result.version).toBe('v0.0.3')
     })
 
     it('does not throw when window is destroyed', async () => {
@@ -492,7 +492,7 @@ describe('packwiz service', () => {
       const { installPackwiz } = await import('./packwiz')
       const result = await installPackwiz()
 
-      expect(result.version).toBe('0.0.3')
+      expect(result.version).toBe('v0.0.3')
     })
   })
 })
