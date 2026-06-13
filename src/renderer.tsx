@@ -7,6 +7,7 @@ import { useWindowStore } from './app/store/window'
 import TitleBar from './app/components/TitleBar/TitleBar'
 import AuthButton from './app/components/AuthButton/AuthButton'
 import SettingsPanel from './app/components/SettingsPanel/SettingsPanel'
+import PlayButton from './app/components/PlayButton/PlayButton'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -34,6 +35,9 @@ const App = () => {
         <div className="absolute top-0 right-0 p-8 flex gap-8">
           <AuthButton />
           <TitleBar />
+        </div>
+        <div className="absolute bottom-0 right-0 p-8">
+          <PlayButton />
         </div>
         <SettingsPanel />
       </main>
