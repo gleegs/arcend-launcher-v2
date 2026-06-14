@@ -6,13 +6,15 @@ import type { ArcItem } from '../../store/arc'
 
 export default function Sidebar() {
   const [arcs, setArcs] = useState<ArcItem[]>([])
+  const [version, setVersion] = useState('2.0.0')
   const selectArc = useArcStore((s) => s.selectArc)
 
   useEffect(() => {
     async function fetchArcs() {
-      const [remoteRes, registryRes] = await Promise.all([
+      const [remoteRes, registryRes, versionRes] = await Promise.all([
         window.electronAPI.arcFetchRemote(),
         window.electronAPI.arcGetRegistry(),
+        window.electronAPI.appGetVersion(),
       ])
 
       const remoteArcs = remoteRes.ok ? (remoteRes.data ?? []) : []
@@ -45,6 +47,8 @@ export default function Sidebar() {
 
         return bStart - aStart
       })
+
+      if (versionRes.ok && versionRes.data) setVersion(versionRes.data)
 
       setArcs(items)
       if (items.length > 0) selectArc(items[0])
@@ -84,7 +88,7 @@ export default function Sidebar() {
       <div className="space-y-1">
         <span className="uppercase text-xs text-center block">Version</span>
         <div className="font-normal text-[10px] w-full py-2.5 bg-black text-center text-white rounded-xl">
-          v2.0
+          v{version}
         </div>
       </div>
     </div>
