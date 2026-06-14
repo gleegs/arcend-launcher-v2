@@ -73,7 +73,10 @@ export default function Sidebar() {
         <div className="space-y-2 flex-1">
           {arcs.map((arc) => (
             <div key={arc.slug} onClick={() => selectArc(arc)}>
-              <Arc src={'https://placehold.co/64x64'} installed={arc.installed} />
+              <Arc
+                src={arc.thumbnailUrl ?? 'https://placehold.co/64x64'}
+                installed={arc.installed}
+              />
             </div>
           ))}
         </div>

@@ -17,7 +17,8 @@ interface SupabaseArcRow {
   loader_version: string | null
   loader_install_url: string | null
   modpack_url: string | null
-  cover_image: string | null
+  cover_url: string | null
+  thumbnail_url: string | null
   created_at: string
 }
 
@@ -35,7 +36,8 @@ function toRemoteArc(row: SupabaseArcRow): RemoteArc {
     loaderVersion: row.loader_version,
     loaderInstallUrl: row.loader_install_url,
     modpackUrl: row.modpack_url,
-    coverImage: row.cover_image,
+    coverUrl: row.cover_url,
+    thumbnailUrl: row.thumbnail_url,
     createdAt: row.created_at,
   }
 }
@@ -56,11 +58,18 @@ function getSupabaseClient(): SupabaseClient {
   return client
 }
 
-export function getCoverUrl(coverImage: string | null): string | undefined {
-  if (!coverImage) return undefined
+export function getCoverUrl(coverUrl: string | null): string | undefined {
+  if (!coverUrl) return undefined
   const url = process.env.SUPABASE_URL
-  if (!url) return coverImage
-  return `${url}/storage/v1/object/public/arc-covers/${coverImage}`
+  if (!url) return coverUrl
+  return `${url}/storage/v1/object/public/arc-covers/${coverUrl}`
+}
+
+export function getThumbnailUrl(thumbnailUrl: string | null): string | undefined {
+  if (!thumbnailUrl) return undefined
+  const url = process.env.SUPABASE_URL
+  if (!url) return thumbnailUrl
+  return `${url}/storage/v1/object/public/arc-thumbnails/${thumbnailUrl}`
 }
 
 async function fetchArcsFromApi(): Promise<RemoteArc[]> {
