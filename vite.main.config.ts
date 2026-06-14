@@ -1,4 +1,8 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
 
-// https://vitejs.dev/config
-export default defineConfig({});
+export default defineConfig({
+  define: {
+    'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
+    'process.env.SUPABASE_PUBLISHABLE_KEY': JSON.stringify(process.env.SUPABASE_PUBLISHABLE_KEY),
+  },
+})

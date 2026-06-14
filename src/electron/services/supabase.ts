@@ -58,20 +58,6 @@ function getSupabaseClient(): SupabaseClient {
   return client
 }
 
-export function getCoverUrl(coverUrl: string | null): string | undefined {
-  if (!coverUrl) return undefined
-  const url = process.env.SUPABASE_URL
-  if (!url) return coverUrl
-  return `${url}/storage/v1/object/public/arc-covers/${coverUrl}`
-}
-
-export function getThumbnailUrl(thumbnailUrl: string | null): string | undefined {
-  if (!thumbnailUrl) return undefined
-  const url = process.env.SUPABASE_URL
-  if (!url) return thumbnailUrl
-  return `${url}/storage/v1/object/public/arc-thumbnails/${thumbnailUrl}`
-}
-
 async function fetchArcsFromApi(): Promise<RemoteArc[]> {
   const supabase = getSupabaseClient()
   const { data, error } = await supabase
@@ -90,8 +76,7 @@ function readCache(): RemoteArc[] | null {
   try {
     if (!fs.existsSync(remoteArcsCachePath)) return null
     const raw = fs.readFileSync(remoteArcsCachePath, 'utf-8')
-    const rows = JSON.parse(raw) as SupabaseArcRow[]
-    return rows.map(toRemoteArc)
+    return JSON.parse(raw) as RemoteArc[]
   } catch {
     return null
   }
