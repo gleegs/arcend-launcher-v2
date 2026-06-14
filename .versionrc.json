@@ -2,13 +2,13 @@
   "types": [
     { "type": "feat", "section": "Features" },
     { "type": "fix", "section": "Bug Fixes" },
-    { "type": "perf", "section": "Performance Improvements" },
-    { "type": "refactor", "section": "Code Refactoring" },
-    { "type": "docs", "section": "Documentation" },
-    { "type": "style", "section": "Styles" },
-    { "type": "test", "section": "Tests" },
-    { "type": "build", "section": "Build System" },
-    { "type": "ci", "section": "CI/CD" },
+    { "type": "perf", "hidden": true },
+    { "type": "refactor", "hidden": true },
+    { "type": "docs", "hidden": true },
+    { "type": "style", "hidden": true },
+    { "type": "test", "hidden": true },
+    { "type": "build", "hidden": true },
+    { "type": "ci", "hidden": true },
     { "type": "chore", "hidden": true }
   ],
   "skip": {
