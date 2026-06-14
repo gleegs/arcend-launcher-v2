@@ -11,7 +11,8 @@ export interface RemoteArc {
   loaderVersion: string | null
   loaderInstallUrl: string | null
   modpackUrl: string | null
-  coverImage: string | null
+  coverUrl: string | null
+  thumbnailUrl: string | null
   createdAt: string
 }
 
@@ -46,7 +47,7 @@ export function remoteArcToMetadata(arc: RemoteArc, coverUrl?: string): ArcMetad
         ? { type: arc.loader, version: arc.loaderVersion, installerUrl: arc.loaderInstallUrl }
         : undefined,
     description: arc.description ?? undefined,
-    cover: coverUrl ?? arc.coverImage ?? undefined,
+    cover: coverUrl ?? arc.coverUrl ?? undefined,
   }
 }
 

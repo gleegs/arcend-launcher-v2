@@ -28,7 +28,7 @@ const App = () => {
       <Sidebar />
       <main className="flex-1 rounded-2xl overflow-hidden relative">
         <img
-          src={selectedArc?.coverImage ?? 'https://placehold.co/600x400?text=Image+Not+Found'}
+          src={selectedArc?.coverUrl ?? 'https://placehold.co/600x400?text=Image+Not+Found'}
           alt={selectedArc?.name ?? ''}
           className="w-full h-full object-cover"
         />
