@@ -62,6 +62,7 @@ export const IpcChannels = {
   LAUNCH_IS_RUNNING: 'launch:isRunning',
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
   SHELL_OPEN_PATH: 'shell:openPath',
+  APP_GET_VERSION: 'app:getVersion',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -107,6 +108,7 @@ export interface ElectronApi {
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
   shellOpenPath: (path: string) => Promise<IpcResult<void>>
+  appGetVersion: () => Promise<IpcResult<string>>
 }
 
 export type { ArcMetadata, RemoteArc } from './arc'

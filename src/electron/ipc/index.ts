@@ -6,6 +6,7 @@ import { registerPackwizIpc } from './packwiz.ipc'
 import { registerArcIpc } from './arc.ipc'
 import { registerLauncherIpc } from './launcher.ipc'
 import { registerShellIpc } from './shell.ipc'
+import { registerAppIpc } from './app.ipc'
 
 export function registerAllIpcHandlers(): void {
   registerWindowIpc()
@@ -16,4 +17,5 @@ export function registerAllIpcHandlers(): void {
   registerArcIpc()
   registerLauncherIpc()
   registerShellIpc()
+  registerAppIpc()
 }
