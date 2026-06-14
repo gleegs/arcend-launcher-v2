@@ -23,27 +23,7 @@ jobs:
 
       - run: npm ci
 
-      - name: Build (Windows)
-        if: matrix.os == 'windows-latest'
-        run: npm run make
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build (macOS)
-        if: matrix.os == 'macos-latest'
-        run: npm run make
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libarchive-tools
-
-      - name: Build (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: npm run make
+      - run: npm run make
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -51,10 +31,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-${{ matrix.os }}
-          path: |
-            dist/*.exe
-            dist/*.dmg
-            dist/*.AppImage
+          path: out/make/**/*
           if-no-files-found: warn
 
   publish:
