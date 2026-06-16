@@ -114,7 +114,7 @@ export interface ElectronApi {
   launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
-  shellOpenPath: (path: string) => Promise<IpcResult<void>>
+  shellOpenPath: (pathArg: string) => Promise<IpcResult<void>>
   appGetVersion: () => Promise<IpcResult<string>>
   serverGetStatus: () => Promise<IpcResult<ServerStatus>>
 }

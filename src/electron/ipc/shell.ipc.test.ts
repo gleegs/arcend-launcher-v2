@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import path from 'node:path'
 
 const handlers: Record<string, (...args: unknown[]) => unknown> = {}
 
@@ -45,7 +46,7 @@ describe('registerShellIpc', () => {
 
     const result = await handlers['shell:openPath']({}, '/some/path')
 
-    expect(mockOpenPath).toHaveBeenCalledWith('/some/path')
+    expect(mockOpenPath).toHaveBeenCalledWith(path.join(mockArcendDir, '/some/path'))
     expect(result).toEqual({ ok: true, data: undefined })
   })
 
@@ -54,7 +55,7 @@ describe('registerShellIpc', () => {
 
     await handlers['shell:openPath']({}, '')
 
-    expect(mockOpenPath).toHaveBeenCalledWith(mockArcendDir)
+    expect(mockOpenPath).toHaveBeenCalledWith(path.join(mockArcendDir, ''))
   })
 
   it('returns { ok: false, error } when openPath throws', async () => {
