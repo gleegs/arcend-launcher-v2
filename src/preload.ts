@@ -7,6 +7,7 @@ import type {
   ArcMetadata,
   RemoteArc,
   IpcResult,
+  ServerStatus,
 } from './electron/types/ipc'
 import type { JavaInstallProgress, JavaInstallation, JavaRegistry } from './electron/types/java'
 import type { PackwizInstallProgress, PackwizInstallation } from './electron/types/packwiz'
@@ -102,6 +103,8 @@ const electronApi: ElectronApi = {
     ipcRenderer.invoke(IpcChannels.SHELL_OPEN_PATH, path) as Promise<IpcResult<void>>,
   appGetVersion: () =>
     ipcRenderer.invoke(IpcChannels.APP_GET_VERSION) as Promise<IpcResult<string>>,
+  serverGetStatus: () =>
+    ipcRenderer.invoke(IpcChannels.SERVER_GET_STATUS) as Promise<IpcResult<ServerStatus>>,
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronApi)

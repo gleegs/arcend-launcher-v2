@@ -2,6 +2,7 @@ import type { JavaInstallation, JavaInstallProgress, JavaRegistry } from './java
 import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
 import type { ArcInstallation, ArcInstallProgress, ArcMetadata, RemoteArc } from './arc'
 import type { LaunchOptions, LaunchProgress } from './launcher'
+import type { ServerStatus } from './server'
 
 export interface WindowBounds {
   x?: number
@@ -63,6 +64,7 @@ export const IpcChannels = {
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
   SHELL_OPEN_PATH: 'shell:openPath',
   APP_GET_VERSION: 'app:getVersion',
+  SERVER_GET_STATUS: 'server:getStatus',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -109,7 +111,9 @@ export interface ElectronApi {
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
   shellOpenPath: (path: string) => Promise<IpcResult<void>>
   appGetVersion: () => Promise<IpcResult<string>>
+  serverGetStatus: () => Promise<IpcResult<ServerStatus>>
 }
 
 export type { ArcMetadata, RemoteArc } from './arc'
 export type { ArcModLoader } from './arc'
+export type { ServerStatus } from './server'
