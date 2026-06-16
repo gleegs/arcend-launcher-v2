@@ -7,12 +7,16 @@ import { useWindowStore } from './app/store/window'
 import TitleBar from './app/components/TitleBar/TitleBar'
 import AuthButton from './app/components/AuthButton/AuthButton'
 import SettingsPanel from './app/components/SettingsPanel/SettingsPanel'
+import ArcSettingsPanel from './app/components/ArcSettingsPanel/ArcSettingsPanel'
 import PlayButton from './app/components/PlayButton/PlayButton'
+import SettingsIcon from './app/assets/icon/settings-icon.svg?react'
+import { useArcSettingsStore } from './app/store/arcSettings'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
   const isHiding = useWindowStore((s) => s.isHiding)
   const setIsHiding = useWindowStore((s) => s.setIsHiding)
+  const toggleArcSettings = useArcSettingsStore((s) => s.toggleArcSettings)
 
   useEffect(() => {
     const onFocus = () => setIsHiding(false)
@@ -36,10 +40,19 @@ const App = () => {
           <AuthButton />
           <TitleBar />
         </div>
-        <div className="absolute bottom-0 right-0 p-8">
+        <div className="absolute bottom-0 right-0 p-8 flex items-center gap-4">
+          <button
+            onClick={() => toggleArcSettings()}
+            disabled={!selectedArc}
+            className="w-12 h-12 rounded-full bg-black border border-white/10 hover:border-white flex items-center justify-center transition-colors duration-250 disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{ WebkitAppRegion: 'no-drag' }}
+          >
+            <SettingsIcon width={22} height={22} />
+          </button>
           <PlayButton />
         </div>
         <SettingsPanel />
+        <ArcSettingsPanel />
       </main>
     </div>
   )

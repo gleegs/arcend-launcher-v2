@@ -69,7 +69,10 @@ describe('store service', () => {
       expect(Store).toHaveBeenCalledWith(
         expect.objectContaining({
           cwd: '/fake/config/path',
-          defaults: expect.any(Object),
+          defaults: expect.objectContaining({
+            arcSettings: {},
+            showConsole: false,
+          }),
         })
       )
     })

@@ -10,6 +10,7 @@ const defaults: AppConfig = {
   encryptedRefreshToken: undefined,
   cachedProfile: undefined,
   showConsole: false,
+  arcSettings: {},
 }
 
 let storeInstance: Store<AppConfig> | null = null
