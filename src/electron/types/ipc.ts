@@ -21,11 +21,16 @@ export type AuthState =
   | { status: 'offline'; profile: CachedProfile }
   | { status: 'unauthenticated' }
 
+export interface ArcSettings {
+  maxMemory: number
+}
+
 export interface AppConfig {
   windowBounds: WindowBounds
   encryptedRefreshToken?: string
   cachedProfile?: CachedProfile
   showConsole: boolean
+  arcSettings: Record<string, ArcSettings>
 }
 
 export const IpcChannels = {

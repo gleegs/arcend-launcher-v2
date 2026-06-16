@@ -38,14 +38,18 @@ export default function SettingsPanel() {
 
       <div className=" font-black uppercase space-y-6">
         <div className="mt-8">
-          <h2 className="text-2xl mb-0.5">Console</h2>
-          <p className="text-xs mb-3">Afficher la console de jeu</p>
+          <h2 className="text-2xl">Paramètres du launcher</h2>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-lg mb-0.5">Console</h2>
+          <p className="text-xs mb-3 text-white/50">Afficher la console de jeu</p>
           <Toggle checked={showConsole} onChange={setShowConsole} />
         </div>
 
         <div>
-          <h2 className="text-2xl mb-0.5">Dossier du Launcher</h2>
-          <p className="text-xs mb-3">Ouvrir le dossier du launcher</p>
+          <h2 className="text-lg mb-0.5">Dossier du Launcher</h2>
+          <p className="text-xs mb-3 text-white/50">Ouvrir le dossier du launcher</p>
           <Button
             onClick={handleOpenLauncherFolder}
             className="text-black bg-white text-sm flex items-center py-1.5 px-5 gap-2 uppercase"
@@ -56,7 +60,7 @@ export default function SettingsPanel() {
         </div>
 
         <div className="mt-8">
-          <h2 className="text-2xl mb-0.5">Version du launcher</h2>
+          <h2 className="text-lg mb-0.5">Version du launcher</h2>
           <p className="text-xs text-white/50">v2.0.0</p>
         </div>
       </div>

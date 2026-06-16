@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Button from '../Button/Button'
 import { useArcStore } from '../../store/arc'
+import { useArcSettingsStore } from '../../store/arcSettings'
 import { useAuthStore } from '../../store/auth'
 import { remoteArcToMetadata } from '../../../electron/types/arc'
 import DownloadIcon from '../../assets/icon/download.svg?react'
@@ -10,6 +11,7 @@ export default function PlayButton() {
   const selectedArc = useArcStore((s) => s.selectedArc)
   const selectArc = useArcStore((s) => s.selectArc)
   const authState = useAuthStore((s) => s.state)
+  const getArcSettings = useArcSettingsStore((s) => s.getArcSettings)
 
   const [isInstalling, setIsInstalling] = useState(false)
   const [installPercent, setInstallPercent] = useState(0)
@@ -67,9 +69,12 @@ export default function PlayButton() {
   const handlePlay = async () => {
     console.log('Launching game')
     setIsLaunching(true)
+    const { maxMemory } = getArcSettings(selectedArc.slug)
     const result = await window.electronAPI.launchGame({
       arcId: selectedArc.slug,
       mode: authState.status === 'online' ? 'online' : 'offline',
+      maxMemory: `${maxMemory}G`,
+      minMemory: `${Math.floor(maxMemory / 2)}G`,
     })
     console.log('Launching result :', result)
     if (!result.ok) {
