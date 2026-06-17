@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.2](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-06-17)
+
+### Features
+
+- **app:** add app and setup icon ([948e222](https://github.com/gleegs/arcend-launcher-v2/commit/948e222871be853ec83bd711d4d015e9f6a373b1))
+- **app:** add app and setup icon ([#37](https://github.com/gleegs/arcend-launcher-v2/issues/37)) ([7b6d238](https://github.com/gleegs/arcend-launcher-v2/commit/7b6d2389b0329ab7c9bceaa8e73d9c63e4bce6ff))
+- **app:** rename arcend setup ([bfbd172](https://github.com/gleegs/arcend-launcher-v2/commit/bfbd1726acf563ef93f172da8ff2c8952bf0efd3))
+- **app:** rename arcend setup ([#38](https://github.com/gleegs/arcend-launcher-v2/issues/38)) ([d025bf4](https://github.com/gleegs/arcend-launcher-v2/commit/d025bf445093fd84a3a84e4d37300c10d8cb8b4e))
+- **updater:** add background auto-update via update-electron-app ([ae0381f](https://github.com/gleegs/arcend-launcher-v2/commit/ae0381fcdc5b1a03514fb053dee34be9c3dbd8e9))
+- **updater:** add background auto-update via update-electron-app ([#42](https://github.com/gleegs/arcend-launcher-v2/issues/42)) ([97a7155](https://github.com/gleegs/arcend-launcher-v2/commit/97a7155aa6202f832ef7ef1c50bba7aa9116ee67))
+
 ## [2.0.0-beta.1](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0-beta.0...v2.0.0-beta.1) (2026-06-17)
 
 ### Features
