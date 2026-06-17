@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useArcSettingsStore, DEFAULT_MAX_MEMORY } from '../../store/arcSettings'
 import { useArcStore } from '../../store/arc'
 import CrossIcon from '../../assets/icon/cross-icon.svg?react'
 import OpenIcon from '../../assets/icon/open-icon.svg?react'
+import TrashIcon from '../../assets/icon/trash-icon.svg?react'
 import Button from '../Button/Button'
 import RamSlider from '../RamSlider/RamSlider'
 
@@ -13,10 +14,19 @@ export default function ArcSettingsPanel() {
   const initArcSettings = useArcSettingsStore((s) => s.initArcSettings)
   const setArcMemory = useArcSettingsStore((s) => s.setArcMemory)
   const selectedArc = useArcStore((s) => s.selectedArc)
+  const setArcInstalled = useArcStore((s) => s.setArcInstalled)
+
+  const [confirmUninstall, setConfirmUninstall] = useState(false)
+  const [wasOpen, setWasOpen] = useState(isArcSettingsOpen)
 
   useEffect(() => {
     initArcSettings()
   }, [initArcSettings])
+
+  if (isArcSettingsOpen !== wasOpen) {
+    setWasOpen(isArcSettingsOpen)
+    setConfirmUninstall(false)
+  }
 
   if (!selectedArc) return null
 
@@ -28,6 +38,19 @@ export default function ArcSettingsPanel() {
 
   const handleOpenGameFolder = async () => {
     await window.electronAPI.shellOpenPath(`arcs/${selectedArc.slug}/minecraft`)
+  }
+
+  const handleUninstall = async () => {
+    if (!confirmUninstall) {
+      setConfirmUninstall(true)
+      return
+    }
+    const result = await window.electronAPI.arcUninstall(selectedArc.slug)
+    if (result.ok) {
+      setArcInstalled(selectedArc.slug, false)
+      setIsArcSettingsOpen(false)
+    }
+    setConfirmUninstall(false)
   }
 
   return (
@@ -66,6 +89,19 @@ export default function ArcSettingsPanel() {
           >
             Ouvrir
             <OpenIcon color="black" width={16} height={16} />
+          </Button>
+        </div>
+
+        <div>
+          <h2 className="text-lg mb-0.5">Désinstaller l&apos;Arc</h2>
+          <p className="text-xs mb-3 text-white/50">Supprimer l&apos;Arc de votre ordinateur</p>
+          <Button
+            onClick={handleUninstall}
+            className="text-white text-sm flex items-center py-1.5 px-5 gap-2 uppercase"
+            style={{ backgroundColor: '#dc2626' }}
+          >
+            {confirmUninstall ? 'Confirmer ?' : 'Désinstaller'}
+            <TrashIcon color="#fff" width={16} height={16} />
           </Button>
         </div>
       </div>

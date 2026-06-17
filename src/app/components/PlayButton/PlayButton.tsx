@@ -9,7 +9,7 @@ import PlayIcon from '../../assets/icon/play-icon.svg?react'
 
 export default function PlayButton() {
   const selectedArc = useArcStore((s) => s.selectedArc)
-  const selectArc = useArcStore((s) => s.selectArc)
+  const setArcInstalled = useArcStore((s) => s.setArcInstalled)
   const authState = useAuthStore((s) => s.state)
   const getArcSettings = useArcSettingsStore((s) => s.getArcSettings)
 
@@ -27,14 +27,14 @@ export default function PlayButton() {
       if (progress.status === 'done') {
         setIsInstalling(false)
         setInstallPercent(0)
-        if (selectedArc) selectArc({ ...selectedArc, installed: true })
+        if (selectedArc) setArcInstalled(selectedArc.slug, true)
       } else if (progress.status === 'error') {
         setIsInstalling(false)
         setInstallPercent(0)
       }
     })
     return unsubscribe
-  }, [arcSlug, selectedArc, selectArc])
+  }, [arcSlug, selectedArc, setArcInstalled])
 
   useEffect(() => {
     const unsubscribe = window.electronAPI.onLaunchProgress((progress) => {

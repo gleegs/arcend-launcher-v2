@@ -2,16 +2,16 @@ import blackLogo from '../../assets/images/black-logo.png'
 import Arc from '../Arc/Arc'
 import { useEffect, useState, useRef } from 'react'
 import { useArcStore } from '../../store/arc'
-import type { ArcItem } from '../../store/arc'
 import type { ServerStatus } from '../../../electron/types/ipc'
 
 const POLL_INTERVAL_MS = 30_000
 
 export default function Sidebar() {
-  const [arcs, setArcs] = useState<ArcItem[]>([])
+  const arcs = useArcStore((s) => s.arcs)
+  const setArcs = useArcStore((s) => s.setArcs)
+  const selectArc = useArcStore((s) => s.selectArc)
   const [version, setVersion] = useState('2.0.0')
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null)
-  const selectArc = useArcStore((s) => s.selectArc)
   const mountedRef = useRef(true)
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function Sidebar() {
     }
 
     fetchArcs()
-  }, [])
+  }, [selectArc, setArcs])
 
   return (
     <div className="bg-white w-20 h-full rounded-2xl px-2 py-4 text-black font-black flex flex-col space-y-4 select-none ">
