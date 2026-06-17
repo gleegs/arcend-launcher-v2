@@ -5,6 +5,7 @@ import { MakerZIP } from '@electron-forge/maker-zip'
 import { MakerDeb } from '@electron-forge/maker-deb'
 import { MakerRpm } from '@electron-forge/maker-rpm'
 import { VitePlugin } from '@electron-forge/plugin-vite'
+import { PublisherGithub } from '@electron-forge/publisher-github'
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -31,6 +32,17 @@ const config: ForgeConfig = {
         productName: 'Arcend Launcher',
         categories: ['Game'],
       },
+    }),
+  ],
+  publishers: [
+    new PublisherGithub({
+      repository: {
+        owner: 'gleegs',
+        name: 'arcend-launcher-v2',
+      },
+      authToken: process.env.GITHUB_TOKEN,
+      prerelease: true,
+      generateReleaseNotes: true,
     }),
   ],
   plugins: [

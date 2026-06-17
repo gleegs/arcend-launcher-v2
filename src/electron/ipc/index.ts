@@ -8,6 +8,7 @@ import { registerLauncherIpc } from './launcher.ipc'
 import { registerShellIpc } from './shell.ipc'
 import { registerAppIpc } from './app.ipc'
 import { registerServerIpc } from './server.ipc'
+import { registerUpdaterIpc } from './updater.ipc'
 
 export function registerAllIpcHandlers(): void {
   registerWindowIpc()
@@ -20,4 +21,5 @@ export function registerAllIpcHandlers(): void {
   registerShellIpc()
   registerAppIpc()
   registerServerIpc()
+  registerUpdaterIpc()
 }
