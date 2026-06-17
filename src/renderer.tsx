@@ -9,6 +9,7 @@ import AuthButton from './app/components/AuthButton/AuthButton'
 import SettingsPanel from './app/components/SettingsPanel/SettingsPanel'
 import ArcSettingsPanel from './app/components/ArcSettingsPanel/ArcSettingsPanel'
 import PlayButton from './app/components/PlayButton/PlayButton'
+import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import SettingsIcon from './app/assets/icon/settings-icon.svg?react'
 import { useArcSettingsStore } from './app/store/arcSettings'
 
@@ -54,6 +55,7 @@ const App = () => {
         </div>
         <SettingsPanel />
         <ArcSettingsPanel />
+        <UpdateToast />
       </main>
     </div>
   )
