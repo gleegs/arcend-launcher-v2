@@ -22,6 +22,7 @@ export function createMainWindow(): BrowserWindow {
     resizable: false,
     minWidth: 900,
     minHeight: 600,
+    icon: path.join(__dirname, '../../build/icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

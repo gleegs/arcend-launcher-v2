@@ -10,9 +10,15 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     executableName: 'arcend-launcher',
+    icon: 'build/icon',
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({ setupIcon: 'build/icon_setup.ico' }),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({}),
+    new MakerDeb({}),
+  ],
   plugins: [
     new VitePlugin({
       build: [
