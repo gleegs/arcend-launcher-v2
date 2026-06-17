@@ -14,10 +14,24 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({ setupIcon: 'build/icon_setup.ico' }),
+    new MakerSquirrel({ setupIcon: 'build/icon_setup.ico', setupExe: 'Arcend Launcher Setup.exe' }),
     new MakerZIP({}, ['darwin']),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerDeb({
+      options: {
+        icon: 'build/icon.png',
+        name: 'arcend-launcher',
+        productName: 'Arcend Launcher',
+        categories: ['Game'],
+      },
+    }),
+    new MakerRpm({
+      options: {
+        icon: 'build/icon.png',
+        name: 'arcend-launcher',
+        productName: 'Arcend Launcher',
+        categories: ['Game'],
+      },
+    }),
   ],
   plugins: [
     new VitePlugin({
