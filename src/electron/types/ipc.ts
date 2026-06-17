@@ -3,6 +3,7 @@ import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
 import type { ArcInstallation, ArcInstallProgress, ArcMetadata, RemoteArc } from './arc'
 import type { LaunchOptions, LaunchProgress } from './launcher'
 import type { ServerStatus } from './server'
+import type { UpdateStatus, UpdateDownloadedInfo } from './updater'
 
 export interface WindowBounds {
   x?: number
@@ -70,6 +71,9 @@ export const IpcChannels = {
   SHELL_OPEN_PATH: 'shell:openPath',
   APP_GET_VERSION: 'app:getVersion',
   SERVER_GET_STATUS: 'server:getStatus',
+  UPDATER_GET_STATUS: 'updater:getStatus',
+  UPDATER_INSTALL: 'updater:install',
+  UPDATER_ON_UPDATE_DOWNLOADED: 'updater:onUpdateDownloaded',
 } as const
 
 export type IpcChannel = (typeof IpcChannels)[keyof typeof IpcChannels]
@@ -117,6 +121,9 @@ export interface ElectronApi {
   shellOpenPath: (pathArg: string) => Promise<IpcResult<void>>
   appGetVersion: () => Promise<IpcResult<string>>
   serverGetStatus: () => Promise<IpcResult<ServerStatus>>
+  updaterGetStatus: () => Promise<IpcResult<UpdateStatus>>
+  updaterInstall: () => Promise<IpcResult<void>>
+  onUpdateDownloaded: (callback: (info: UpdateDownloadedInfo) => void) => () => void
 }
 
 export type { ArcMetadata, RemoteArc } from './arc'
