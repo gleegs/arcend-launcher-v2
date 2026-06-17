@@ -5,6 +5,7 @@ import { createMainWindow, getMainWindow } from './electron/services/window'
 import { registerAllIpcHandlers } from './electron/ipc'
 import { refresh as refreshAuth } from './electron/services/auth'
 import { fetchArcsWithCache } from './electron/services/supabase'
+import { initUpdater } from './electron/services/updater'
 
 if (started) {
   app.quit()
@@ -17,6 +18,7 @@ app.on('ready', () => {
 
   refreshAuth().catch(() => undefined)
   fetchArcsWithCache().catch(() => undefined)
+  initUpdater()
 })
 
 app.on('window-all-closed', () => {

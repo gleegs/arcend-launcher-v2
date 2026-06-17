@@ -13,6 +13,7 @@ import type { JavaInstallProgress, JavaInstallation, JavaRegistry } from './elec
 import type { PackwizInstallProgress, PackwizInstallation } from './electron/types/packwiz'
 import type { ArcInstallProgress, ArcInstallation } from './electron/types/arc'
 import type { LaunchOptions, LaunchProgress } from './electron/types/launcher'
+import type { UpdateDownloadedInfo, UpdateStatus } from './electron/types/updater'
 
 const electronApi: ElectronApi = {
   windowMinimize: () => ipcRenderer.invoke(IpcChannels.WINDOW_MINIMIZE) as Promise<IpcResult<void>>,
@@ -105,6 +106,17 @@ const electronApi: ElectronApi = {
     ipcRenderer.invoke(IpcChannels.APP_GET_VERSION) as Promise<IpcResult<string>>,
   serverGetStatus: () =>
     ipcRenderer.invoke(IpcChannels.SERVER_GET_STATUS) as Promise<IpcResult<ServerStatus>>,
+  updaterGetStatus: () =>
+    ipcRenderer.invoke(IpcChannels.UPDATER_GET_STATUS) as Promise<IpcResult<UpdateStatus>>,
+  updaterInstall: () => ipcRenderer.invoke(IpcChannels.UPDATER_INSTALL) as Promise<IpcResult<void>>,
+  onUpdateDownloaded: (callback: (info: UpdateDownloadedInfo) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, info: UpdateDownloadedInfo) =>
+      callback(info)
+    ipcRenderer.on(IpcChannels.UPDATER_ON_UPDATE_DOWNLOADED, handler)
+    return () => {
+      ipcRenderer.removeListener(IpcChannels.UPDATER_ON_UPDATE_DOWNLOADED, handler)
+    }
+  },
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronApi)
