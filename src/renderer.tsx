@@ -41,14 +41,15 @@ const App = () => {
           <TitleBar />
         </div>
         <div className="absolute bottom-0 right-0 p-8 flex items-center gap-4">
-          <button
-            onClick={() => toggleArcSettings()}
-            disabled={!selectedArc}
-            className="w-12 h-12 rounded-full bg-black border border-white/10 hover:border-white flex items-center justify-center transition-colors duration-250 disabled:opacity-30 disabled:cursor-not-allowed"
-            style={{ WebkitAppRegion: 'no-drag' }}
-          >
-            <SettingsIcon width={22} height={22} />
-          </button>
+          {selectedArc?.installed && (
+            <button
+              onClick={() => toggleArcSettings()}
+              className="w-12 h-12 rounded-full bg-black border border-white/10 hover:border-white flex items-center justify-center transition-colors duration-250"
+              style={{ WebkitAppRegion: 'no-drag' }}
+            >
+              <SettingsIcon width={22} height={22} />
+            </button>
+          )}
           <PlayButton />
         </div>
         <SettingsPanel />
