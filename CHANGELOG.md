@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0-beta.3](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2026-06-18)
+
+### Features
+
+- **ui:** add progress bars for installation and launch phases ([#43](https://github.com/gleegs/arcend-launcher-v2/issues/43)) ([443fd24](https://github.com/gleegs/arcend-launcher-v2/commit/443fd24bfc178c01591c6b53b7ef2b24758ff255))
+
 ## [2.0.0-beta.2](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0-beta.1...v2.0.0-beta.2) (2026-06-17)
 
 ### Features
