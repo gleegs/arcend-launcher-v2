@@ -84,4 +84,14 @@ export interface ArcInstallProgress {
   percent: number
   status: ArcInstallStatus
   error?: string
+  /**
+   * Mods téléchargés pendant la phase `syncing_packwiz`. Présent uniquement si
+   * le stdout de Packwiz a pu être parsé. Indéfini en dehors de cette phase.
+   */
+  modsDownloaded?: number
+  /**
+   * Nombre total estimé de mods à télécharger (compté à partir du stdout
+   * Packwiz). Indéfini tant que le total n'a pas été déterminé.
+   */
+  modsTotal?: number
 }

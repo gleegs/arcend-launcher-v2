@@ -4,20 +4,38 @@ import './index.css'
 import Sidebar from './app/components/Sidebar/Sidebar'
 import { useArcStore } from './app/store/arc'
 import { useWindowStore } from './app/store/window'
+import { useProgressStore } from './app/store/progress'
 import TitleBar from './app/components/TitleBar/TitleBar'
 import AuthButton from './app/components/AuthButton/AuthButton'
 import SettingsPanel from './app/components/SettingsPanel/SettingsPanel'
 import ArcSettingsPanel from './app/components/ArcSettingsPanel/ArcSettingsPanel'
 import PlayButton from './app/components/PlayButton/PlayButton'
+import ProgressBar from './app/components/ProgressBar/ProgressBar'
 import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import SettingsIcon from './app/assets/icon/settings-icon.svg?react'
 import { useArcSettingsStore } from './app/store/arcSettings'
+import Button from './app/components/Button/Button'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
   const isHiding = useWindowStore((s) => s.isHiding)
   const setIsHiding = useWindowStore((s) => s.setIsHiding)
   const toggleArcSettings = useArcSettingsStore((s) => s.toggleArcSettings)
+  const installActive = useProgressStore((s) => s.install.active)
+  const installPercent = useProgressStore((s) => s.install.percent)
+  const installLabel = useProgressStore((s) => s.install.label)
+  const installSublabel = useProgressStore((s) => s.install.sublabel)
+  const installError = useProgressStore((s) => s.install.error)
+  const launchActive = useProgressStore((s) => s.launch.active)
+  const launchPercent = useProgressStore((s) => s.launch.percent)
+  const launchLabel = useProgressStore((s) => s.launch.label)
+  const launchSublabel = useProgressStore((s) => s.launch.sublabel)
+  const launchError = useProgressStore((s) => s.launch.error)
+  const initProgress = useProgressStore((s) => s.init)
+
+  useEffect(() => {
+    initProgress()
+  }, [initProgress])
 
   useEffect(() => {
     const onFocus = () => setIsHiding(false)
@@ -41,17 +59,35 @@ const App = () => {
           <AuthButton />
           <TitleBar />
         </div>
-        <div className="absolute bottom-0 right-0 p-8 flex items-center gap-4">
+        <div className="absolute bottom-0 right-0 p-8 flex flex-col items-end gap-3">
           {selectedArc?.installed && (
-            <button
+            <Button
               onClick={() => toggleArcSettings()}
-              className="w-12 h-12 rounded-full bg-black border border-white/10 hover:border-white flex items-center justify-center transition-colors duration-250"
+              className="p-2"
               style={{ WebkitAppRegion: 'no-drag' }}
             >
-              <SettingsIcon width={22} height={22} />
-            </button>
+              <SettingsIcon />
+            </Button>
           )}
-          <PlayButton />
+          <div className="flex items-center">
+            {(installActive || installError) && (
+              <ProgressBar
+                percent={installPercent}
+                label={installLabel}
+                sublabel={installSublabel}
+                error={installError}
+              />
+            )}
+            {(launchActive || launchError) && (
+              <ProgressBar
+                percent={launchPercent}
+                label={launchLabel}
+                sublabel={launchSublabel}
+                error={launchError}
+              />
+            )}
+            <PlayButton />
+          </div>
         </div>
         <SettingsPanel />
         <ArcSettingsPanel />
