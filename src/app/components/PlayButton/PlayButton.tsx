@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import Button from '../Button/Button'
 import { useArcStore } from '../../store/arc'
 import { useArcSettingsStore } from '../../store/arcSettings'
 import { useAuthStore } from '../../store/auth'
+import { useProgressStore } from '../../store/progress'
 import { remoteArcToMetadata } from '../../../electron/types/arc'
 import DownloadIcon from '../../assets/icon/download.svg?react'
 import PlayIcon from '../../assets/icon/play-icon.svg?react'
@@ -13,62 +14,45 @@ export default function PlayButton() {
   const authState = useAuthStore((s) => s.state)
   const getArcSettings = useArcSettingsStore((s) => s.getArcSettings)
 
-  const [isInstalling, setIsInstalling] = useState(false)
-  const [installPercent, setInstallPercent] = useState(0)
-  const [isLaunching, setIsLaunching] = useState(false)
+  const install = useProgressStore((s) => s.install)
+  const launch = useProgressStore((s) => s.launch)
+  const startInstall = useProgressStore((s) => s.startInstall)
+  const resetInstall = useProgressStore((s) => s.resetInstall)
+  const resetLaunch = useProgressStore((s) => s.resetLaunch)
 
-  const arcSlug = selectedArc?.slug
+  const isInstalling = install.active
+  const isLaunching = launch.active
   const canPlay = authState.status !== 'unauthenticated'
 
+  // Détecte la fin d'installation (transition active → inactive avec succès)
+  // pour marquer l'arc sélectionné comme installé dans le store Arc.
+  const wasInstallingRef = useRef(false)
   useEffect(() => {
-    const unsubscribe = window.electronAPI.onArcInstallProgress((progress) => {
-      if (progress.arcId !== arcSlug) return
-      setInstallPercent(progress.percent)
-      if (progress.status === 'done') {
-        setIsInstalling(false)
-        setInstallPercent(0)
-        if (selectedArc) setArcInstalled(selectedArc.slug, true)
-      } else if (progress.status === 'error') {
-        setIsInstalling(false)
-        setInstallPercent(0)
-      }
-    })
-    return unsubscribe
-  }, [arcSlug, selectedArc, setArcInstalled])
-
-  useEffect(() => {
-    const unsubscribe = window.electronAPI.onLaunchProgress((progress) => {
-      if (
-        progress.status === 'running' ||
-        progress.status === 'closed' ||
-        progress.status === 'error'
-      ) {
-        setIsLaunching(false)
-      }
-    })
-    return unsubscribe
-  }, [])
+    const justCompleted =
+      wasInstallingRef.current && !install.active && install.percent === 100 && !install.error
+    if (justCompleted && selectedArc) {
+      setArcInstalled(selectedArc.slug, true)
+    }
+    wasInstallingRef.current = install.active
+  }, [install.active, install.percent, install.error, selectedArc, setArcInstalled])
 
   if (!selectedArc) return null
 
   const handleInstall = async () => {
-    console.log('Installe modpack')
-    setIsInstalling(true)
-    setInstallPercent(0)
-    console.log('Selected Arc :', selectedArc)
+    // `startInstall` (et non resetInstall) pour activer la barre à 0% avec le
+    // libellé « Préparation… » et reset le tracking des phases vues. Comme ça,
+    // même si Java/Packwiz sont déjà installés et n'émettront aucun event,
+    // les plages seront recalculées dynamiquement au premier event reçu.
+    startInstall()
     const metadata = remoteArcToMetadata(selectedArc)
-    console.log('Arc metadata :', metadata)
     const result = await window.electronAPI.arcInstall(selectedArc.slug, metadata)
-    console.log('Install result :', result)
     if (!result.ok) {
-      setIsInstalling(false)
-      setInstallPercent(0)
+      resetInstall()
     }
   }
 
   const handlePlay = async () => {
-    console.log('Launching game')
-    setIsLaunching(true)
+    resetLaunch()
     const { maxMemory } = getArcSettings(selectedArc.slug)
     const result = await window.electronAPI.launchGame({
       arcId: selectedArc.slug,
@@ -76,15 +60,14 @@ export default function PlayButton() {
       maxMemory: `${maxMemory}G`,
       minMemory: `${Math.floor(maxMemory / 2)}G`,
     })
-    console.log('Launching result :', result)
     if (!result.ok) {
-      setIsLaunching(false)
+      resetLaunch()
     }
   }
 
   const isLoading = isInstalling || isLaunching
   const label = isInstalling
-    ? `Installation ${Math.round(installPercent)}%`
+    ? `Installation ${Math.round(install.percent)}%`
     : isLaunching
       ? 'Lancement...'
       : selectedArc.installed

@@ -83,8 +83,56 @@ function cleanupArcInstall(arcId: string, arcPath: string): void {
   saveRegistry(registry)
 }
 
-async function runPackwiz(mcPath: string, packwizUrl: string): Promise<void> {
-  await ensureJava('21')
+interface PackwizProgress {
+  /** Index du fichier courant (x dans « (x/y) »). */
+  current: number
+  /** Nombre total de fichiers (y dans « (x/y) »). */
+  total: number
+}
+
+/**
+ * Extrait la progression Packwiz d'un chunk de stdout.
+ *
+ * Packwiz log chaque fichier traité au format `(x/y) filename status`, ex :
+ *   (1/1153) aether-compat.pw.toml already exists (cached)
+ *   (2/1153) README.md already exists (validated)
+ *
+ * On capture le max de `x` vu et la valeur de `y` (constante pour un pack
+ * donné). Plusieurs lignes peuvent matcher dans un même chunk.
+ */
+const PACKWIZ_LINE_PATTERN = /\((\d+)\/(\d+)\)\s+\S+/g
+
+function extractPackwizProgress(chunk: string): PackwizProgress | null {
+  let current = 0
+  let total = 0
+  const pattern = new RegExp(PACKWIZ_LINE_PATTERN.source, 'g')
+  let match: RegExpExecArray | null
+  while ((match = pattern.exec(chunk)) !== null) {
+    const x = Number.parseInt(match[1], 10)
+    const y = Number.parseInt(match[2], 10)
+    if (!Number.isNaN(x) && x > current) current = x
+    if (!Number.isNaN(y) && y > 0) total = y
+  }
+  if (current === 0 && total === 0) return null
+  return { current, total }
+}
+
+/**
+ * Calcule un percent linéaire pour la phase syncing_packwiz à partir de
+ * l'avancement réel (x/y) retourné par Packwiz. Résultat borné [25, 75] en
+ * local, qui sera ensuite remappé sur la plage globale Arc par le renderer.
+ */
+function computeModsPercent(current: number, total: number): number {
+  if (total <= 0) return 25
+  const ratio = Math.max(0, Math.min(1, current / total))
+  return 25 + Math.floor(ratio * 50)
+}
+
+async function runPackwiz(
+  mcPath: string,
+  packwizUrl: string,
+  onProgress?: (progress: PackwizProgress) => void
+): Promise<void> {
   const packwizJar = getJarPath()
   const javaPath = getJavaExecutable('21')
 
@@ -95,9 +143,30 @@ async function runPackwiz(mcPath: string, packwizUrl: string): Promise<void> {
 
     let stdout = ''
     let stderr = ''
+    // Buffer des lignes partielles : un chunk peut couper une ligne `(x/y)`
+    // en deux. On attend le prochain chunk pour compléter la ligne avant de
+    // la parser.
+    let pendingLine = ''
+    let lastReportedCurrent = 0
 
     process.stdout.on('data', (data) => {
-      stdout += data.toString()
+      const chunk = data.toString()
+      stdout += chunk
+      if (!onProgress) return
+
+      pendingLine += chunk
+      const lines = pendingLine.split('\n')
+      // Le dernier élément est soit '' (si chunk finit par \n) soit une ligne
+      // incomplète à conserver pour le prochain chunk.
+      pendingLine = lines.pop() ?? ''
+
+      for (const line of lines) {
+        const progress = extractPackwizProgress(line)
+        if (progress && progress.current > lastReportedCurrent) {
+          lastReportedCurrent = progress.current
+          onProgress(progress)
+        }
+      }
     })
 
     process.stderr.on('data', (data) => {
@@ -105,6 +174,13 @@ async function runPackwiz(mcPath: string, packwizUrl: string): Promise<void> {
     })
 
     process.on('close', (code) => {
+      // Flush d'une éventuelle ligne restante sans \n final.
+      if (onProgress && pendingLine.length > 0) {
+        const progress = extractPackwizProgress(pendingLine)
+        if (progress && progress.current > lastReportedCurrent) {
+          onProgress(progress)
+        }
+      }
       if (code === 0) {
         resolve()
       } else {
@@ -172,6 +248,12 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
   const mcPath = path.join(arcPath, 'minecraft')
 
   try {
+    // Ordre chronologique aligné sur les plages de progression du renderer :
+    //   Java [0, 40] → Packwiz bootstrap [40, 50] → Arc sync [50, 100]
+    // `ensurePackwiz` ne fait que télécharger un jar (~99 Ko), il n'a pas
+    // besoin de Java pour s'exécuter. On peut donc le faire APRÈS ensureJava
+    // sans dépendance, ce qui évite la régression visuelle Packwiz → Java.
+    await ensureJava('21')
     await ensurePackwiz()
 
     sendProgress({ arcId, percent: 0, status: 'creating_folder' })
@@ -183,9 +265,17 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
     }
     fs.mkdirSync(mcPath, { recursive: true })
 
-    sendProgress({ arcId, percent: 25, status: 'syncing_packwiz' })
+    sendProgress({ arcId, percent: 25, status: 'syncing_packwiz', modsDownloaded: 0 })
 
-    await runPackwiz(mcPath, resolvedMetadata.packwizUrl)
+    await runPackwiz(mcPath, resolvedMetadata.packwizUrl, ({ current, total }) => {
+      sendProgress({
+        arcId,
+        percent: computeModsPercent(current, total),
+        status: 'syncing_packwiz',
+        modsDownloaded: current,
+        modsTotal: total,
+      })
+    })
 
     sendProgress({ arcId, percent: 75, status: 'creating_metadata' })
 

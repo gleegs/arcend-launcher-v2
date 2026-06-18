@@ -8,7 +8,9 @@ export interface PackwizRegistry {
   installation: PackwizInstallation | null
 }
 
+export type PackwizInstallStatus = 'downloading' | 'done'
+
 export interface PackwizInstallProgress {
   percent: number
-  status: 'downloading' | 'done'
+  status: PackwizInstallStatus
 }

@@ -113,6 +113,26 @@ function setupSpawnExit(code: number, options?: { stderr?: string }) {
   }))
 }
 
+/**
+ * Variante de setupSpawnExit qui émet des chunks stdout (pour tester le parsing
+ * de la granularité mods pendant la phase syncing_packwiz).
+ */
+function setupSpawnWithStdout(code: number, stdoutChunks: string[]) {
+  mockSpawn.mockImplementation(() => ({
+    stdout: {
+      on: vi.fn((event: string, cb: (data: Buffer) => void) => {
+        if (event === 'data') {
+          for (const chunk of stdoutChunks) cb(Buffer.from(chunk))
+        }
+      }),
+    },
+    stderr: { on: vi.fn() },
+    on: vi.fn((event: string, cb: (c: number | null) => void) => {
+      if (event === 'close') setTimeout(() => cb(code), 0)
+    }),
+  }))
+}
+
 function mockHttpResponse(options: {
   statusCode?: number
   headers?: Record<string, string>
@@ -547,6 +567,139 @@ describe('arc service', () => {
       )
 
       expect(mockFsRmSync).toHaveBeenCalled()
+    })
+
+    it('emits mod download progress during packwiz sync', async () => {
+      setupSpawnWithStdout(0, [
+        'Starting packwiz installer\n',
+        '(1/3) sodium.jar already exists (cached)\n',
+        '(2/3) fabric-api.jar downloaded\n',
+        '(3/3) optigui.jar downloaded\n',
+      ])
+      const send = vi.fn()
+      mockGetMainWindow.mockReturnValue({ isDestroyed: () => false, webContents: { send } })
+      mockFsExistsSync.mockImplementation((p: string) => {
+        if (p === fakeArcsDir) return true
+        if (p === fakeArcRegistryPath) return true
+        if (p === fakeConfigDir) return true
+        return false
+      })
+      mockFsReadFileSync.mockImplementation((p: string) => {
+        if (p === fakeArcRegistryPath) return JSON.stringify({ installations: {} })
+        return ''
+      })
+      mockFsReaddirSync.mockReturnValue([])
+      mockEnsurePackwiz.mockResolvedValue({
+        version: '0.0.3',
+        jarPath: '/runtime/packwiz.jar',
+        installedAt: '2026-01-01',
+      })
+      mockGetJarPath.mockReturnValue('/runtime/packwiz.jar')
+      mockEnsureJava.mockResolvedValue({
+        version: '21',
+        path: '/runtime/java-21',
+        installedAt: '2026-01-01',
+        arch: 'x64',
+      })
+      mockGetJavaExecutable.mockReturnValue('/runtime/java-21/bin/java')
+
+      const { installArc } = await import('./arc')
+      await installArc('test-arc', sampleMetadata)
+
+      // On filtre les appels send sur le canal de progression Arc
+      const arcProgressCalls = send.mock.calls.filter(
+        (c: unknown[]) => c[0] === 'arc:onInstallProgress'
+      )
+      const payloads = arcProgressCalls.map((c: unknown[]) => c[1] as Record<string, unknown>)
+
+      // Événement initial à 25% avec modsDownloaded: 0
+      const syncEvents = payloads.filter((p) => p.status === 'syncing_packwiz')
+      expect(syncEvents[0]).toMatchObject({ percent: 25, modsDownloaded: 0 })
+
+      // Événements intermédiaires linéaires : chaque (x/y) incrémente le percent
+      const modEvents = syncEvents.filter((p) => Number(p.modsDownloaded ?? 0) > 0)
+      expect(modEvents.length).toBe(3)
+
+      // (1/3) → 25 + floor(1/3 * 50) = 25 + 16 = 41
+      expect(modEvents[0]).toMatchObject({ percent: 41, modsDownloaded: 1, modsTotal: 3 })
+      // (2/3) → 25 + floor(2/3 * 50) = 25 + 33 = 58
+      expect(modEvents[1]).toMatchObject({ percent: 58, modsDownloaded: 2, modsTotal: 3 })
+      // (3/3) → 25 + floor(3/3 * 50) = 25 + 50 = 75
+      expect(modEvents[2]).toMatchObject({ percent: 75, modsDownloaded: 3, modsTotal: 3 })
+    })
+
+    it('ensures Java before emitting creating_folder event', async () => {
+      setupSpawnWithStdout(0, [])
+      const send = vi.fn()
+      mockGetMainWindow.mockReturnValue({ isDestroyed: () => false, webContents: { send } })
+      mockFsExistsSync.mockImplementation((p: string) => {
+        if (p === fakeArcsDir) return true
+        if (p === fakeArcRegistryPath) return true
+        if (p === fakeConfigDir) return true
+        return false
+      })
+      mockFsReadFileSync.mockImplementation((p: string) => {
+        if (p === fakeArcRegistryPath) return JSON.stringify({ installations: {} })
+        return ''
+      })
+      mockFsReaddirSync.mockReturnValue([])
+      mockEnsurePackwiz.mockResolvedValue({
+        version: '0.0.3',
+        jarPath: '/runtime/packwiz.jar',
+        installedAt: '2026-01-01',
+      })
+      mockGetJarPath.mockReturnValue('/runtime/packwiz.jar')
+      mockEnsureJava.mockResolvedValue({
+        version: '21',
+        path: '/runtime/java-21',
+        installedAt: '2026-01-01',
+        arch: 'x64',
+      })
+      mockGetJavaExecutable.mockReturnValue('/runtime/java-21/bin/java')
+
+      // Tracker l'ordre d'appel entre ensureJava, ensurePackwiz et le send Arc
+      const callOrder: string[] = []
+      mockEnsureJava.mockImplementationOnce(async () => {
+        callOrder.push('ensureJava')
+        return {
+          version: '21',
+          path: '/runtime/java-21',
+          installedAt: '2026-01-01',
+          arch: 'x64',
+        }
+      })
+      mockEnsurePackwiz.mockImplementationOnce(async () => {
+        callOrder.push('ensurePackwiz')
+        return {
+          version: '0.0.3',
+          jarPath: '/runtime/packwiz.jar',
+          installedAt: '2026-01-01',
+        }
+      })
+      mockGetMainWindow.mockReturnValue({
+        isDestroyed: () => false,
+        webContents: {
+          send: (channel: string, payload: { status: string }) => {
+            if (channel === 'arc:onInstallProgress') {
+              callOrder.push(`arc:${payload.status}`)
+            }
+          },
+        },
+      })
+
+      const { installArc } = await import('./arc')
+      await installArc('test-arc', sampleMetadata)
+
+      // L'ordre doit suivre les plages du renderer :
+      //   ensureJava (plage [0,40]) → ensurePackwiz (plage [40,50]) → Arc
+      const javaIdx = callOrder.indexOf('ensureJava')
+      const packwizIdx = callOrder.indexOf('ensurePackwiz')
+      const folderIdx = callOrder.indexOf('arc:creating_folder')
+      expect(javaIdx).toBeGreaterThanOrEqual(0)
+      expect(packwizIdx).toBeGreaterThanOrEqual(0)
+      expect(folderIdx).toBeGreaterThanOrEqual(0)
+      expect(javaIdx).toBeLessThan(packwizIdx)
+      expect(packwizIdx).toBeLessThan(folderIdx)
     })
   })
 

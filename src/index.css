@@ -19,6 +19,7 @@
 @theme {
   --color-black: #151013;
   --color-white: #fff0e6;
+  --color-green: #12b95d;
 
   --color-surface: rgba(21, 16, 19, 0.3);
   --color-border: oklch(0.95 0.01 60 / 0.1);
@@ -52,24 +53,6 @@
   background: var(--color-white);
   cursor: pointer;
 }
-
-/* .ram-slider::-webkit-slider-runnable-track {
-  height: 0.5rem;
-  border-radius: 9999px;
-  background: var(--color-white);
-  opacity: 0.2;
-}
-
-.ram-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 9999px;
-  background: var(--color-white);
-  margin-top: -0.375rem;
-  cursor: pointer;
-} */
 
 @layer base {
   #root {
