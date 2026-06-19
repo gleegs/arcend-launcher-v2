@@ -7,6 +7,7 @@ import { useWindowStore } from './app/store/window'
 import { useProgressStore } from './app/store/progress'
 import TitleBar from './app/components/TitleBar/TitleBar'
 import AuthButton from './app/components/AuthButton/AuthButton'
+import SocialButtons from './app/components/SocialButtons/SocialButtons'
 import SettingsPanel from './app/components/SettingsPanel/SettingsPanel'
 import ArcSettingsPanel from './app/components/ArcSettingsPanel/ArcSettingsPanel'
 import PlayButton from './app/components/PlayButton/PlayButton'
@@ -59,6 +60,7 @@ const App = () => {
           <AuthButton />
           <TitleBar />
         </div>
+        <SocialButtons />
         <div className="absolute bottom-0 right-0 p-8 flex flex-col items-end gap-3">
           {selectedArc?.installed && (
             <Button
