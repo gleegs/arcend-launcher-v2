@@ -3,6 +3,7 @@ import MinusIcon from '../../assets/icon/minus-icon.svg?react'
 import CrossIcon from '../../assets/icon/cross-icon.svg?react'
 import { useWindowStore } from '../../store/window'
 import { useSettingsStore } from '../../store/settings'
+import Button from '../Button/Button'
 
 export default function TitleBar() {
   const minimize = useWindowStore((s) => s.minimize)
@@ -11,27 +12,15 @@ export default function TitleBar() {
 
   return (
     <div className="space-x-3">
-      <button
-        onClick={toggleSettings}
-        className="cursor-pointer rounded-full bg-black p-2 border border-transparent hover:border-white transition-colors duration-250"
-        style={{ WebkitAppRegion: 'no-drag' }}
-      >
+      <Button onClick={toggleSettings} className="p-2">
         <SettingsIcon />
-      </button>
-      <button
-        onClick={minimize}
-        className="cursor-pointer rounded-full bg-black p-2 border border-transparent hover:border-white transition-colors duration-250"
-        style={{ WebkitAppRegion: 'no-drag' }}
-      >
+      </Button>
+      <Button onClick={minimize} className="p-2">
         <MinusIcon />
-      </button>
-      <button
-        onClick={close}
-        className="cursor-pointer rounded-full bg-black p-2 border border-transparent hover:border-white transition-colors duration-250"
-        style={{ WebkitAppRegion: 'no-drag' }}
-      >
+      </Button>
+      <Button onClick={close} className="p-2">
         <CrossIcon />
-      </button>
+      </Button>
     </div>
   )
 }
