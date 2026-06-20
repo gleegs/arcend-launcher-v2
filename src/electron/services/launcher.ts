@@ -11,15 +11,44 @@ import { getConfig } from './store'
 import { auth, decryptToken } from './auth'
 import { getArcPath, getRegistry as getArcRegistry } from './arc'
 import { ensureJava, getJavaExecutable } from './java'
-import type { LaunchOptions, LaunchProgress } from '../types/launcher'
+import type {
+  LaunchOptions,
+  LaunchProgress,
+  LogLevel,
+  LogEntry,
+  LogSource,
+} from '../types/launcher'
 
 let activeLauncher: Client | null = null
+
+let logIdCounter = 0
 
 function sendProgress(progress: LaunchProgress): void {
   const win = getMainWindow()
   if (win && !win.isDestroyed()) {
     win.webContents.send(IpcChannels.LAUNCH_ON_PROGRESS, progress)
   }
+}
+
+function sendLog(level: LogLevel, message: string, source: LogSource): void {
+  const win = getMainWindow()
+  if (win && !win.isDestroyed()) {
+    const entry: LogEntry = {
+      id: ++logIdCounter,
+      timestamp: Date.now(),
+      level,
+      message,
+      source,
+    }
+    win.webContents.send(IpcChannels.LAUNCH_ON_LOG, entry)
+  }
+}
+
+function classifyLine(line: string): LogLevel {
+  const upper = line.toUpperCase()
+  if (/\b(ERROR|EXCEPTION|FATAL|FAILED|CRASH)\b/.test(upper)) return 'error'
+  if (/\b(WARN|WARNING)\b/.test(upper)) return 'warn'
+  return 'info'
 }
 
 function createOfflineToken(profile: CachedProfile): IUser {
@@ -42,17 +71,22 @@ async function getOnlineToken(): Promise<IUser> {
     throw new Error("Aucun token d'authentification trouvé. Veuillez vous connecter.")
   }
 
+  sendLog('info', 'Décryptage du token...', 'launcher')
   const refreshToken = decryptToken(encryptedToken)
   if (!refreshToken) {
     throw new Error("Impossible de décrypter le token d'authentification.")
   }
 
+  sendLog('info', 'Rafraîchissement du token Microsoft...', 'launcher')
   const xbox = await auth.refresh(refreshToken)
+
+  sendLog('info', 'Récupération du profil Minecraft...', 'launcher')
   const minecraft = await xbox.getMinecraft()
   if (!minecraft.profile) {
     throw new Error('Profil Minecraft non trouvé. Veuillez vous reconnecter.')
   }
 
+  sendLog('info', `Connecté en tant que ${minecraft.profile.name}`, 'launcher')
   return minecraft.mclc() as IUser
 }
 
@@ -61,6 +95,7 @@ function getOfflineToken(): IUser {
   if (!cached) {
     throw new Error('Aucun profil en cache. Veuillez vous connecter au moins une fois.')
   }
+  sendLog('info', `Connecté hors ligne en tant que ${cached.name}`, 'launcher')
   return createOfflineToken(cached)
 }
 
@@ -126,22 +161,33 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
   const { arcId, mode, maxMemory = '4G', minMemory = '2G' } = options
 
   sendProgress({ status: 'validating_arc', percent: 0 })
+  sendLog('info', `Lancement de l'arc "${arcId}" (${mode})`, 'launcher')
 
   const arcRegistry = getArcRegistry()
   const installation = arcRegistry.installations[arcId]
   if (!installation) {
+    sendLog('error', `Arc "${arcId}" non installé`, 'launcher')
     throw new Error(`Arc "${arcId}" n'est pas installé.`)
   }
 
   const arcPath = getArcPath(arcId)
   const mcPath = path.join(arcPath, 'minecraft')
   if (!fs.existsSync(mcPath)) {
+    sendLog('error', `Dossier minecraft introuvable pour "${arcId}"`, 'launcher')
     throw new Error(`Dossier minecraft introuvable pour l'arc "${arcId}".`)
   }
 
+  sendLog('info', 'Arc validé', 'launcher')
+
   sendProgress({ status: 'validating_auth', percent: 10 })
+  sendLog(
+    'info',
+    mode === 'online' ? 'Authentification Microsoft...' : 'Mode hors ligne',
+    'launcher'
+  )
 
   if (!installation.metadata.mcVersion) {
+    sendLog('error', `Version Minecraft manquante pour "${arcId}"`, 'launcher')
     throw new Error(
       `Arc "${arcId}" : version Minecraft non disponible. Veuillez réinstaller l'arc.`
     )
@@ -151,23 +197,33 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
   try {
     userToken = mode === 'online' ? await getOnlineToken() : getOfflineToken()
   } catch (error) {
+    sendLog(
+      'error',
+      `Erreur d'authentification : ${error instanceof Error ? error.message : String(error)}`,
+      'launcher'
+    )
     throw new Error(
       `Erreur d'authentification : ${error instanceof Error ? error.message : String(error)}`
     )
   }
 
   sendProgress({ status: 'preparing_launch', percent: 30 })
+  sendLog('info', 'Préparation du lancement...', 'launcher')
 
   const { mcVersion, modLoader, javaVersion } = installation.metadata
 
   let forgePath: string | undefined
   if (modLoader) {
+    sendLog('info', `Mod loader ${modLoader.type} ${modLoader.version}`, 'launcher')
     forgePath = await ensureModLoaderInstaller(arcPath, modLoader)
+    sendLog('info', 'Mod loader prêt', 'launcher')
   }
 
   const resolvedJavaVersion = javaVersion || '21'
+  sendLog('info', `Vérification de Java ${resolvedJavaVersion}...`, 'launcher')
   await ensureJava(resolvedJavaVersion)
   const javaPath = getJavaExecutable(resolvedJavaVersion)
+  sendLog('info', `Java : ${javaPath}`, 'launcher')
 
   const launcher = new Client()
   activeLauncher = launcher
@@ -193,12 +249,15 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
   return new Promise((resolve, reject) => {
     launcher.on('debug', (e: string) => {
       console.log(`[MCLC Debug] ${e}`)
+      sendLog(classifyLine(e), e, 'game')
     })
 
     launcher.on('data', (e: string) => {
       console.log(`[MCLC] ${e}`)
+      sendLog(classifyLine(e), e, 'game')
       if (e.includes('Setting user:')) {
         sendProgress({ status: 'running', percent: 100 })
+        sendLog('info', 'Jeu lancé', 'launcher')
         hideWindow()
       }
     })
@@ -206,6 +265,12 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
     launcher.on('close', (code: number | null) => {
       activeLauncher = null
       restoreWindow()
+
+      sendLog(
+        code === 0 || code === null ? 'info' : 'error',
+        `Jeu fermé${code !== null ? ` (code ${code})` : ''}`,
+        'launcher'
+      )
 
       sendProgress({
         status: 'closed',
@@ -216,11 +281,15 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
       resolve()
     })
 
+    sendLog('info', `Lancement de Minecraft ${mcVersion}...`, 'launcher')
+    sendLog('info', `Mémoire : ${minMemory} / ${maxMemory}`, 'launcher')
     sendProgress({ status: 'launching', percent: 60 })
 
     launcher.launch(launchOpts).catch((err: Error) => {
       activeLauncher = null
       restoreWindow()
+
+      sendLog('error', `Erreur lors du lancement : ${err.message}`, 'launcher')
 
       sendProgress({
         status: 'error',

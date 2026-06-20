@@ -15,7 +15,9 @@ import ProgressBar from './app/components/ProgressBar/ProgressBar'
 import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import SettingsIcon from './app/assets/icon/settings-icon.svg?react'
 import { useArcSettingsStore } from './app/store/arcSettings'
+import { useLogStore } from './app/store/log'
 import Button from './app/components/Button/Button'
+import Console from './app/components/Console/Console'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -33,10 +35,15 @@ const App = () => {
   const launchSublabel = useProgressStore((s) => s.launch.sublabel)
   const launchError = useProgressStore((s) => s.launch.error)
   const initProgress = useProgressStore((s) => s.init)
+  const initLog = useLogStore((s) => s.init)
 
   useEffect(() => {
     initProgress()
   }, [initProgress])
+
+  useEffect(() => {
+    initLog()
+  }, [initLog])
 
   useEffect(() => {
     const onFocus = () => setIsHiding(false)
@@ -62,6 +69,7 @@ const App = () => {
         </div>
         <SocialButtons />
         <div className="absolute bottom-0 right-0 p-8 flex flex-col items-end gap-3">
+          <Console />
           {selectedArc?.installed && (
             <Button
               onClick={() => toggleArcSettings()}

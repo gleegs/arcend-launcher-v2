@@ -54,6 +54,19 @@
   cursor: pointer;
 }
 
+.console-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.console-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.console-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-white);
+  border-radius: 2px;
+}
+
 @layer base {
   #root {
     background-color: transparent;

@@ -43,7 +43,7 @@ export default function SettingsPanel() {
 
         <div className="mt-8">
           <h2 className="text-lg mb-0.5">Console</h2>
-          <p className="text-xs mb-3 text-white/50">Afficher la console de jeu</p>
+          <p className="text-xs mb-3 text-white/50">Afficher la console du launcher</p>
           <Toggle checked={showConsole} onChange={setShowConsole} />
         </div>
 
