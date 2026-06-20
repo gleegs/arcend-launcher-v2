@@ -17,7 +17,7 @@ interface SupabaseArcRow {
   loader_version: string | null
   loader_install_url: string | null
   modpack_url: string | null
-  cover_url: string | null
+  cover_url: string[] | null
   thumbnail_url: string | null
   created_at: string
 }

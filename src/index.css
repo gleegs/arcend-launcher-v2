@@ -35,6 +35,19 @@
   --blur-glass-heavy: 24px;
 }
 
+@keyframes cover-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.cover-fade-in {
+  animation: cover-fade-in 0.3s ease-out;
+}
+
 .ram-slider {
   -webkit-appearance: none;
   appearance: none;

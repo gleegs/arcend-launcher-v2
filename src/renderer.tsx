@@ -15,9 +15,12 @@ import ProgressBar from './app/components/ProgressBar/ProgressBar'
 import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import { useLogStore } from './app/store/log'
 import Console from './app/components/Console/Console'
+import Arc01Logo from './app/assets/images/arcend_arc_01_logo.png'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
+  const coverIndex = useArcStore((s) => s.coverIndex)
+  const cycleCover = useArcStore((s) => s.cycleCover)
   const isHiding = useWindowStore((s) => s.isHiding)
   const setIsHiding = useWindowStore((s) => s.setIsHiding)
   const installActive = useProgressStore((s) => s.install.active)
@@ -47,18 +50,37 @@ const App = () => {
     return () => window.removeEventListener('focus', onFocus)
   }, [setIsHiding])
 
+  useEffect(() => {
+    selectedArc?.coverUrl?.forEach((url) => {
+      const img = new Image()
+      img.src = url
+    })
+  }, [selectedArc])
+
   return (
     <div
       className={`rounded-3xl bg-surface w-full h-full flex p-4 gap-4 transition-all duration-200 ${isHiding ? 'opacity-0 scale-95' : ''}`}
       style={{ WebkitAppRegion: 'drag' }}
     >
       <Sidebar />
-      <main className="flex-1 rounded-2xl overflow-hidden relative">
+      <main className="flex-1 rounded-2xl overflow-hidden relative bg-black">
         <img
-          src={selectedArc?.coverUrl ?? 'https://placehold.co/600x400?text=Image+Not+Found'}
+          key={coverIndex}
+          src={
+            selectedArc?.coverUrl?.[coverIndex] ??
+            'https://placehold.co/600x400?text=Image+Not+Found'
+          }
           alt={selectedArc?.name ?? ''}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover cover-fade-in"
         />
+        <div className="absolute top-0 left-0 p-8" style={{ WebkitAppRegion: 'no-drag' }}>
+          <img
+            src={Arc01Logo}
+            alt="Arcend logo"
+            onClick={cycleCover}
+            className=" w-40 cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95"
+          />
+        </div>
         <div className="absolute top-0 right-0 p-8 flex gap-8">
           <AuthButton />
           <TitleBar />
