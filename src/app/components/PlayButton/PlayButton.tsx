@@ -127,7 +127,7 @@ export default function PlayButton() {
           trigger={
             <button
               type="button"
-              className="flex items-center px-4 cursor-pointer rounded-r-full transition-colors duration-150"
+              className="flex items-center h-full px-4 cursor-pointer rounded-r-full transition-colors duration-150"
               style={{ WebkitAppRegion: 'no-drag' }}
             >
               <EllipsisIcon color="#fff0e6" />

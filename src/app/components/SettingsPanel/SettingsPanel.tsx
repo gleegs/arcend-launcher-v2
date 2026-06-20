@@ -22,6 +22,8 @@ export default function SettingsPanel() {
 
   return (
     <div
+      inert={!isSettingsOpen}
+      aria-hidden={!isSettingsOpen}
       className="absolute top-0 h-full rounded-2xl w-1/2 bg-black p-8 pl-16 border-l border-border z-50"
       style={{
         WebkitAppRegion: 'no-drag',
