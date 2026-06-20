@@ -15,6 +15,8 @@ interface ArcStore {
   setArcs: (arcs: ArcItem[]) => void
   selectedArc: ArcItem | null
   selectArc: (arc: ArcItem | null) => void
+  coverIndex: number
+  cycleCover: () => void
   setArcInstalled: (arcId: string, installed: boolean) => void
   uninstallArc: (arcId: string) => Promise<boolean>
 }
@@ -23,7 +25,14 @@ export const useArcStore = create<ArcStore>((set, get) => ({
   arcs: [],
   setArcs: (arcs) => set({ arcs }),
   selectedArc: null,
-  selectArc: (arc) => set({ selectedArc: arc }),
+  selectArc: (arc) => set({ selectedArc: arc, coverIndex: 0 }),
+  coverIndex: 0,
+  cycleCover: () =>
+    set((state) => {
+      const covers = state.selectedArc?.coverUrl
+      const len = covers?.length ?? 1
+      return { coverIndex: (state.coverIndex + 1) % len }
+    }),
   setArcInstalled: (arcId, installed) =>
     set((state) => ({
       arcs: state.arcs.map((arc) => (arc.slug === arcId ? { ...arc, installed } : arc)),
