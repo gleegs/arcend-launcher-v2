@@ -31,7 +31,7 @@ export default function Console() {
 
   return (
     <div
-      className="w-72 h-32 rounded-xl bg-black border border-border flex flex-col overflow-hidden p-2"
+      className="w-80 h-40 rounded-xl bg-black border border-border flex flex-col overflow-hidden p-2"
       style={{ WebkitAppRegion: 'no-drag' }}
     >
       <h4 className=" uppercase text-lg font-bold">Logs</h4>

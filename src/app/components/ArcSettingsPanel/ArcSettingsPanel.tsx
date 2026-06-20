@@ -14,7 +14,7 @@ export default function ArcSettingsPanel() {
   const initArcSettings = useArcSettingsStore((s) => s.initArcSettings)
   const setArcMemory = useArcSettingsStore((s) => s.setArcMemory)
   const selectedArc = useArcStore((s) => s.selectedArc)
-  const setArcInstalled = useArcStore((s) => s.setArcInstalled)
+  const uninstallArc = useArcStore((s) => s.uninstallArc)
 
   const [confirmUninstall, setConfirmUninstall] = useState(false)
   const [wasOpen, setWasOpen] = useState(isArcSettingsOpen)
@@ -45,9 +45,8 @@ export default function ArcSettingsPanel() {
       setConfirmUninstall(true)
       return
     }
-    const result = await window.electronAPI.arcUninstall(selectedArc.slug)
-    if (result.ok) {
-      setArcInstalled(selectedArc.slug, false)
+    const ok = await uninstallArc(selectedArc.slug)
+    if (ok) {
       setIsArcSettingsOpen(false)
     }
     setConfirmUninstall(false)
