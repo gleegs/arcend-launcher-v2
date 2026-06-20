@@ -81,7 +81,7 @@ export default function ProgressBar({ percent, label, sublabel, error = null }: 
       role="status"
       aria-live="polite"
     >
-      <div className="flex items-center justify-between text-xs uppercase font-black ml-5">
+      <div className="flex items-center justify-between text-xs uppercase font-black ml-9">
         <span
           className={error ? 'truncate' : 'truncate'}
           style={error ? { color: '#dc2626' } : undefined}
@@ -93,8 +93,8 @@ export default function ProgressBar({ percent, label, sublabel, error = null }: 
           <span className="text-white/80 tabular-nums shrink-0">{Math.round(displayPercent)}%</span>
         )}
       </div>
-      <div className="bg-black p-3 rounded-full translate-x-4">
-        <div className="h-2 rounded-full bg-white overflow-hidden mr-2">
+      <div className="bg-black p-3 rounded-full translate-x-7">
+        <div className="h-2 rounded-full bg-white overflow-hidden mr-3">
           <div
             className="h-full rounded-full ease-out"
             style={{

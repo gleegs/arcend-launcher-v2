@@ -13,17 +13,13 @@ import ArcSettingsPanel from './app/components/ArcSettingsPanel/ArcSettingsPanel
 import PlayButton from './app/components/PlayButton/PlayButton'
 import ProgressBar from './app/components/ProgressBar/ProgressBar'
 import UpdateToast from './app/components/UpdateToast/UpdateToast'
-import SettingsIcon from './app/assets/icon/settings-icon.svg?react'
-import { useArcSettingsStore } from './app/store/arcSettings'
 import { useLogStore } from './app/store/log'
-import Button from './app/components/Button/Button'
 import Console from './app/components/Console/Console'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
   const isHiding = useWindowStore((s) => s.isHiding)
   const setIsHiding = useWindowStore((s) => s.setIsHiding)
-  const toggleArcSettings = useArcSettingsStore((s) => s.toggleArcSettings)
   const installActive = useProgressStore((s) => s.install.active)
   const installPercent = useProgressStore((s) => s.install.percent)
   const installLabel = useProgressStore((s) => s.install.label)
@@ -70,15 +66,6 @@ const App = () => {
         <SocialButtons />
         <div className="absolute bottom-0 right-0 p-8 flex flex-col items-end gap-3">
           <Console />
-          {selectedArc?.installed && (
-            <Button
-              onClick={() => toggleArcSettings()}
-              className="p-2"
-              style={{ WebkitAppRegion: 'no-drag' }}
-            >
-              <SettingsIcon />
-            </Button>
-          )}
           <div className="flex items-center">
             {(installActive || installError) && (
               <ProgressBar
