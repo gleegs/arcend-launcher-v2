@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0...v2.1.0) (2026-06-20)
+
+### Features
+
+- **ui:** add clickable logo with cover cycling in main view ([#52](https://github.com/gleegs/arcend-launcher-v2/issues/52)) ([37de931](https://github.com/gleegs/arcend-launcher-v2/commit/37de931bbd8106a57f15852883f6a44b4971bec7))
+- **ui:** remove server status indicator from sidebar ([#51](https://github.com/gleegs/arcend-launcher-v2/issues/51)) ([c0f71dd](https://github.com/gleegs/arcend-launcher-v2/commit/c0f71dd5744d9baf32b03b2995141bce190ecc99))
+
 ## [2.0.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0-beta.3...v2.0.0) (2026-06-20)
 
 ### Features
