@@ -12,7 +12,7 @@ import type {
 import type { JavaInstallProgress, JavaInstallation, JavaRegistry } from './electron/types/java'
 import type { PackwizInstallProgress, PackwizInstallation } from './electron/types/packwiz'
 import type { ArcInstallProgress, ArcInstallation } from './electron/types/arc'
-import type { LaunchOptions, LaunchProgress } from './electron/types/launcher'
+import type { LaunchOptions, LaunchProgress, LogEntry } from './electron/types/launcher'
 import type { UpdateDownloadedInfo, UpdateStatus } from './electron/types/updater'
 
 const electronApi: ElectronApi = {
@@ -98,6 +98,13 @@ const electronApi: ElectronApi = {
     ipcRenderer.on(IpcChannels.LAUNCH_ON_PROGRESS, handler)
     return () => {
       ipcRenderer.removeListener(IpcChannels.LAUNCH_ON_PROGRESS, handler)
+    }
+  },
+  onLog: (callback: (entry: LogEntry) => void) => {
+    const handler = (_event: Electron.IpcRendererEvent, entry: LogEntry) => callback(entry)
+    ipcRenderer.on(IpcChannels.LAUNCH_ON_LOG, handler)
+    return () => {
+      ipcRenderer.removeListener(IpcChannels.LAUNCH_ON_LOG, handler)
     }
   },
   shellOpenPath: (path: string) =>

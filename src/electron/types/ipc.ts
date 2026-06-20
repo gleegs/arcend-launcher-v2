@@ -1,7 +1,7 @@
 import type { JavaInstallation, JavaInstallProgress, JavaRegistry } from './java'
 import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
 import type { ArcInstallation, ArcInstallProgress, ArcMetadata, RemoteArc } from './arc'
-import type { LaunchOptions, LaunchProgress } from './launcher'
+import type { LaunchOptions, LaunchProgress, LogEntry } from './launcher'
 import type { ServerStatus } from './server'
 import type { UpdateStatus, UpdateDownloadedInfo } from './updater'
 
@@ -68,6 +68,7 @@ export const IpcChannels = {
   LAUNCH_GAME: 'launch:game',
   LAUNCH_IS_RUNNING: 'launch:isRunning',
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
+  LAUNCH_ON_LOG: 'launch:onLog',
   SHELL_OPEN_PATH: 'shell:openPath',
   APP_GET_VERSION: 'app:getVersion',
   SERVER_GET_STATUS: 'server:getStatus',
@@ -118,6 +119,7 @@ export interface ElectronApi {
   launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
+  onLog: (callback: (entry: LogEntry) => void) => () => void
   shellOpenPath: (pathArg: string) => Promise<IpcResult<void>>
   appGetVersion: () => Promise<IpcResult<string>>
   serverGetStatus: () => Promise<IpcResult<ServerStatus>>
