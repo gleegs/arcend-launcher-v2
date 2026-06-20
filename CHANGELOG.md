@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0-beta.3...v2.0.0) (2026-06-20)
+
+### Features
+
+- **console:** add game console UI with live logs ([#48](https://github.com/gleegs/arcend-launcher-v2/issues/48)) ([78c4460](https://github.com/gleegs/arcend-launcher-v2/commit/78c4460d053f55f992ffcfac341f13e2d86c7bd1))
+- **ui:** add discord and website social buttons ([#47](https://github.com/gleegs/arcend-launcher-v2/issues/47)) ([53e76c7](https://github.com/gleegs/arcend-launcher-v2/commit/53e76c7a39c87a0f16cb664d1b34be040a58e9b0))
+- **ui:** add kebab menu next to play button ([#49](https://github.com/gleegs/arcend-launcher-v2/issues/49)) ([b4a18bc](https://github.com/gleegs/arcend-launcher-v2/commit/b4a18bcb94b64b64b561c92d6b7f82f6f4e56dc7))
+
+### Bug Fixes
+
+- **server:** fix serveur status ([#44](https://github.com/gleegs/arcend-launcher-v2/issues/44)) ([77390d9](https://github.com/gleegs/arcend-launcher-v2/commit/77390d902298120526622badb4adc87e33f460fb))
+- **ui:** add arc button background ([#45](https://github.com/gleegs/arcend-launcher-v2/issues/45)) ([64d670a](https://github.com/gleegs/arcend-launcher-v2/commit/64d670a5b58fee807f2ea296f0336936b90035df))
+- **ui:** make hidden settings panels non-focusable when closed ([#50](https://github.com/gleegs/arcend-launcher-v2/issues/50)) ([88680ff](https://github.com/gleegs/arcend-launcher-v2/commit/88680ff3f3af18a1defb4c02b3973ca027136f92))
+
 ## [2.0.0-beta.3](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0-beta.2...v2.0.0-beta.3) (2026-06-18)
 
 ### Features
