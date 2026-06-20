@@ -1,38 +1,13 @@
 import blackLogo from '../../assets/images/black-logo.png'
 import Arc from '../Arc/Arc'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useArcStore } from '../../store/arc'
-import type { ServerStatus } from '../../../electron/types/ipc'
-
-const POLL_INTERVAL_MS = 30_000
 
 export default function Sidebar() {
   const arcs = useArcStore((s) => s.arcs)
   const setArcs = useArcStore((s) => s.setArcs)
   const selectArc = useArcStore((s) => s.selectArc)
   const [version, setVersion] = useState('2.0.0')
-  const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null)
-  const mountedRef = useRef(true)
-
-  useEffect(() => {
-    mountedRef.current = true
-
-    async function fetchServerStatus() {
-      const res = await window.electronAPI.serverGetStatus()
-      console.log('Serveur status : ', res)
-      if (mountedRef.current && res.ok && res.data) {
-        setServerStatus(res.data)
-      }
-    }
-
-    fetchServerStatus()
-    const interval = setInterval(fetchServerStatus, POLL_INTERVAL_MS)
-
-    return () => {
-      mountedRef.current = false
-      clearInterval(interval)
-    }
-  }, [])
 
   useEffect(() => {
     async function fetchArcs() {
@@ -89,30 +64,7 @@ export default function Sidebar() {
         <h3 className="uppercase leading-4">Arcend Server Panel</h3>
       </div>
       <div className="flex-1 space-y-0.5">
-        <div className=" -space-y-1">
-          <div className="flex justify-between items-center">
-            <span className="text-base">
-              {serverStatus === null
-                ? '...'
-                : serverStatus.online
-                  ? `${serverStatus.playersOnline}/${serverStatus.playersMax}`
-                  : 'Offline'}
-            </span>
-            <div className="relative flex items-center justify-center mr-0.5">
-              {serverStatus?.online ? (
-                <>
-                  <div className="animate-ping absolute rounded-full w-2 h-2 bg-green-400 opacity-75" />
-                  <div className="rounded-full w-2 h-2 bg-green-500" />
-                </>
-              ) : (
-                <div
-                  className={`rounded-full w-2 h-2 ${serverStatus === null ? 'bg-gray-400' : 'bg-red-500'}`}
-                />
-              )}
-            </div>
-          </div>
-          <span className="text-[11px] uppercase block w-full text-center">Connectés</span>
-        </div>
+        <h5 className="uppercase font-black text-sm">Arcs</h5>
         <div className="space-y-2 flex-1">
           {arcs.map((arc) => (
             <div key={arc.slug} onClick={() => selectArc(arc)}>
