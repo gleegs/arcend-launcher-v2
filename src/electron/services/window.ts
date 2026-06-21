@@ -1,4 +1,4 @@
-import { BrowserWindow, shell } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import path from 'node:path'
 import { getConfig, setConfig } from './store'
 import type { WindowBounds } from '../types/ipc'
@@ -27,6 +27,7 @@ export function createMainWindow(): BrowserWindow {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      devTools: !app.isPackaged,
     },
   })
 
@@ -46,6 +47,24 @@ export function createMainWindow(): BrowserWindow {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+
+  if (app.isPackaged) {
+    mainWindow.webContents.on('before-input-event', (event, input) => {
+      if (input.type !== 'keyDown') return
+      const key = input.key.toLowerCase()
+      const isDevToolsShortcut =
+        key === 'f12' ||
+        ((input.control || input.meta) && input.shift && key === 'i') ||
+        ((input.control || input.meta) && input.alt && key === 'i') ||
+        ((input.control || input.meta) && input.shift && key === 'j') ||
+        ((input.control || input.meta) && input.alt && key === 'j') ||
+        ((input.control || input.meta) && input.shift && key === 'c') ||
+        ((input.control || input.meta) && input.alt && key === 'c')
+      if (isDevToolsShortcut) {
+        event.preventDefault()
+      }
+    })
+  }
 
   return mainWindow
 }
