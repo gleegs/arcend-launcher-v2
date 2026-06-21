@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSettingsStore } from '../../store/settings'
 import CrossIcon from '../../assets/icon/cross-icon.svg?react'
 import OpenIcon from '../../assets/icon/open-icon.svg?react'
@@ -11,9 +11,14 @@ export default function SettingsPanel() {
   const showConsole = useSettingsStore((s) => s.showConsole)
   const setShowConsole = useSettingsStore((s) => s.setShowConsole)
   const initShowConsole = useSettingsStore((s) => s.initShowConsole)
+  const [version, setVersion] = useState('')
 
   useEffect(() => {
     initShowConsole()
+
+    window.electronAPI.appGetVersion().then((res) => {
+      if (res.ok && res.data) setVersion(res.data)
+    })
   }, [initShowConsole])
 
   const handleOpenLauncherFolder = async () => {
@@ -63,7 +68,7 @@ export default function SettingsPanel() {
 
         <div className="mt-8">
           <h2 className="text-lg mb-0.5">Version du launcher</h2>
-          <p className="text-xs text-white/50">v2.0.0</p>
+          <p className="text-xs text-white/50">v{version}</p>
         </div>
       </div>
     </div>
