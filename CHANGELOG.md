@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/gleegs/arcend-launcher-v2/compare/v2.1.0...v2.1.1) (2026-06-21)
+
+### Bug Fixes
+
+- **ui:** make social buttons clickable ([#53](https://github.com/gleegs/arcend-launcher-v2/issues/53)) ([3698307](https://github.com/gleegs/arcend-launcher-v2/commit/3698307bb89e4cb2a823b45a41c191602beb758c))
+- **ui:** use dynamic app version in settings panel ([#54](https://github.com/gleegs/arcend-launcher-v2/issues/54)) ([4b1c2b1](https://github.com/gleegs/arcend-launcher-v2/commit/4b1c2b1385bc6accb1be6ca5b0495d826b8be9f6))
+
 ## [2.1.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.0.0...v2.1.0) (2026-06-20)
 
 ### Features
