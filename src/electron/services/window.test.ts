@@ -1,4 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+
+const { mockApp, mockWindowOptions } = vi.hoisted(() => ({
+  mockApp: { isPackaged: false },
+  mockWindowOptions: { current: undefined as unknown },
+}))
 
 const eventHandlers: Record<string, (...args: unknown[]) => void> = {}
 
@@ -16,6 +21,7 @@ const mockIsDestroyed = vi.fn()
 const mockLoadURL = vi.fn()
 const mockLoadFile = vi.fn()
 const mockSetWindowOpenHandler = vi.fn()
+const mockWebContentsOn = vi.fn()
 
 function createMockBrowserWindowInstance() {
   return {
@@ -37,12 +43,15 @@ function createMockBrowserWindowInstance() {
     }),
     webContents: {
       setWindowOpenHandler: mockSetWindowOpenHandler,
+      on: mockWebContentsOn,
     },
   }
 }
 
 vi.mock('electron', () => ({
-  BrowserWindow: vi.fn(function () {
+  app: mockApp,
+  BrowserWindow: vi.fn(function (_options: unknown) {
+    mockWindowOptions.current = _options
     return createMockBrowserWindowInstance()
   }),
   shell: {
@@ -79,8 +88,11 @@ describe('window service', () => {
     mockLoadURL.mockReset()
     mockLoadFile.mockReset()
     mockSetWindowOpenHandler.mockReset()
+    mockWebContentsOn.mockReset()
     mockGetConfig.mockReset()
     mockSetConfig.mockReset()
+    mockApp.isPackaged = false
+    mockWindowOptions.current = undefined
   })
 
   describe('createMainWindow', () => {
@@ -142,6 +154,166 @@ describe('window service', () => {
       expect(mockLoadURL).not.toHaveBeenCalled()
 
       vi.stubGlobal('MAIN_WINDOW_VITE_DEV_SERVER_URL', 'http://localhost:5173')
+    })
+
+    it('enables devTools in development', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const options = mockWindowOptions.current as { webPreferences: { devTools: boolean } }
+      expect(options.webPreferences.devTools).toBe(true)
+    })
+
+    it('does not register before-input-event listener in development', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      expect(mockWebContentsOn).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('createMainWindow in production', () => {
+    beforeEach(() => {
+      mockApp.isPackaged = true
+    })
+
+    afterEach(() => {
+      mockApp.isPackaged = false
+    })
+
+    it('disables devTools when packaged', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const options = mockWindowOptions.current as { webPreferences: { devTools: boolean } }
+      expect(options.webPreferences.devTools).toBe(false)
+    })
+
+    it('registers before-input-event listener when packaged', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      expect(mockWebContentsOn).toHaveBeenCalledWith('before-input-event', expect.any(Function))
+    })
+
+    it('blocks F12 key', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const handler = mockWebContentsOn.mock.calls[0][1] as (
+        event: { preventDefault: ReturnType<typeof vi.fn> },
+        input: Record<string, unknown>
+      ) => void
+      const event = { preventDefault: vi.fn() }
+      handler(event, { type: 'keyDown', key: 'F12' })
+
+      expect(event.preventDefault).toHaveBeenCalled()
+    })
+
+    it('blocks Ctrl+Shift+I', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const handler = mockWebContentsOn.mock.calls[0][1] as (
+        event: { preventDefault: ReturnType<typeof vi.fn> },
+        input: Record<string, unknown>
+      ) => void
+      const event = { preventDefault: vi.fn() }
+      handler(event, { type: 'keyDown', key: 'I', control: true, shift: true })
+
+      expect(event.preventDefault).toHaveBeenCalled()
+    })
+
+    it('blocks Cmd+Alt+I (macOS)', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const handler = mockWebContentsOn.mock.calls[0][1] as (
+        event: { preventDefault: ReturnType<typeof vi.fn> },
+        input: Record<string, unknown>
+      ) => void
+      const event = { preventDefault: vi.fn() }
+      handler(event, { type: 'keyDown', key: 'i', meta: true, alt: true })
+
+      expect(event.preventDefault).toHaveBeenCalled()
+    })
+
+    it('blocks Ctrl+Shift+J (console)', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const handler = mockWebContentsOn.mock.calls[0][1] as (
+        event: { preventDefault: ReturnType<typeof vi.fn> },
+        input: Record<string, unknown>
+      ) => void
+      const event = { preventDefault: vi.fn() }
+      handler(event, { type: 'keyDown', key: 'J', control: true, shift: true })
+
+      expect(event.preventDefault).toHaveBeenCalled()
+    })
+
+    it('blocks Ctrl+Shift+C (inspect element)', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const handler = mockWebContentsOn.mock.calls[0][1] as (
+        event: { preventDefault: ReturnType<typeof vi.fn> },
+        input: Record<string, unknown>
+      ) => void
+      const event = { preventDefault: vi.fn() }
+      handler(event, { type: 'keyDown', key: 'C', control: true, shift: true })
+
+      expect(event.preventDefault).toHaveBeenCalled()
+    })
+
+    it('does not block normal keys', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const handler = mockWebContentsOn.mock.calls[0][1] as (
+        event: { preventDefault: ReturnType<typeof vi.fn> },
+        input: Record<string, unknown>
+      ) => void
+      const event = { preventDefault: vi.fn() }
+      handler(event, { type: 'keyDown', key: 'a', control: false, shift: false })
+
+      expect(event.preventDefault).not.toHaveBeenCalled()
+    })
+
+    it('does not block keyUp events', async () => {
+      mockGetConfig.mockReturnValue({ x: 0, y: 0, width: 800, height: 600 })
+
+      const { createMainWindow } = await import('./window')
+      createMainWindow()
+
+      const handler = mockWebContentsOn.mock.calls[0][1] as (
+        event: { preventDefault: ReturnType<typeof vi.fn> },
+        input: Record<string, unknown>
+      ) => void
+      const event = { preventDefault: vi.fn() }
+      handler(event, { type: 'keyUp', key: 'F12' })
+
+      expect(event.preventDefault).not.toHaveBeenCalled()
     })
   })
 
