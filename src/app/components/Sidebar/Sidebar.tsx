@@ -1,6 +1,7 @@
 import blackLogo from '../../assets/images/black-logo.png'
 import Arc from '../Arc/Arc'
 import { useEffect, useState } from 'react'
+import { clsx } from 'clsx'
 import { useArcStore } from '../../store/arc'
 import { cachedImage } from '../../lib/cachedImage'
 import { isProposalArc } from '../../lib/proposalArc'
@@ -9,6 +10,7 @@ export default function Sidebar() {
   const arcs = useArcStore((s) => s.arcs)
   const setArcs = useArcStore((s) => s.setArcs)
   const selectArc = useArcStore((s) => s.selectArc)
+  const selectedArc = useArcStore((s) => s.selectedArc)
   const [version, setVersion] = useState('2.0.0')
 
   useEffect(() => {
@@ -69,7 +71,14 @@ export default function Sidebar() {
         <h5 className="uppercase font-black text-sm">Arcs</h5>
         <div className="space-y-2 flex-1">
           {arcs.map((arc) => (
-            <div key={arc.slug} onClick={() => selectArc(arc)}>
+            <div
+              key={arc.slug}
+              onClick={() => selectArc(arc)}
+              className={clsx(
+                'transition-opacity duration-200',
+                selectedArc?.slug === arc.slug ? 'opacity-100' : 'opacity-70'
+              )}
+            >
               <Arc
                 src={
                   arc.thumbnailUrl ? cachedImage(arc.thumbnailUrl) : 'https://placehold.co/64x64'
