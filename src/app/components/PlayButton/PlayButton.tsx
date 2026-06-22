@@ -100,15 +100,12 @@ export default function PlayButton() {
     ]
 
     return (
-      <div
-        className=" w-80 flex items-stretch rounded-full border-2 border-transparent bg-black shadow-button cursor-pointer"
-        style={{ WebkitAppRegion: 'no-drag' }}
-      >
+      <div className="relative w-80">
         <button
           onClick={handlePlay}
           disabled={!canPlay}
           className={clsx(
-            'flex flex-1 min-w-0 items-center justify-center gap-3 py-2 text-3xl font-black uppercase rounded-l-full ring-inset hover:ring-2 hover:ring-white transition-all duration-250 cursor-pointer',
+            'w-full flex items-center justify-center gap-3 py-2 text-3xl font-black uppercase rounded-full border-2 border-transparent hover:border-white bg-black shadow-button transition-colors duration-250 cursor-pointer',
             !canPlay && 'opacity-50 cursor-not-allowed'
           )}
           style={{ WebkitAppRegion: 'no-drag' }}
@@ -116,19 +113,21 @@ export default function PlayButton() {
           {label}
           <Play color="#fff0e6" width={26} height={26} />
         </button>
-        <DropdownMenu
-          items={menuItems}
-          onClose={() => setConfirmUninstall(false)}
-          trigger={
-            <button
-              type="button"
-              className="flex h-13 w-13 shrink-0 items-center justify-center rounded-full bg-white border-2 border-transparent hover:border-white cursor-pointer hover:bg-white/85 transition-colors duration-150"
-              style={{ WebkitAppRegion: 'no-drag' }}
-            >
-              <EllipsisVertical color="#151013" width={20} height={20} />
-            </button>
-          }
-        />
+        <div className="absolute right-1 top-1/2 -translate-y-1/2">
+          <DropdownMenu
+            items={menuItems}
+            onClose={() => setConfirmUninstall(false)}
+            trigger={
+              <button
+                type="button"
+                className="flex h-13 w-13 shrink-0 items-center justify-center rounded-full bg-white cursor-pointer hover:bg-white/85 transition-colors duration-150"
+                style={{ WebkitAppRegion: 'no-drag' }}
+              >
+                <EllipsisVertical color="#151013" width={20} height={20} />
+              </button>
+            }
+          />
+        </div>
       </div>
     )
   }
