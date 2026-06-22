@@ -49,7 +49,7 @@ export default function PlayButton() {
         href={PROPOSE_ARC_DISCORD_URL}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-80 py-2 flex justify-center items-center text-3xl font-black uppercase gap-3 bg-black rounded-full border-2 border-transparent hover:border-white shadow-button transition-colors duration-250 cursor-pointer"
+        className="w-[22rem] py-2 flex justify-center items-center text-3xl font-black uppercase gap-3 bg-black rounded-full border-2 border-transparent hover:border-white shadow-button transition-colors duration-250 cursor-pointer"
         style={{ WebkitAppRegion: 'no-drag' }}
       >
         Proposer un arc
