@@ -108,9 +108,15 @@ export default function Sidebar() {
       </div>
       <div className="space-y-1">
         <span className="uppercase text-xs text-center block">Version</span>
-        <div className="font-normal text-[10px] w-full p-2.5 bg-black text-center text-white rounded-xl wrap-normal">
+        <a
+          href="https://www.arcend.fr/changelog"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block font-normal text-[10px] w-full p-2.5 bg-black text-center text-white rounded-xl wrap-normal cursor-pointer border border-transparent hover:border-white transition-colors duration-250"
+          style={{ WebkitAppRegion: 'no-drag' }}
+        >
           v{version}
-        </div>
+        </a>
       </div>
     </div>
   )
