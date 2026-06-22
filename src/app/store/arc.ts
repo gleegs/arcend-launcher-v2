@@ -22,12 +22,15 @@ export function coverIndexForTime(covers: string[] | null | undefined, now = new
 
   const hour = now.getHours()
   let keywords: string[]
-  if (hour >= 8 && hour < 18) {
+  if (hour >= 8 && hour < 17) {
+    // Day: 08:00 -> 17:00
     keywords = ['day', 'noon']
-  } else if (hour >= 18 && hour < 20) {
-    keywords = ['sunset', 'dusk', 'sunrise', 'dawn']
-  } else {
+  } else if (hour >= 21 || hour < 6) {
+    // Night: 21:00 -> 06:00
     keywords = ['night', 'midnight']
+  } else {
+    // Sunset / sunrise: 06:00 -> 08:00 and 17:00 -> 21:00
+    keywords = ['sunset', 'dusk', 'sunrise', 'dawn', 'afternoon', 'evening', 'morning']
   }
 
   const index = covers.findIndex((url) => {

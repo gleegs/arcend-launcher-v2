@@ -10,21 +10,23 @@ const COVERS = [
 const at = (hour: number) => new Date(2026, 0, 1, hour, 0, 0)
 
 describe('coverIndexForTime', () => {
-  it('picks the day cover during daytime hours', () => {
+  it('picks the day cover during daytime hours (8h-17h)', () => {
     expect(coverIndexForTime(COVERS, at(8))).toBe(1)
     expect(coverIndexForTime(COVERS, at(12))).toBe(1)
-    expect(coverIndexForTime(COVERS, at(17))).toBe(1)
+    expect(coverIndexForTime(COVERS, at(16))).toBe(1)
   })
 
-  it('picks the sunset cover in the evening', () => {
-    expect(coverIndexForTime(COVERS, at(18))).toBe(0)
-    expect(coverIndexForTime(COVERS, at(19))).toBe(0)
+  it('picks the sunset cover at dawn (6h-8h) and dusk (17h-21h)', () => {
+    expect(coverIndexForTime(COVERS, at(6))).toBe(0)
+    expect(coverIndexForTime(COVERS, at(7))).toBe(0)
+    expect(coverIndexForTime(COVERS, at(17))).toBe(0)
+    expect(coverIndexForTime(COVERS, at(20))).toBe(0)
   })
 
-  it('picks the night cover at night', () => {
-    expect(coverIndexForTime(COVERS, at(20))).toBe(2)
+  it('picks the night cover at night (21h-6h)', () => {
+    expect(coverIndexForTime(COVERS, at(21))).toBe(2)
     expect(coverIndexForTime(COVERS, at(0))).toBe(2)
-    expect(coverIndexForTime(COVERS, at(7))).toBe(2)
+    expect(coverIndexForTime(COVERS, at(5))).toBe(2)
   })
 
   it('matches regardless of array order', () => {
