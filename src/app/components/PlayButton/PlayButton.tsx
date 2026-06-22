@@ -105,7 +105,7 @@ export default function PlayButton() {
           onClick={handlePlay}
           disabled={!canPlay}
           className={clsx(
-            'w-full flex items-center justify-center gap-3 py-2 pr-12 text-3xl font-black uppercase rounded-full border-2 border-transparent hover:border-white bg-black shadow-button transition-colors duration-250 cursor-pointer',
+            'w-full flex items-center justify-center gap-3 py-2 pr-8 text-3xl font-black uppercase rounded-full border-2 border-transparent hover:border-white bg-black shadow-button transition-colors duration-250 cursor-pointer',
             !canPlay && 'opacity-50 cursor-not-allowed'
           )}
           style={{ WebkitAppRegion: 'no-drag' }}
@@ -120,7 +120,7 @@ export default function PlayButton() {
             trigger={
               <button
                 type="button"
-                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white cursor-pointer hover:bg-white/85 transition-colors duration-150"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white border-2 border-transparent hover:border-black cursor-pointer transition-colors duration-150"
                 style={{ WebkitAppRegion: 'no-drag' }}
               >
                 <EllipsisVertical color="#151013" width={20} height={20} />
