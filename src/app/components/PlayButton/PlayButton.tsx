@@ -122,7 +122,7 @@ export default function PlayButton() {
           trigger={
             <button
               type="button"
-              className="my-auto mr-2 flex h-10 w-10 items-center justify-center rounded-full bg-white cursor-pointer hover:bg-white/85 transition-colors duration-150"
+              className="my-auto flex h-10 w-10 items-center justify-center rounded-full bg-white cursor-pointer hover:bg-white/85 transition-colors duration-150"
               style={{ WebkitAppRegion: 'no-drag' }}
             >
               <EllipsisVertical color="#151013" width={20} height={20} />
