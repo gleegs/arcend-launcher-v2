@@ -11,6 +11,9 @@ export async function startWindowDrag(e: ReactMouseEvent): Promise<void> {
   if (e.button !== 0) return
   if ((e.target as HTMLElement).closest(IGNORE_SELECTOR)) return
 
+  // Empêche la sélection / le drag natif de l'image de fond pendant le déplacement.
+  e.preventDefault()
+
   const res = await window.electronAPI.windowGetPosition()
   if (!res.ok || !res.data) return
 
