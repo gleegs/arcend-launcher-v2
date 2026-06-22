@@ -91,5 +91,19 @@
     background-color: transparent;
     color: var(--color-white);
     font-family: var(--font-sans);
+    cursor: url('./app/assets/images/default.png'), default;
   }
+}
+
+/* Curseurs personnalisés — non layered pour battre les utilitaires Tailwind. */
+.cursor-pointer {
+  cursor: url('./app/assets/images/pointing_hand.png'), pointer;
+}
+
+.cursor-not-allowed {
+  cursor: url('./app/assets/images/not_allowed.png'), not-allowed;
+}
+
+.cursor-wait {
+  cursor: url('./app/assets/images/busy.gif'), wait;
 }
