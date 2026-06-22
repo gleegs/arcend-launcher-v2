@@ -90,9 +90,7 @@ export default function DropdownMenu({
             onClick={() => handleItemClick(item)}
             className={clsx(
               'w-full flex items-center gap-2 px-4 py-2.5 text-sm uppercase font-bold text-left transition-colors duration-150 cursor-pointer',
-              item.danger
-                ? 'text-white hover:bg-[#dc2626]'
-                : 'text-white/80 hover:bg-white/10 hover:text-white'
+              item.danger ? 'text-white hover:bg-[#dc2626]' : 'text-white hover:bg-white/10'
             )}
           >
             {item.icon}
