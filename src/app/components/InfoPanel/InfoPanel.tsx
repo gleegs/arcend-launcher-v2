@@ -38,7 +38,7 @@ function computeArcProgress(start: string | null, end: string | null): number {
 }
 
 export default function InfoPanel() {
-  const [tab, setTab] = useState<TabId>('serveur')
+  const [tab, setTab] = useState<TabId>('article')
   const [article, setArticle] = useState<LatestArticle | null>(null)
   const selectedArc = useArcStore((s) => s.selectedArc)
   const logs = useLogStore((s) => s.logs)
