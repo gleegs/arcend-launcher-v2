@@ -101,14 +101,14 @@ export default function PlayButton() {
 
     return (
       <div
-        className=" w-80 flex items-stretch rounded-full border-2 border-transparent hover:border-white bg-black shadow-button transition-colors duration-250 cursor-pointer"
+        className=" w-80 flex items-stretch rounded-full border-2 border-transparent bg-black shadow-button cursor-pointer"
         style={{ WebkitAppRegion: 'no-drag' }}
       >
         <button
           onClick={handlePlay}
           disabled={!canPlay}
           className={clsx(
-            'flex flex-1 min-w-0 items-center justify-center gap-3 py-2 text-3xl font-black uppercase rounded-l-full cursor-pointer',
+            'flex flex-1 min-w-0 items-center justify-center gap-3 py-2 text-3xl font-black uppercase rounded-l-full ring-inset hover:ring-2 hover:ring-white transition-all duration-250 cursor-pointer',
             !canPlay && 'opacity-50 cursor-not-allowed'
           )}
           style={{ WebkitAppRegion: 'no-drag' }}
