@@ -81,7 +81,7 @@ describe('store service', () => {
       const Store = (await import('electron-store')).default
       const { initStore } = await import('./store')
 
-      Store.mockClear()
+      vi.mocked(Store).mockClear()
       initStore()
       initStore()
 

@@ -138,7 +138,7 @@ function mockHttpResponse(options: {
   headers?: Record<string, string>
   data?: string
 }) {
-  return (url: string, callback: (res: unknown) => void) => {
+  return (_url: string, callback: (res: unknown) => void) => {
     const res = {
       statusCode: options.statusCode ?? 200,
       headers: options.headers ?? {},
@@ -479,7 +479,7 @@ describe('arc service', () => {
     it('follows HTTP redirect during mcVersion resolution', async () => {
       setupSpawnExit(0)
       let callCount = 0
-      mockHttpsGet.mockImplementation((url: string, callback: (res: unknown) => void) => {
+      mockHttpsGet.mockImplementation((_url: string, callback: (res: unknown) => void) => {
         callCount++
         if (callCount === 1) {
           const res = {
