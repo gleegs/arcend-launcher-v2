@@ -44,7 +44,10 @@ interface ArcStore {
   selectedArc: ArcItem | null
   selectArc: (arc: ArcItem | null) => void
   coverIndex: number
+  /** Last cover index applied automatically from the time of day. */
+  autoCoverIndex: number
   cycleCover: () => void
+  refreshCoverForTime: () => void
   setArcInstalled: (arcId: string, installed: boolean) => void
   uninstallArc: (arcId: string) => Promise<boolean>
 }
@@ -53,13 +56,24 @@ export const useArcStore = create<ArcStore>((set, get) => ({
   arcs: [],
   setArcs: (arcs) => set({ arcs }),
   selectedArc: null,
-  selectArc: (arc) => set({ selectedArc: arc, coverIndex: coverIndexForTime(arc?.coverUrl) }),
+  selectArc: (arc) => {
+    const index = coverIndexForTime(arc?.coverUrl)
+    set({ selectedArc: arc, coverIndex: index, autoCoverIndex: index })
+  },
   coverIndex: 0,
+  autoCoverIndex: 0,
   cycleCover: () =>
     set((state) => {
       const covers = state.selectedArc?.coverUrl
       const len = covers?.length ?? 1
       return { coverIndex: (state.coverIndex + 1) % len }
+    }),
+  refreshCoverForTime: () =>
+    set((state) => {
+      const next = coverIndexForTime(state.selectedArc?.coverUrl)
+      // Only switch when the time slot changed since the last auto update,
+      // so a manual cycle (logo click) is preserved until the next boundary.
+      return next === state.autoCoverIndex ? {} : { coverIndex: next, autoCoverIndex: next }
     }),
   setArcInstalled: (arcId, installed) =>
     set((state) => ({

@@ -21,6 +21,7 @@ const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
   const coverIndex = useArcStore((s) => s.coverIndex)
   const cycleCover = useArcStore((s) => s.cycleCover)
+  const refreshCoverForTime = useArcStore((s) => s.refreshCoverForTime)
   const isHiding = useWindowStore((s) => s.isHiding)
   const setIsHiding = useWindowStore((s) => s.setIsHiding)
   const installActive = useProgressStore((s) => s.install.active)
@@ -56,6 +57,13 @@ const App = () => {
       img.src = url
     })
   }, [selectedArc])
+
+  // Re-evaluate the time-of-day cover every minute so the hero background
+  // switches live (e.g. day -> sunset) while the launcher stays open.
+  useEffect(() => {
+    const id = setInterval(refreshCoverForTime, 60_000)
+    return () => clearInterval(id)
+  }, [refreshCoverForTime])
 
   return (
     <div

@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import { coverIndexForTime } from './arc'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import { coverIndexForTime, useArcStore, type ArcItem } from './arc'
 
 const COVERS = [
   'https://example.com/arc/cover/arc_01_cover_sunset.jpg',
@@ -36,5 +36,36 @@ describe('coverIndexForTime', () => {
     expect(coverIndexForTime(['https://example.com/plain.jpg'], at(12))).toBe(0)
     expect(coverIndexForTime([], at(12))).toBe(0)
     expect(coverIndexForTime(null, at(12))).toBe(0)
+  })
+})
+
+describe('refreshCoverForTime', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+    useArcStore.setState({ selectedArc: null, coverIndex: 0, autoCoverIndex: 0 })
+  })
+
+  const arc = { coverUrl: COVERS } as ArcItem
+
+  it('updates coverIndex when the time slot changes', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(at(12)) // day -> index 1
+    useArcStore.getState().selectArc(arc)
+    expect(useArcStore.getState().coverIndex).toBe(1)
+
+    vi.setSystemTime(at(21)) // night -> index 2
+    useArcStore.getState().refreshCoverForTime()
+    expect(useArcStore.getState().coverIndex).toBe(2)
+  })
+
+  it('keeps a manual cover until the time slot changes', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(at(12))
+    useArcStore.getState().selectArc(arc)
+    useArcStore.getState().cycleCover() // manual -> index 2
+    expect(useArcStore.getState().coverIndex).toBe(2)
+
+    useArcStore.getState().refreshCoverForTime() // still daytime, no override
+    expect(useArcStore.getState().coverIndex).toBe(2)
   })
 })
