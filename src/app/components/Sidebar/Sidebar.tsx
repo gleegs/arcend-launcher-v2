@@ -6,11 +6,18 @@ import { useArcStore } from '../../store/arc'
 import { cachedImage } from '../../lib/cachedImage'
 import { isProposalArc } from '../../lib/proposalArc'
 
+// Hauteur d'une vignette d'arc (= largeur du contenu de la sidebar : w-20 −
+// px-2*2) et écart vertical entre vignettes (space-y-2), pour positionner le
+// connecteur de l'arc sélectionné.
+const ARC_ROW_HEIGHT = 64
+const ARC_ROW_GAP = 8
+
 export default function Sidebar() {
   const arcs = useArcStore((s) => s.arcs)
   const setArcs = useArcStore((s) => s.setArcs)
   const selectArc = useArcStore((s) => s.selectArc)
   const selectedArc = useArcStore((s) => s.selectedArc)
+  const selectedIndex = arcs.findIndex((a) => a.slug === selectedArc?.slug)
   const [version, setVersion] = useState('2.0.0')
 
   useEffect(() => {
@@ -72,13 +79,13 @@ export default function Sidebar() {
       </div>
       <div className="flex-1 space-y-0.5">
         <h5 className="uppercase font-black text-sm">Arcs</h5>
-        <div className="space-y-2 flex-1">
+        <div className="relative space-y-2 flex-1">
           {arcs.map((arc) => (
             <div
               key={arc.slug}
               onClick={() => selectArc(arc)}
               className={clsx(
-                'relative transition-opacity duration-200',
+                'transition-opacity duration-200',
                 selectedArc?.slug === arc.slug ? 'opacity-100' : 'opacity-70'
               )}
             >
@@ -89,11 +96,14 @@ export default function Sidebar() {
                 installed={arc.installed}
                 showOverlay={!isProposalArc(arc.slug)}
               />
-              {selectedArc?.slug === arc.slug && (
-                <div className="absolute top-1/2 left-full ml-2 z-10 h-10 w-4 -translate-y-1/2 rounded-lg bg-white" />
-              )}
             </div>
           ))}
+          {selectedIndex >= 0 && (
+            <div
+              className="absolute left-full ml-2 z-10 h-10 w-4 -translate-y-1/2 rounded-lg bg-white transition-[top] duration-300 ease-out pointer-events-none"
+              style={{ top: selectedIndex * (ARC_ROW_HEIGHT + ARC_ROW_GAP) + ARC_ROW_HEIGHT / 2 }}
+            />
+          )}
         </div>
       </div>
       <div className="space-y-1">
