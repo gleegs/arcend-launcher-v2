@@ -3,6 +3,7 @@ import Arc from '../Arc/Arc'
 import { useEffect, useState } from 'react'
 import { useArcStore } from '../../store/arc'
 import { cachedImage } from '../../lib/cachedImage'
+import { isProposalArc } from '../../lib/proposalArc'
 
 export default function Sidebar() {
   const arcs = useArcStore((s) => s.arcs)
@@ -74,6 +75,7 @@ export default function Sidebar() {
                   arc.thumbnailUrl ? cachedImage(arc.thumbnailUrl) : 'https://placehold.co/64x64'
                 }
                 installed={arc.installed}
+                showOverlay={!isProposalArc(arc.slug)}
               />
             </div>
           ))}
