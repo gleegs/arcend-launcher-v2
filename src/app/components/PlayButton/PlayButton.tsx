@@ -8,6 +8,7 @@ import { useAuthStore } from '../../store/auth'
 import { useProgressStore } from '../../store/progress'
 import { remoteArcToMetadata } from '../../../electron/types/arc'
 import { Download, Play, EllipsisVertical, Settings, Trash2 } from 'lucide-react'
+import { isProposalArc, PROPOSE_ARC_DISCORD_URL } from '../../lib/proposalArc'
 
 export default function PlayButton() {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -40,6 +41,21 @@ export default function PlayButton() {
   }, [install.active, install.percent, install.error, selectedArc, setArcInstalled])
 
   if (!selectedArc) return null
+
+  // Arc « à proposer » : pas d'installation/paramètres, juste un lien Discord.
+  if (isProposalArc(selectedArc.slug)) {
+    return (
+      <a
+        href={PROPOSE_ARC_DISCORD_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-80 py-2 flex justify-center items-center text-3xl font-black uppercase gap-3 bg-black rounded-full border-2 border-transparent hover:border-white shadow-button transition-colors duration-250 cursor-pointer"
+        style={{ WebkitAppRegion: 'no-drag' }}
+      >
+        Proposer un arc
+      </a>
+    )
+  }
 
   const handleInstall = async () => {
     startInstall()

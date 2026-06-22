@@ -4,6 +4,7 @@ import { ArrowRight, Users, Map, RefreshCw } from 'lucide-react'
 import { useArcStore } from '../../store/arc'
 import { useLogStore } from '../../store/log'
 import LogRow from '../LogRow/LogRow'
+import { isProposalArc } from '../../lib/proposalArc'
 import type { LatestArticle } from '../../../electron/types/article'
 
 type TabId = 'article' | 'serveur' | 'logs'
@@ -44,6 +45,12 @@ export default function InfoPanel() {
 
   const progress = computeArcProgress(selectedArc?.startDate ?? null, selectedArc?.endDate ?? null)
 
+  // Les arcs « à proposer » n'ont pas d'onglet Serveur.
+  const hideServer = isProposalArc(selectedArc?.slug)
+  const tabs = hideServer ? TABS.filter((t) => t.id !== 'serveur') : TABS
+  // Onglet réellement affiché (retombe sur « article » si Serveur est masqué).
+  const activeTab: TabId = hideServer && tab === 'serveur' ? 'article' : tab
+
   useEffect(() => {
     window.electronAPI
       .articleFetchLatest()
@@ -65,7 +72,7 @@ export default function InfoPanel() {
     <div className="w-[400px]" style={{ WebkitAppRegion: 'no-drag' }}>
       {/* Tabs */}
       <div className="flex">
-        {TABS.map((t, i) => (
+        {tabs.map((t, i) => (
           <button
             key={t.id}
             type="button"
@@ -73,9 +80,11 @@ export default function InfoPanel() {
             className={clsx(
               'px-4 py-2 text-[12px] font-black uppercase cursor-pointer transition-colors duration-200',
               i === 0 && 'rounded-tl-[8px]',
-              i === TABS.length - 1 && 'rounded-tr-[8px]',
-              i < TABS.length - 1 && 'border-r border-black',
-              tab === t.id ? 'bg-white text-black' : 'bg-white/40 text-black/60 hover:bg-white/60'
+              i === tabs.length - 1 && 'rounded-tr-[8px]',
+              i < tabs.length - 1 && 'border-r border-black',
+              activeTab === t.id
+                ? 'bg-white text-black'
+                : 'bg-white/40 text-black/60 hover:bg-white/60'
             )}
           >
             {t.label}
@@ -87,10 +96,10 @@ export default function InfoPanel() {
       <div
         className={clsx(
           'relative -mt-px h-[156px] overflow-hidden rounded-[4px] rounded-tl-none p-3 shadow-glass-lg',
-          tab === 'logs' ? 'bg-black text-white' : 'bg-white text-black'
+          activeTab === 'logs' ? 'bg-black text-white' : 'bg-white text-black'
         )}
       >
-        {tab === 'serveur' && (
+        {activeTab === 'serveur' && (
           <button
             type="button"
             className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-black text-white cursor-pointer border-2 border-transparent hover:border-black hover:scale-110 transition-all duration-250"
@@ -100,7 +109,7 @@ export default function InfoPanel() {
           </button>
         )}
 
-        {tab === 'serveur' && (
+        {activeTab === 'serveur' && (
           <div className="flex h-full flex-col justify-between">
             <div>
               <div className="flex items-center gap-1.5 text-[16px] font-black uppercase leading-none">
@@ -145,7 +154,7 @@ export default function InfoPanel() {
           </div>
         )}
 
-        {tab === 'article' &&
+        {activeTab === 'article' &&
           (article ? (
             <a
               href={article.url}
@@ -183,7 +192,7 @@ export default function InfoPanel() {
             </div>
           ))}
 
-        {tab === 'logs' && (
+        {activeTab === 'logs' && (
           <div className="console-scroll h-full overflow-y-auto font-mono text-[11px]">
             {logs.length === 0 ? (
               <div className="px-2 py-0.5 text-xs text-white/60">Aucun log</div>
