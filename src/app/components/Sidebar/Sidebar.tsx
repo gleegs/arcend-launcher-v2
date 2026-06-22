@@ -69,7 +69,7 @@ export default function Sidebar() {
   }, [selectArc, setArcs])
 
   return (
-    <div className="bg-white w-20 h-full rounded-2xl px-2 py-4 text-black font-black flex flex-col space-y-4 select-none ">
+    <div className="relative z-20 bg-white w-20 h-full rounded-2xl px-2 py-4 text-black font-black flex flex-col space-y-4 select-none ">
       <div className="space-y-4">
         <img src={blackLogo} alt="Arcend logo" />
         <h3 className="uppercase leading-none">
@@ -100,7 +100,7 @@ export default function Sidebar() {
           ))}
           {selectedIndex >= 0 && (
             <div
-              className="absolute left-full ml-2 z-10 h-10 w-4 -translate-y-1/2 rounded-r-[4px] bg-white transition-[top] duration-300 ease-out pointer-events-none"
+              className="absolute left-full ml-2 z-10 h-10 w-[18px] -translate-y-1/2 rounded-r-[4px] bg-white transition-[top] duration-300 ease-out pointer-events-none"
               style={{ top: selectedIndex * (ARC_ROW_HEIGHT + ARC_ROW_GAP) + ARC_ROW_HEIGHT / 2 }}
             />
           )}
