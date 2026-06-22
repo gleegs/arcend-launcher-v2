@@ -15,6 +15,7 @@ import ProgressBar from './app/components/ProgressBar/ProgressBar'
 import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import { useLogStore } from './app/store/log'
 import Console from './app/components/Console/Console'
+import InfoPanel from './app/components/InfoPanel/InfoPanel'
 import Arc01Logo from './app/assets/images/arcend_arc_01_logo.png'
 
 const App = () => {
@@ -94,6 +95,9 @@ const App = () => {
           <TitleBar />
         </div>
         <SocialButtons />
+        <div className="absolute bottom-0 left-0 p-8" style={{ WebkitAppRegion: 'no-drag' }}>
+          <InfoPanel />
+        </div>
         <div className="absolute bottom-0 right-0 p-8 flex flex-col items-end gap-3">
           <Console />
           <div className="flex items-center">
