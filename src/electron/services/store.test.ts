@@ -71,7 +71,6 @@ describe('store service', () => {
           cwd: '/fake/config/path',
           defaults: expect.objectContaining({
             arcSettings: {},
-            showConsole: false,
           }),
         })
       )

@@ -6,6 +6,7 @@ import type {
   AuthState,
   ArcMetadata,
   RemoteArc,
+  LatestArticle,
   IpcResult,
 } from './electron/types/ipc'
 import type { JavaInstallProgress, JavaInstallation, JavaRegistry } from './electron/types/java'
@@ -87,6 +88,10 @@ const electronApi: ElectronApi = {
     ipcRenderer.invoke(IpcChannels.ARC_FETCH_REMOTE) as Promise<IpcResult<RemoteArc[]>>,
   arcFetchActive: () =>
     ipcRenderer.invoke(IpcChannels.ARC_FETCH_ACTIVE) as Promise<IpcResult<RemoteArc | null>>,
+  articleFetchLatest: () =>
+    ipcRenderer.invoke(IpcChannels.ARTICLE_FETCH_LATEST) as Promise<
+      IpcResult<LatestArticle | null>
+    >,
   launchGame: (options: LaunchOptions) =>
     ipcRenderer.invoke(IpcChannels.LAUNCH_GAME, options) as Promise<IpcResult<void>>,
   launchIsRunning: () =>

@@ -9,7 +9,6 @@ const defaults: AppConfig = {
   },
   encryptedRefreshToken: undefined,
   cachedProfile: undefined,
-  showConsole: false,
   arcSettings: {},
 }
 

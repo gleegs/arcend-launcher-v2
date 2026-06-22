@@ -1,6 +1,7 @@
-import { Globe, MessageCircle } from 'lucide-react'
+import { Globe } from 'lucide-react'
+import DiscordIcon from '../DiscordIcon/DiscordIcon'
 
-const DISCORD_URL = 'https://discord.gg/nkUZCTJyu8'
+const DISCORD_URL = 'https://discord.gg/CgMdQsptNW'
 const WEBSITE_URL = 'https://www.arcend.fr'
 
 const linkClassName =
@@ -25,7 +26,7 @@ export default function SocialButtons() {
         className={linkClassName}
         style={{ WebkitAppRegion: 'no-drag' }}
       >
-        <MessageCircle color="#fff" />
+        <DiscordIcon color="#fff" />
       </a>
     </div>
   )
