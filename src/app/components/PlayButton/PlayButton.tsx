@@ -116,17 +116,16 @@ export default function PlayButton() {
           {label}
           <Play color="#fff0e6" width={26} height={26} />
         </button>
-        <div className="w-px bg-white/25 my-3" aria-hidden />
         <DropdownMenu
           items={menuItems}
           onClose={() => setConfirmUninstall(false)}
           trigger={
             <button
               type="button"
-              className="flex items-center h-full px-4 cursor-pointer rounded-r-full transition-colors duration-150"
+              className="my-auto mr-2 flex h-10 w-10 items-center justify-center rounded-full bg-white cursor-pointer hover:bg-white/85 transition-colors duration-150"
               style={{ WebkitAppRegion: 'no-drag' }}
             >
-              <EllipsisVertical color="#fff0e6" />
+              <EllipsisVertical color="#151013" width={20} height={20} />
             </button>
           }
         />
