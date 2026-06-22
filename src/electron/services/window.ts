@@ -99,3 +99,14 @@ export function restoreWindow(): void {
   mainWindow.show()
   mainWindow.focus()
 }
+
+export function getWindowPosition(): { x: number; y: number } {
+  if (!mainWindow || mainWindow.isDestroyed()) return { x: 0, y: 0 }
+  const [x, y] = mainWindow.getPosition()
+  return { x, y }
+}
+
+export function setWindowPosition(x: number, y: number): void {
+  if (!mainWindow || mainWindow.isDestroyed()) return
+  mainWindow.setPosition(Math.round(x), Math.round(y))
+}

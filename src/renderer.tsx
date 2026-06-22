@@ -16,6 +16,7 @@ import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import { useLogStore } from './app/store/log'
 import InfoPanel from './app/components/InfoPanel/InfoPanel'
 import { cachedImage } from './app/lib/cachedImage'
+import { startWindowDrag } from './app/lib/windowDrag'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -68,7 +69,7 @@ const App = () => {
   return (
     <div
       className={`rounded-3xl bg-surface w-full h-full flex p-4 gap-4 transition-all duration-200 ${isHiding ? 'opacity-0 scale-95' : ''}`}
-      style={{ WebkitAppRegion: 'drag' }}
+      onMouseDown={startWindowDrag}
     >
       <Sidebar />
       <main className="flex-1 rounded-2xl overflow-hidden relative bg-black">

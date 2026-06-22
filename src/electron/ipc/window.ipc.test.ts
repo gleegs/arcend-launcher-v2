@@ -46,13 +46,15 @@ describe('registerWindowIpc', () => {
     registerWindowIpc()
   })
 
-  it('registers exactly 5 window channels', () => {
+  it('registers exactly 7 window channels', () => {
     expect(handlers['window:minimize']).toBeDefined()
     expect(handlers['window:maximize']).toBeDefined()
     expect(handlers['window:close']).toBeDefined()
     expect(handlers['window:hide']).toBeDefined()
     expect(handlers['window:restore']).toBeDefined()
-    expect(Object.keys(handlers)).toHaveLength(5)
+    expect(handlers['window:getPosition']).toBeDefined()
+    expect(handlers['window:setPosition']).toBeDefined()
+    expect(Object.keys(handlers)).toHaveLength(7)
   })
 
   it('window:minimize calls minimizeWindow and returns { ok: true, data }', async () => {
