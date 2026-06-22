@@ -19,6 +19,7 @@ interface SupabaseArcRow {
   modpack_url: string | null
   cover_url: string[] | null
   thumbnail_url: string | null
+  logo_url: string | null
   created_at: string
 }
 
@@ -38,6 +39,7 @@ function toRemoteArc(row: SupabaseArcRow): RemoteArc {
     modpackUrl: row.modpack_url,
     coverUrl: row.cover_url,
     thumbnailUrl: row.thumbnail_url,
+    logoUrl: row.logo_url,
     createdAt: row.created_at,
   }
 }

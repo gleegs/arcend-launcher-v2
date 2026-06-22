@@ -16,7 +16,6 @@ import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import { useLogStore } from './app/store/log'
 import InfoPanel from './app/components/InfoPanel/InfoPanel'
 import { cachedImage } from './app/lib/cachedImage'
-import Arc01Logo from './app/assets/images/arcend_arc_01_logo.png'
 
 const App = () => {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -91,12 +90,14 @@ const App = () => {
           />
         )}
         <div className="absolute top-0 left-0 p-8" style={{ WebkitAppRegion: 'no-drag' }}>
-          <img
-            src={Arc01Logo}
-            alt="Arcend logo"
-            onClick={cycleCover}
-            className=" w-40 cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95"
-          />
+          {selectedArc?.logoUrl && (
+            <img
+              src={cachedImage(selectedArc.logoUrl)}
+              alt={selectedArc.name ?? 'Arc logo'}
+              onClick={cycleCover}
+              className=" w-40 cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95"
+            />
+          )}
         </div>
         <div className="absolute top-0 right-0 p-8 flex gap-8">
           <AuthButton />
