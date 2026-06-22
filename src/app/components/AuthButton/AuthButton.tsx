@@ -40,12 +40,12 @@ export default function AuthButton() {
             confirmLogout && 'opacity-0'
           )}
         >
+          <span className="uppercase font-black text-xs">{profile.name}</span>
           <img
             src={`https://mc-heads.net/avatar/${profile.id}`}
             alt={profile.name}
             className="w-5 h-5 rounded-sm"
           />
-          <span className="uppercase font-black text-xs">{profile.name}</span>
         </div>
         <div
           className={clsx(
