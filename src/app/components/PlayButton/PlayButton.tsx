@@ -7,7 +7,7 @@ import { useArcSettingsStore } from '../../store/arcSettings'
 import { useAuthStore } from '../../store/auth'
 import { useProgressStore } from '../../store/progress'
 import { remoteArcToMetadata } from '../../../electron/types/arc'
-import { Download, Play, EllipsisVertical, Settings, Trash2 } from 'lucide-react'
+import { Download, Play, EllipsisVertical, Settings, Trash2, NotebookPen } from 'lucide-react'
 import { isProposalArc, PROPOSE_ARC_DISCORD_URL } from '../../lib/proposalArc'
 
 export default function PlayButton() {
@@ -53,6 +53,7 @@ export default function PlayButton() {
         style={{ WebkitAppRegion: 'no-drag' }}
       >
         Proposer un arc
+        <NotebookPen color="#fff0e6" width={26} height={26} />
       </a>
     )
   }
