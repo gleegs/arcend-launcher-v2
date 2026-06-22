@@ -65,7 +65,7 @@ export default function Sidebar() {
     <div className="bg-white w-20 h-full rounded-2xl px-2 py-4 text-black font-black flex flex-col space-y-4 select-none ">
       <div className="space-y-4">
         <img src={blackLogo} alt="Arcend logo" />
-        <h3 className="uppercase leading-4">Arcend</h3>
+        <h3 className="uppercase leading-4">Arcend Launcher</h3>
       </div>
       <div className="flex-1 space-y-0.5">
         <h5 className="uppercase font-black text-sm">Arcs</h5>
