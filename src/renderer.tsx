@@ -73,16 +73,23 @@ const App = () => {
     >
       <Sidebar />
       <main className="flex-1 rounded-2xl overflow-hidden relative bg-black">
-        <img
-          key={coverIndex}
-          src={
-            selectedArc?.coverUrl?.[coverIndex]
-              ? cachedImage(selectedArc.coverUrl[coverIndex])
-              : 'https://placehold.co/600x400?text=Image+Not+Found'
-          }
-          alt={selectedArc?.name ?? ''}
-          className="w-full h-full object-cover cover-fade-in"
-        />
+        {selectedArc?.coverUrl && selectedArc.coverUrl.length > 0 ? (
+          selectedArc.coverUrl.map((url, i) => (
+            <img
+              key={url}
+              src={cachedImage(url)}
+              alt={selectedArc.name ?? ''}
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ease-in-out"
+              style={{ opacity: i === coverIndex ? 1 : 0 }}
+            />
+          ))
+        ) : (
+          <img
+            src="https://placehold.co/600x400?text=Image+Not+Found"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
         <div className="absolute top-0 left-0 p-8" style={{ WebkitAppRegion: 'no-drag' }}>
           <img
             src={Arc01Logo}
