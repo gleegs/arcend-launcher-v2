@@ -45,11 +45,11 @@ export default function InfoPanel() {
 
   const progress = computeArcProgress(selectedArc?.startDate ?? null, selectedArc?.endDate ?? null)
 
-  // Les arcs « à proposer » n'ont pas d'onglet Serveur.
-  const hideServer = isProposalArc(selectedArc?.slug)
-  const tabs = hideServer ? TABS.filter((t) => t.id !== 'serveur') : TABS
-  // Onglet réellement affiché (retombe sur « article » si Serveur est masqué).
-  const activeTab: TabId = hideServer && tab === 'serveur' ? 'article' : tab
+  // Les arcs « à proposer » n'ont que l'onglet Dernier article (pas Serveur ni Logs).
+  const isProposal = isProposalArc(selectedArc?.slug)
+  const tabs = isProposal ? TABS.filter((t) => t.id === 'article') : TABS
+  // Onglet réellement affiché (forcé sur « article » pour les arcs à proposer).
+  const activeTab: TabId = isProposal ? 'article' : tab
 
   useEffect(() => {
     window.electronAPI
