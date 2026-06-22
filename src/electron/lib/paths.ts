@@ -8,6 +8,7 @@ export const runtimeDir = path.join(arcendDir, 'runtime')
 export const arcsDir = path.join(arcendDir, 'arcs')
 export const cacheDir = path.join(arcendDir, 'cache')
 export const remoteArcsCachePath = path.join(cacheDir, 'remote-arcs.json')
+export const imagesCacheDir = path.join(cacheDir, 'images')
 
 export const packwizDir = path.join(runtimeDir, 'packwiz')
 export const javaRegistryPath = path.join(configDir, 'java.json')

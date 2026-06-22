@@ -15,6 +15,7 @@ import ProgressBar from './app/components/ProgressBar/ProgressBar'
 import UpdateToast from './app/components/UpdateToast/UpdateToast'
 import { useLogStore } from './app/store/log'
 import InfoPanel from './app/components/InfoPanel/InfoPanel'
+import { cachedImage } from './app/lib/cachedImage'
 import Arc01Logo from './app/assets/images/arcend_arc_01_logo.png'
 
 const App = () => {
@@ -54,7 +55,7 @@ const App = () => {
   useEffect(() => {
     selectedArc?.coverUrl?.forEach((url) => {
       const img = new Image()
-      img.src = url
+      img.src = cachedImage(url)
     })
   }, [selectedArc])
 
@@ -75,8 +76,9 @@ const App = () => {
         <img
           key={coverIndex}
           src={
-            selectedArc?.coverUrl?.[coverIndex] ??
-            'https://placehold.co/600x400?text=Image+Not+Found'
+            selectedArc?.coverUrl?.[coverIndex]
+              ? cachedImage(selectedArc.coverUrl[coverIndex])
+              : 'https://placehold.co/600x400?text=Image+Not+Found'
           }
           alt={selectedArc?.name ?? ''}
           className="w-full h-full object-cover cover-fade-in"
