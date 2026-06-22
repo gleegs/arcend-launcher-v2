@@ -1,6 +1,4 @@
-import SettingsIcon from '../../assets/icon/settings-icon.svg?react'
-import MinusIcon from '../../assets/icon/minus-icon.svg?react'
-import CrossIcon from '../../assets/icon/cross-icon.svg?react'
+import { Settings, Minus, X } from 'lucide-react'
 import { useWindowStore } from '../../store/window'
 import { useSettingsStore } from '../../store/settings'
 import Button from '../Button/Button'
@@ -13,13 +11,13 @@ export default function TitleBar() {
   return (
     <div className="space-x-3">
       <Button onClick={toggleSettings} className="p-2">
-        <SettingsIcon />
+        <Settings />
       </Button>
       <Button onClick={minimize} className="p-2">
-        <MinusIcon />
+        <Minus />
       </Button>
       <Button onClick={close} className="p-2">
-        <CrossIcon />
+        <X />
       </Button>
     </div>
   )

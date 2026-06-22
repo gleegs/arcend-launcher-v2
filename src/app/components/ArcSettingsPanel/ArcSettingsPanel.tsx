@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useArcSettingsStore, DEFAULT_MAX_MEMORY } from '../../store/arcSettings'
 import { useArcStore } from '../../store/arc'
-import CrossIcon from '../../assets/icon/cross-icon.svg?react'
-import OpenIcon from '../../assets/icon/open-icon.svg?react'
-import TrashIcon from '../../assets/icon/trash-icon.svg?react'
+import { X, FolderOpen, Trash2 } from 'lucide-react'
 import Button from '../Button/Button'
 import RamSlider from '../RamSlider/RamSlider'
 
@@ -67,7 +65,7 @@ export default function ArcSettingsPanel() {
         onClick={() => setIsArcSettingsOpen(false)}
         className="bg-white p-2 hover:border-black! transition-colors duration-250 ml-auto block"
       >
-        <CrossIcon color="#151013" />
+        <X color="#151013" />
       </Button>
 
       <div className="font-black uppercase space-y-6">
@@ -89,7 +87,7 @@ export default function ArcSettingsPanel() {
             className="text-black bg-white text-sm flex items-center py-1.5 px-5 gap-2 uppercase"
           >
             Ouvrir
-            <OpenIcon color="black" width={16} height={16} />
+            <FolderOpen color="black" width={16} height={16} />
           </Button>
         </div>
 
@@ -102,7 +100,7 @@ export default function ArcSettingsPanel() {
             style={{ backgroundColor: '#dc2626' }}
           >
             {confirmUninstall ? 'Confirmer ?' : 'Désinstaller'}
-            <TrashIcon color="#fff" width={16} height={16} />
+            <Trash2 color="#fff" width={16} height={16} />
           </Button>
         </div>
       </div>

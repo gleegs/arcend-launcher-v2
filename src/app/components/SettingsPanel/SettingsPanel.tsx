@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSettingsStore } from '../../store/settings'
-import CrossIcon from '../../assets/icon/cross-icon.svg?react'
-import OpenIcon from '../../assets/icon/open-icon.svg?react'
+import { X, FolderOpen } from 'lucide-react'
 import Button from '../Button/Button'
 import Toggle from '../Toggle/Toggle'
 
@@ -40,7 +39,7 @@ export default function SettingsPanel() {
         onClick={() => setIsSettingsOpen(false)}
         className="bg-white p-2 hover:border-black! transition-colors duration-250 ml-auto block"
       >
-        <CrossIcon color="#151013" />
+        <X color="#151013" />
       </Button>
 
       <div className=" font-black uppercase space-y-6">
@@ -62,7 +61,7 @@ export default function SettingsPanel() {
             className="text-black bg-white text-sm flex items-center py-1.5 px-5 gap-2 uppercase"
           >
             Ouvrir
-            <OpenIcon color="black" width={16} height={16} />
+            <FolderOpen color="black" width={16} height={16} />
           </Button>
         </div>
 

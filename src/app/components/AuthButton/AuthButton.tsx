@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
-import LoginIcon from '../../assets/icon/login-icon.svg?react'
-import LogoutIcon from '../../assets/icon/logout-icon.svg?react'
+import { LogIn, LogOut } from 'lucide-react'
 import Button from '../Button/Button'
 import { useAuthStore } from '../../store/auth'
 
@@ -31,7 +30,7 @@ export default function AuthButton() {
           <span className="uppercase font-black text-xs">{profile.name}</span>
         </div>
         <div className="absolute inset-0 flex justify-center items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <LogoutIcon className="text-white" />
+          <LogOut className="text-white" />
           <span className="uppercase font-black text-xs">Se déconnecter ?</span>
         </div>
       </Button>
@@ -45,7 +44,7 @@ export default function AuthButton() {
       onClick={login}
     >
       <span className="uppercase font-black text-xs">Se connecter</span>
-      <LoginIcon className="text-white" />
+      <LogIn className="text-white" />
     </Button>
   )
 }

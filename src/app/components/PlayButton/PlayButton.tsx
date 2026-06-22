@@ -7,11 +7,7 @@ import { useArcSettingsStore } from '../../store/arcSettings'
 import { useAuthStore } from '../../store/auth'
 import { useProgressStore } from '../../store/progress'
 import { remoteArcToMetadata } from '../../../electron/types/arc'
-import DownloadIcon from '../../assets/icon/download.svg?react'
-import PlayIcon from '../../assets/icon/play-icon.svg?react'
-import EllipsisIcon from '../../assets/icon/ellipsis-vertical.svg?react'
-import SettingsIcon from '../../assets/icon/settings-icon.svg?react'
-import TrashIcon from '../../assets/icon/trash-icon.svg?react'
+import { Download, Play, EllipsisVertical, Settings, Trash2 } from 'lucide-react'
 
 export default function PlayButton() {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -91,14 +87,14 @@ export default function PlayButton() {
     const menuItems: MenuItem[] = [
       {
         label: 'Paramètres',
-        icon: <SettingsIcon color="#fff0e6" width={16} height={16} />,
+        icon: <Settings color="#fff0e6" width={16} height={16} />,
         onClick: () => toggleArcSettings(),
       },
       {
         label: confirmUninstall ? 'Confirmer ?' : 'Désinstaller',
         danger: true,
         keepOpenOnClick: !confirmUninstall,
-        icon: <TrashIcon color="#fff" width={16} height={16} />,
+        icon: <Trash2 color="#fff" width={16} height={16} />,
         onClick: handleUninstallClick,
       },
     ]
@@ -118,7 +114,7 @@ export default function PlayButton() {
           style={{ WebkitAppRegion: 'no-drag' }}
         >
           {label}
-          <PlayIcon color="#fff0e6" width={26} height={26} />
+          <Play color="#fff0e6" width={26} height={26} />
         </button>
         <div className="w-px bg-white/25 my-3" aria-hidden />
         <DropdownMenu
@@ -130,7 +126,7 @@ export default function PlayButton() {
               className="flex items-center h-full px-4 cursor-pointer rounded-r-full transition-colors duration-150"
               style={{ WebkitAppRegion: 'no-drag' }}
             >
-              <EllipsisIcon color="#fff0e6" />
+              <EllipsisVertical color="#fff0e6" />
             </button>
           }
         />
@@ -148,10 +144,8 @@ export default function PlayButton() {
       )}
     >
       {label}
-      {selectedArc.installed && !isLoading && <PlayIcon color="#fff0e6" width={26} height={26} />}
-      {!selectedArc.installed && !isLoading && (
-        <DownloadIcon color="#fff0e6" width={26} height={26} />
-      )}
+      {selectedArc.installed && !isLoading && <Play color="#fff0e6" width={26} height={26} />}
+      {!selectedArc.installed && !isLoading && <Download color="#fff0e6" width={26} height={26} />}
     </Button>
   )
 }
