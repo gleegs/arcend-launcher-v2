@@ -78,7 +78,7 @@ export default function Sidebar() {
               key={arc.slug}
               onClick={() => selectArc(arc)}
               className={clsx(
-                'transition-opacity duration-200',
+                'relative transition-opacity duration-200',
                 selectedArc?.slug === arc.slug ? 'opacity-100' : 'opacity-70'
               )}
             >
@@ -89,6 +89,9 @@ export default function Sidebar() {
                 installed={arc.installed}
                 showOverlay={!isProposalArc(arc.slug)}
               />
+              {selectedArc?.slug === arc.slug && (
+                <div className="absolute top-1/2 left-full ml-2 z-10 h-10 w-4 -translate-y-1/2 rounded-lg bg-white" />
+              )}
             </div>
           ))}
         </div>
