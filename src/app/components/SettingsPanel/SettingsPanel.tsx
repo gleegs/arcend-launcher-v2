@@ -26,7 +26,7 @@ export default function SettingsPanel() {
       style={{
         WebkitAppRegion: 'no-drag',
         right: isSettingsOpen ? 0 : '-50%',
-        transition: 'right 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        transition: 'right 0.55s cubic-bezier(0.16, 1, 0.3, 1)',
       }}
     >
       <Button
