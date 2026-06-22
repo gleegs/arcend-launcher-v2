@@ -51,7 +51,7 @@ export default function InfoPanel() {
   const progress = computeArcProgress(selectedArc?.startDate ?? null, selectedArc?.endDate ?? null)
 
   return (
-    <div className="w-96" style={{ WebkitAppRegion: 'no-drag' }}>
+    <div className="w-[400px]" style={{ WebkitAppRegion: 'no-drag' }}>
       {/* Tabs */}
       <div className="flex gap-1.5 px-2">
         {TABS.map((t) => (
@@ -70,7 +70,7 @@ export default function InfoPanel() {
       </div>
 
       {/* Body */}
-      <div className="relative -mt-px rounded-xl bg-white p-5 text-black shadow-glass-lg">
+      <div className="relative -mt-px h-[156px] overflow-hidden rounded-xl bg-white p-4 text-black shadow-glass-lg">
         {tab !== 'logs' && (
           <button
             type="button"
@@ -82,40 +82,45 @@ export default function InfoPanel() {
         )}
 
         {tab === 'serveur' && (
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center gap-2 text-2xl font-black uppercase leading-none">
-                {MOCK_PLAYERS} Joueurs
-                <Users width={20} height={20} />
+          <div className="flex h-full flex-col justify-between pr-12">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-1.5 text-xl font-black uppercase leading-none">
+                  {MOCK_PLAYERS} Joueurs
+                  <Users width={16} height={16} />
+                </div>
+                <div className="mt-0.5 text-[10px] font-bold uppercase text-black/50">
+                  Connectés
+                </div>
               </div>
-              <div className="mt-1 text-xs font-bold uppercase text-black/50">Connectés</div>
+              <div>
+                <div className="flex items-center gap-1.5 text-xl font-black uppercase leading-none">
+                  {MOCK_SERVER_ONLINE ? 'En ligne' : 'Hors ligne'}
+                  <span
+                    className="inline-block h-2.5 w-2.5 rounded-full"
+                    style={{
+                      backgroundColor: MOCK_SERVER_ONLINE ? 'var(--color-green)' : '#dc2626',
+                    }}
+                  />
+                </div>
+                <div className="mt-0.5 text-[10px] font-bold uppercase text-black/50">
+                  Statut serveur
+                </div>
+              </div>
             </div>
 
             <div>
-              <div className="flex items-center gap-2 text-2xl font-black uppercase leading-none">
-                {MOCK_SERVER_ONLINE ? 'En ligne' : 'Hors ligne'}
-                <span
-                  className="inline-block h-3 w-3 rounded-full"
-                  style={{ backgroundColor: MOCK_SERVER_ONLINE ? 'var(--color-green)' : '#dc2626' }}
-                />
-              </div>
-              <div className="mt-1 text-xs font-bold uppercase text-black/50">
-                Statut du serveur
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 text-lg font-black uppercase leading-none">
+              <div className="flex items-center gap-1.5 text-base font-black uppercase leading-none">
                 Progression de l&apos;arc
-                <Map width={18} height={18} />
+                <Map width={16} height={16} />
               </div>
-              <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/15">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-black/15">
                 <div
                   className="h-full rounded-full bg-black"
                   style={{ width: `${progress}%`, transition: 'width 300ms ease-out' }}
                 />
               </div>
-              <div className="mt-1.5 flex justify-between text-xs font-bold uppercase">
+              <div className="mt-1 flex justify-between text-[10px] font-bold uppercase">
                 <span>{formatArcDate(selectedArc?.startDate ?? null)}</span>
                 <span>{formatArcDate(selectedArc?.endDate ?? null)}</span>
               </div>
@@ -132,7 +137,7 @@ export default function InfoPanel() {
         )}
 
         {tab === 'logs' && (
-          <div className="h-44 overflow-hidden rounded-xl bg-black">
+          <div className="h-full overflow-hidden rounded-xl bg-black">
             <div className="console-scroll h-full overflow-y-auto py-1 font-mono text-[11px]">
               {logs.length === 0 ? (
                 <div className="mt-4 text-center text-xs text-white/60">Aucun log</div>
