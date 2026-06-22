@@ -48,7 +48,15 @@ export default function InfoPanel() {
     window.electronAPI
       .articleFetchLatest()
       .then((res) => {
-        if (res.ok && res.data) setArticle(res.data)
+        if (res.ok && res.data) {
+          setArticle(res.data)
+          // Précharge l'image pour qu'elle soit déjà en cache à l'ouverture
+          // de l'onglet (évite le chargement visible).
+          if (res.data.image) {
+            const img = new Image()
+            img.src = res.data.image
+          }
+        }
       })
       .catch(() => undefined)
   }, [])
@@ -150,7 +158,7 @@ export default function InfoPanel() {
                 <img
                   src={article.image}
                   alt=""
-                  className="absolute inset-0 h-full w-full object-cover"
+                  className="cover-fade-in absolute inset-0 h-full w-full object-cover"
                 />
               )}
               <div
