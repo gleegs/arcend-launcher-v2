@@ -100,7 +100,7 @@ export default function Sidebar() {
           ))}
           {selectedIndex >= 0 && (
             <div
-              className="absolute left-full ml-2 z-10 h-10 w-4 -translate-y-1/2 rounded-[4px] bg-white transition-[top] duration-300 ease-out pointer-events-none"
+              className="absolute left-full ml-2 z-10 h-10 w-4 -translate-y-1/2 rounded-r-[4px] bg-white transition-[top] duration-300 ease-out pointer-events-none"
               style={{ top: selectedIndex * (ARC_ROW_HEIGHT + ARC_ROW_GAP) + ARC_ROW_HEIGHT / 2 }}
             />
           )}
