@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { clsx } from 'clsx'
 import { useArcStore } from '../../store/arc'
 import { cachedImage } from '../../lib/cachedImage'
-import { isProposalArc } from '../../lib/proposalArc'
 
 // Hauteur d'une vignette d'arc (= largeur du contenu de la sidebar : w-20 −
 // px-2*2) et écart vertical entre vignettes (space-y-2), pour positionner le
@@ -93,8 +92,6 @@ export default function Sidebar() {
                 src={
                   arc.thumbnailUrl ? cachedImage(arc.thumbnailUrl) : 'https://placehold.co/64x64'
                 }
-                installed={arc.installed}
-                showOverlay={!isProposalArc(arc.slug)}
               />
             </div>
           ))}
