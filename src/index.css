@@ -109,7 +109,3 @@
 .cursor-not-allowed {
   cursor: url('./app/assets/images/not_allowed.png'), not-allowed;
 }
-
-.cursor-wait {
-  cursor: url('./app/assets/images/busy.gif'), wait;
-}
