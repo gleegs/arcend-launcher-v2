@@ -28,12 +28,10 @@ const App = () => {
   const installActive = useProgressStore((s) => s.install.active)
   const installPercent = useProgressStore((s) => s.install.percent)
   const installLabel = useProgressStore((s) => s.install.label)
-  const installSublabel = useProgressStore((s) => s.install.sublabel)
   const installError = useProgressStore((s) => s.install.error)
   const launchActive = useProgressStore((s) => s.launch.active)
   const launchPercent = useProgressStore((s) => s.launch.percent)
   const launchLabel = useProgressStore((s) => s.launch.label)
-  const launchSublabel = useProgressStore((s) => s.launch.sublabel)
   const launchError = useProgressStore((s) => s.launch.error)
   const initProgress = useProgressStore((s) => s.init)
   const initLog = useLogStore((s) => s.init)
@@ -109,22 +107,12 @@ const App = () => {
           <InfoPanel />
         </div>
         <div className="absolute bottom-0 right-0 p-8 flex flex-col items-end gap-3">
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
             {(installActive || installError) && (
-              <ProgressBar
-                percent={installPercent}
-                label={installLabel}
-                sublabel={installSublabel}
-                error={installError}
-              />
+              <ProgressBar percent={installPercent} label={installLabel} error={installError} />
             )}
             {(launchActive || launchError) && (
-              <ProgressBar
-                percent={launchPercent}
-                label={launchLabel}
-                sublabel={launchSublabel}
-                error={launchError}
-              />
+              <ProgressBar percent={launchPercent} label={launchLabel} error={launchError} />
             )}
             <PlayButton />
           </div>

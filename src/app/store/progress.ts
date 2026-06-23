@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { useLogStore } from './log'
 import type { JavaInstallProgress, JavaInstallStatus } from '../../electron/types/java'
 import type { PackwizInstallProgress, PackwizInstallStatus } from '../../electron/types/packwiz'
 import type { ArcInstallProgress, ArcInstallStatus } from '../../electron/types/arc'
@@ -199,6 +200,21 @@ function stopLaunchAsymptote(): void {
 
 function clamp(n: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, n))
+}
+
+// Log de la synchronisation des mods, throttlé (≤ 1 entrée / 200 ms) pour
+// éviter de spammer les logs avec un message par mod.
+let lastModLogAt = 0
+let lastModCount = -1
+function logModsProgress(downloaded: number, total?: number): void {
+  const now = Date.now()
+  const isLast = total != null && downloaded >= total
+  if (downloaded === lastModCount) return
+  if (!isLast && now - lastModLogAt < 200) return
+  lastModLogAt = now
+  lastModCount = downloaded
+  const message = total != null ? `Mods : ${downloaded}/${total}` : `Mods : ${downloaded}`
+  useLogStore.getState().add(message)
 }
 
 /**
@@ -430,6 +446,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         _ranges: ranges,
         install: applyArcProgress(state.install, progress, ranges),
       })
+      if (progress.status === 'syncing_packwiz' && progress.modsDownloaded != null) {
+        logModsProgress(progress.modsDownloaded, progress.modsTotal)
+      }
     })
 
     window.electronAPI.onLaunchProgress((progress) => {

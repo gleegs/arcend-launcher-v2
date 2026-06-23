@@ -155,7 +155,7 @@ export default function PlayButton() {
       disabled={isLoading || (selectedArc.installed && !canPlay)}
       className={clsx(
         'w-80 py-2 flex justify-center items-center text-3xl font-black uppercase gap-3 border-2',
-        isLaunching && '!opacity-100 border-0 hover:border-0'
+        isLoading && '!opacity-100 border-0 hover:border-0'
       )}
     >
       {label}
