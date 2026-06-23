@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { clsx } from 'clsx'
 import { LogIn, LogOut } from 'lucide-react'
 import Button from '../Button/Button'
@@ -11,14 +11,26 @@ export default function AuthButton() {
   const logout = useAuthStore((s) => s.logout)
   const init = useAuthStore((s) => s.init)
   const [confirmLogout, setConfirmLogout] = useState(false)
+  const authedAtRef = useRef(0)
 
   useEffect(() => {
     init()
   }, [init])
 
+  // Mémorise l'instant de connexion pour ignorer le clic d'activation de
+  // fenêtre qui survient au retour de la fenêtre Microsoft (sinon le bouton
+  // reste bloqué sur « Se déconnecter ? » après le 1er login).
+  useEffect(() => {
+    if (state.status !== 'unauthenticated') {
+      authedAtRef.current = Date.now()
+    }
+  }, [state.status])
+
   if (state.status !== 'unauthenticated') {
     const profile = state.profile
     const handleClick = () => {
+      // Ignore le clic d'activation de fenêtre juste après la connexion.
+      if (Date.now() - authedAtRef.current < 600) return
       if (confirmLogout) {
         logout()
       } else {
