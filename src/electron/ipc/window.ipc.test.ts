@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 const handlers: Record<string, (...args: unknown[]) => unknown> = {}
+const listeners: Record<string, (...args: unknown[]) => unknown> = {}
 
 vi.mock('electron', () => ({
   ipcMain: {
     handle: vi.fn((channel: string, handler: (...args: unknown[]) => unknown) => {
       handlers[channel] = handler
+    }),
+    on: vi.fn((channel: string, listener: (...args: unknown[]) => unknown) => {
+      listeners[channel] = listener
     }),
   },
 }))
@@ -15,6 +19,8 @@ const mockMaximizeWindow = vi.fn()
 const mockCloseWindow = vi.fn()
 const mockHideWindow = vi.fn()
 const mockRestoreWindow = vi.fn()
+const mockGetWindowPosition = vi.fn()
+const mockSetWindowPosition = vi.fn()
 
 vi.mock('../services/window', () => ({
   minimizeWindow: (...args: unknown[]) => mockMinimizeWindow(...args),
@@ -22,6 +28,8 @@ vi.mock('../services/window', () => ({
   closeWindow: (...args: unknown[]) => mockCloseWindow(...args),
   hideWindow: (...args: unknown[]) => mockHideWindow(...args),
   restoreWindow: (...args: unknown[]) => mockRestoreWindow(...args),
+  getWindowPosition: (...args: unknown[]) => mockGetWindowPosition(...args),
+  setWindowPosition: (...args: unknown[]) => mockSetWindowPosition(...args),
 }))
 
 vi.mock('../services/store', () => ({
@@ -36,6 +44,7 @@ vi.mock('../lib/paths', () => ({
 describe('registerWindowIpc', () => {
   beforeEach(async () => {
     Object.keys(handlers).forEach((k) => delete handlers[k])
+    Object.keys(listeners).forEach((k) => delete listeners[k])
     mockMinimizeWindow.mockReset()
     mockMaximizeWindow.mockReset()
     mockCloseWindow.mockReset()
@@ -46,15 +55,20 @@ describe('registerWindowIpc', () => {
     registerWindowIpc()
   })
 
-  it('registers exactly 7 window channels', () => {
+  it('registers 6 invoke handlers and the move listener', () => {
     expect(handlers['window:minimize']).toBeDefined()
     expect(handlers['window:maximize']).toBeDefined()
     expect(handlers['window:close']).toBeDefined()
     expect(handlers['window:hide']).toBeDefined()
     expect(handlers['window:restore']).toBeDefined()
     expect(handlers['window:getPosition']).toBeDefined()
-    expect(handlers['window:setPosition']).toBeDefined()
-    expect(Object.keys(handlers)).toHaveLength(7)
+    expect(Object.keys(handlers)).toHaveLength(6)
+    expect(listeners['window:move']).toBeDefined()
+  })
+
+  it('window:move sets the window position', () => {
+    listeners['window:move']({}, 120, 340)
+    expect(mockSetWindowPosition).toHaveBeenCalledWith(120, 340)
   })
 
   it('window:minimize calls minimizeWindow and returns { ok: true, data }', async () => {

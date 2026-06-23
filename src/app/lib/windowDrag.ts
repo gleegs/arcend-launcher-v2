@@ -30,7 +30,7 @@ export async function startWindowDrag(e: ReactMouseEvent): Promise<void> {
     if (!raf) {
       raf = requestAnimationFrame(() => {
         raf = 0
-        window.electronAPI.windowSetPosition(nextX, nextY)
+        window.electronAPI.windowMove(nextX, nextY)
       })
     }
   }

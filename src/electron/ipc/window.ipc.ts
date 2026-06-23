@@ -1,3 +1,4 @@
+import { ipcMain } from 'electron'
 import { IpcChannels } from '../types/ipc'
 import {
   minimizeWindow,
@@ -17,7 +18,8 @@ export function registerWindowIpc(): void {
   safeHandle(IpcChannels.WINDOW_HIDE, () => hideWindow())
   safeHandle(IpcChannels.WINDOW_RESTORE, () => restoreWindow())
   safeHandle(IpcChannels.WINDOW_GET_POSITION, () => getWindowPosition())
-  safeHandle(IpcChannels.WINDOW_SET_POSITION, (x: unknown, y: unknown) =>
-    setWindowPosition(x as number, y as number)
-  )
+  // One-way (send) pour le drag : pas de round-trip par frame.
+  ipcMain.on(IpcChannels.WINDOW_MOVE, (_event, x: number, y: number) => {
+    setWindowPosition(x, y)
+  })
 }

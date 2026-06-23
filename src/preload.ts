@@ -25,8 +25,7 @@ const electronApi: ElectronApi = {
     ipcRenderer.invoke(IpcChannels.WINDOW_GET_POSITION) as Promise<
       IpcResult<{ x: number; y: number }>
     >,
-  windowSetPosition: (x: number, y: number) =>
-    ipcRenderer.invoke(IpcChannels.WINDOW_SET_POSITION, x, y) as Promise<IpcResult<void>>,
+  windowMove: (x: number, y: number) => ipcRenderer.send(IpcChannels.WINDOW_MOVE, x, y),
   storeGet: <K extends keyof AppConfig>(key: K) =>
     ipcRenderer.invoke(IpcChannels.STORE_GET, key) as Promise<IpcResult<AppConfig[K]>>,
   storeSet: <K extends keyof AppConfig>(key: K, value: AppConfig[K]) =>

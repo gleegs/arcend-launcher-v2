@@ -40,7 +40,7 @@ export const IpcChannels = {
   WINDOW_HIDE: 'window:hide',
   WINDOW_RESTORE: 'window:restore',
   WINDOW_GET_POSITION: 'window:getPosition',
-  WINDOW_SET_POSITION: 'window:setPosition',
+  WINDOW_MOVE: 'window:move',
   STORE_GET: 'store:get',
   STORE_SET: 'store:set',
   AUTH_LOGIN: 'auth:login',
@@ -93,7 +93,8 @@ export interface ElectronApi {
   windowHide: () => Promise<IpcResult<void>>
   windowRestore: () => Promise<IpcResult<void>>
   windowGetPosition: () => Promise<IpcResult<{ x: number; y: number }>>
-  windowSetPosition: (x: number, y: number) => Promise<IpcResult<void>>
+  /** One-way (send) : déplace la fenêtre, sans round-trip, pour un drag fluide. */
+  windowMove: (x: number, y: number) => void
   storeGet: <K extends keyof AppConfig>(key: K) => Promise<IpcResult<AppConfig[K]>>
   storeSet: <K extends keyof AppConfig>(key: K, value: AppConfig[K]) => Promise<IpcResult<void>>
   authLogin: () => Promise<IpcResult<AuthState>>
