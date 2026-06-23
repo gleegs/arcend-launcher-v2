@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { clsx } from 'clsx'
 import { ArrowRight, Users, Map, RefreshCw } from 'lucide-react'
 import { useArcStore } from '../../store/arc'
@@ -50,6 +50,23 @@ export default function InfoPanel() {
   const tabs = isProposal ? TABS.filter((t) => t.id === 'article') : TABS
   // Onglet réellement affiché (forcé sur « article » pour les arcs à proposer).
   const activeTab: TabId = isProposal ? 'article' : tab
+
+  // Auto-scroll des logs vers le bas quand de nouvelles entrées arrivent
+  // (sauf si l'utilisateur a remonté pour lire l'historique).
+  const logsRef = useRef<HTMLDivElement>(null)
+  const logsAtBottomRef = useRef(true)
+  const handleLogsScroll = () => {
+    const el = logsRef.current
+    if (!el) return
+    logsAtBottomRef.current = el.scrollHeight - el.scrollTop - el.clientHeight < 24
+  }
+  useEffect(() => {
+    if (activeTab !== 'logs') return
+    const el = logsRef.current
+    if (el && logsAtBottomRef.current) {
+      el.scrollTop = el.scrollHeight
+    }
+  }, [logs, activeTab])
 
   useEffect(() => {
     window.electronAPI
@@ -193,7 +210,11 @@ export default function InfoPanel() {
           ))}
 
         {activeTab === 'logs' && (
-          <div className="console-scroll h-full overflow-y-auto font-mono text-[11px]">
+          <div
+            ref={logsRef}
+            onScroll={handleLogsScroll}
+            className="console-scroll h-full overflow-y-auto font-mono text-[11px]"
+          >
             {logs.length === 0 ? (
               <div className="px-2 py-0.5 text-xs text-white/60">Aucun log</div>
             ) : (
