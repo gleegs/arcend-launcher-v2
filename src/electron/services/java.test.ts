@@ -87,7 +87,7 @@ function mockHttpsGet(response: {
   data?: string
   error?: Error
 }) {
-  return vi.fn((url: string, callback: (res: unknown) => void) => {
+  return vi.fn((_url: string, callback: (res: unknown) => void) => {
     if (response.error) {
       return {
         on: vi.fn((event: string, cb: (err: Error) => void) => {
@@ -385,7 +385,7 @@ describe('java service', () => {
     it('rejects on HTTP error status', async () => {
       const https = await import('node:https')
       let callCount = 0
-      const mockGet = vi.fn((url: string, callback: (res: unknown) => void) => {
+      const mockGet = vi.fn((_url: string, callback: (res: unknown) => void) => {
         callCount++
         if (callCount === 1) {
           const pkg = {

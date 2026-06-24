@@ -58,7 +58,7 @@ const {
   const mockLaunch = vi.fn()
   const emitters: EventEmitter[] = []
 
-  function MockClientFn(this: { on: ReturnType<EventEmitter['on']>; launch: typeof mockLaunch }) {
+  function MockClientFn(this: { on: EventEmitter['on']; launch: typeof mockLaunch }) {
     const emitter = new EventEmitter()
     emitters.push(emitter)
     this.on = emitter.on.bind(emitter)
@@ -564,7 +564,7 @@ describe('launcher service', () => {
       }
       mockFsCreateWriteStream.mockReturnValue(mockFile)
 
-      mockHttpsGet.mockImplementation((url: string, callback: (res: unknown) => void) => {
+      mockHttpsGet.mockImplementation((_url: string, callback: (res: unknown) => void) => {
         const res = {
           statusCode: 200,
           headers: {},

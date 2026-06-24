@@ -3,6 +3,7 @@ import type { PackwizInstallation, PackwizInstallProgress } from './packwiz'
 import type { ArcInstallation, ArcInstallProgress, ArcMetadata, RemoteArc } from './arc'
 import type { LaunchOptions, LaunchProgress, LogEntry } from './launcher'
 import type { UpdateStatus, UpdateDownloadedInfo } from './updater'
+import type { LatestArticle } from './article'
 
 export interface WindowBounds {
   x?: number
@@ -29,7 +30,6 @@ export interface AppConfig {
   windowBounds: WindowBounds
   encryptedRefreshToken?: string
   cachedProfile?: CachedProfile
-  showConsole: boolean
   arcSettings: Record<string, ArcSettings>
 }
 
@@ -39,6 +39,8 @@ export const IpcChannels = {
   WINDOW_CLOSE: 'window:close',
   WINDOW_HIDE: 'window:hide',
   WINDOW_RESTORE: 'window:restore',
+  WINDOW_GET_POSITION: 'window:getPosition',
+  WINDOW_MOVE: 'window:move',
   STORE_GET: 'store:get',
   STORE_SET: 'store:set',
   AUTH_LOGIN: 'auth:login',
@@ -64,6 +66,7 @@ export const IpcChannels = {
   ARC_ON_INSTALL_PROGRESS: 'arc:onInstallProgress',
   ARC_FETCH_REMOTE: 'arc:fetchRemote',
   ARC_FETCH_ACTIVE: 'arc:fetchActive',
+  ARTICLE_FETCH_LATEST: 'article:fetchLatest',
   LAUNCH_GAME: 'launch:game',
   LAUNCH_IS_RUNNING: 'launch:isRunning',
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
@@ -89,6 +92,9 @@ export interface ElectronApi {
   windowClose: () => Promise<IpcResult<void>>
   windowHide: () => Promise<IpcResult<void>>
   windowRestore: () => Promise<IpcResult<void>>
+  windowGetPosition: () => Promise<IpcResult<{ x: number; y: number }>>
+  /** One-way (send) : déplace la fenêtre, sans round-trip, pour un drag fluide. */
+  windowMove: (x: number, y: number) => void
   storeGet: <K extends keyof AppConfig>(key: K) => Promise<IpcResult<AppConfig[K]>>
   storeSet: <K extends keyof AppConfig>(key: K, value: AppConfig[K]) => Promise<IpcResult<void>>
   authLogin: () => Promise<IpcResult<AuthState>>
@@ -114,6 +120,7 @@ export interface ElectronApi {
   onArcInstallProgress: (callback: (progress: ArcInstallProgress) => void) => () => void
   arcFetchRemote: () => Promise<IpcResult<RemoteArc[]>>
   arcFetchActive: () => Promise<IpcResult<RemoteArc | null>>
+  articleFetchLatest: () => Promise<IpcResult<LatestArticle | null>>
   launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
@@ -127,3 +134,4 @@ export interface ElectronApi {
 
 export type { ArcMetadata, RemoteArc } from './arc'
 export type { ArcModLoader } from './arc'
+export type { LatestArticle } from './article'

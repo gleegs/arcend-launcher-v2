@@ -66,11 +66,10 @@ interface ProgressBarProps {
   /** Pourcentage cible [0, 100]. */
   percent: number
   label: string
-  sublabel?: string | null
   error?: string | null
 }
 
-export default function ProgressBar({ percent, label, sublabel, error = null }: ProgressBarProps) {
+export default function ProgressBar({ percent, label, error = null }: ProgressBarProps) {
   // En cas d'erreur on fige à 0 (snap via le hook, target <= previousTarget).
   const displayPercent = useAnimatedPercent(error ? 0 : percent)
 
@@ -81,9 +80,9 @@ export default function ProgressBar({ percent, label, sublabel, error = null }: 
       role="status"
       aria-live="polite"
     >
-      <div className="flex items-center justify-between text-xs uppercase font-black ml-9">
+      <div className="flex items-center justify-between text-xs uppercase font-black px-2">
         <span
-          className={error ? 'truncate' : 'truncate'}
+          className="truncate"
           style={error ? { color: '#dc2626' } : undefined}
           title={error ?? label}
         >
@@ -93,8 +92,8 @@ export default function ProgressBar({ percent, label, sublabel, error = null }: 
           <span className="text-white/80 tabular-nums shrink-0">{Math.round(displayPercent)}%</span>
         )}
       </div>
-      <div className="bg-black p-3 rounded-full translate-x-7">
-        <div className="h-2 rounded-full bg-white overflow-hidden mr-3">
+      <div className="bg-black p-3 rounded-full">
+        <div className="h-2 rounded-full bg-white overflow-hidden">
           <div
             className="h-full rounded-full ease-out"
             style={{
@@ -105,9 +104,6 @@ export default function ProgressBar({ percent, label, sublabel, error = null }: 
           />
         </div>
       </div>
-      {sublabel && !error && (
-        <span className="text-xs text-white/60 tabular-nums ml-5">{sublabel}</span>
-      )}
     </div>
   )
 }

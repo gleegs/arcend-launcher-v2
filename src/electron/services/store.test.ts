@@ -71,7 +71,6 @@ describe('store service', () => {
           cwd: '/fake/config/path',
           defaults: expect.objectContaining({
             arcSettings: {},
-            showConsole: false,
           }),
         })
       )
@@ -81,7 +80,7 @@ describe('store service', () => {
       const Store = (await import('electron-store')).default
       const { initStore } = await import('./store')
 
-      Store.mockClear()
+      vi.mocked(Store).mockClear()
       initStore()
       initStore()
 

@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useUpdaterStore } from '../../store/updater'
 import Button from '../Button/Button'
-import DownloadIcon from '../../assets/icon/download.svg?react'
-import CrossIcon from '../../assets/icon/cross-icon.svg?react'
+import { Download, X } from 'lucide-react'
 
 export default function UpdateToast() {
   const updateReady = useUpdaterStore((s) => s.updateReady)
@@ -26,7 +25,7 @@ export default function UpdateToast() {
       className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 rounded-2xl bg-black border border-border px-5 py-3 shadow-glass-lg"
       style={{ WebkitAppRegion: 'no-drag' }}
     >
-      <DownloadIcon width={20} height={20} className="text-white shrink-0" />
+      <Download width={20} height={20} className="text-white shrink-0" />
       <div className="flex flex-col">
         <span className="text-sm font-black uppercase">
           Mise à jour prête{version ? ` — ${version}` : ''}
@@ -45,7 +44,7 @@ export default function UpdateToast() {
         style={{ WebkitAppRegion: 'no-drag' }}
         aria-label="Fermer"
       >
-        <CrossIcon width={16} height={16} />
+        <X width={16} height={16} />
       </button>
     </div>
   )

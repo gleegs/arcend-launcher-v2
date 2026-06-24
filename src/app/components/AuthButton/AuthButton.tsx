@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
-import LoginIcon from '../../assets/icon/login-icon.svg?react'
-import LogoutIcon from '../../assets/icon/logout-icon.svg?react'
+import { useEffect, useState } from 'react'
+import { clsx } from 'clsx'
+import { LogIn, LogOut } from 'lucide-react'
 import Button from '../Button/Button'
 import { useAuthStore } from '../../store/auth'
 
@@ -10,6 +10,8 @@ export default function AuthButton() {
   const login = useAuthStore((s) => s.login)
   const logout = useAuthStore((s) => s.logout)
   const init = useAuthStore((s) => s.init)
+  const [confirmLogout, setConfirmLogout] = useState(false)
+  const [hovering, setHovering] = useState(false)
 
   useEffect(() => {
     init()
@@ -17,21 +19,50 @@ export default function AuthButton() {
 
   if (state.status !== 'unauthenticated') {
     const profile = state.profile
+    // La confirmation ne s'affiche que si le bouton est réellement survolé : le
+    // clic d'activation de fenêtre (au retour du login Microsoft) n'est pas
+    // précédé d'un mouseenter, donc il ne fait pas apparaître « Se déconnecter ? ».
+    const showConfirm = confirmLogout && hovering
+    const handleClick = () => {
+      if (confirmLogout) {
+        logout()
+      } else {
+        setConfirmLogout(true)
+      }
+    }
     return (
       <Button
-        className="group flex justify-center items-center gap-2 min-w-48 relative hover:border-red-500/70! hover:border-2"
-        onClick={logout}
+        className={clsx(
+          'flex justify-center items-center gap-2 min-w-48 relative',
+          showConfirm && 'border-red-500/70! border-2'
+        )}
+        onClick={handleClick}
+        onMouseEnter={() => setHovering(true)}
+        onMouseLeave={() => {
+          setHovering(false)
+          setConfirmLogout(false)
+        }}
       >
-        <div className="flex items-center gap-2 transition-opacity duration-200 group-hover:opacity-0">
+        <div
+          className={clsx(
+            'flex items-center gap-2 transition-opacity duration-200',
+            showConfirm && 'opacity-0'
+          )}
+        >
+          <span className="uppercase font-black text-xs">{profile.name}</span>
           <img
             src={`https://mc-heads.net/avatar/${profile.id}`}
             alt={profile.name}
             className="w-5 h-5 rounded-sm"
           />
-          <span className="uppercase font-black text-xs">{profile.name}</span>
         </div>
-        <div className="absolute inset-0 flex justify-center items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          <LogoutIcon className="text-white" />
+        <div
+          className={clsx(
+            'absolute inset-0 flex justify-center items-center gap-2 transition-opacity duration-200',
+            showConfirm ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          <LogOut className="text-white" />
           <span className="uppercase font-black text-xs">Se déconnecter ?</span>
         </div>
       </Button>
@@ -45,7 +76,7 @@ export default function AuthButton() {
       onClick={login}
     >
       <span className="uppercase font-black text-xs">Se connecter</span>
-      <LoginIcon className="text-white" />
+      <LogIn className="text-white" />
     </Button>
   )
 }

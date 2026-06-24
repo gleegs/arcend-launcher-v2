@@ -13,6 +13,7 @@ export interface RemoteArc {
   modpackUrl: string | null
   coverUrl: string[] | null
   thumbnailUrl: string | null
+  logoUrl: string | null
   createdAt: string
 }
 

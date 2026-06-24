@@ -72,32 +72,32 @@ export default function DropdownMenu({
         {trigger}
       </div>
 
-      {isOpen && (
-        <div
-          className={clsx(
-            'absolute bottom-full mb-2 z-50 min-w-44 bg-black border border-border rounded-xl overflow-hidden shadow-button',
-            align === 'right' ? 'right-0' : 'left-0',
-            className
-          )}
-          style={{ WebkitAppRegion: 'no-drag' }}
-        >
-          {items.map((item) => (
-            <button
-              key={item.label}
-              onClick={() => handleItemClick(item)}
-              className={clsx(
-                'w-full flex items-center gap-2 px-4 py-2.5 text-sm uppercase font-bold text-left transition-colors duration-150 cursor-pointer',
-                item.danger
-                  ? 'text-white hover:bg-[#dc2626]'
-                  : 'text-white/80 hover:bg-white/10 hover:text-white'
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </button>
-          ))}
-        </div>
-      )}
+      <div
+        className={clsx(
+          'absolute bottom-full mb-2 z-50 min-w-44 bg-black border border-border rounded-xl overflow-hidden shadow-button',
+          'transition-all duration-200 ease-out',
+          align === 'right' ? 'right-0 origin-bottom-right' : 'left-0 origin-bottom-left',
+          isOpen
+            ? 'opacity-100 translate-y-0 scale-100'
+            : 'pointer-events-none opacity-0 translate-y-1 scale-95',
+          className
+        )}
+        style={{ WebkitAppRegion: 'no-drag' }}
+      >
+        {items.map((item) => (
+          <button
+            key={item.label}
+            onClick={() => handleItemClick(item)}
+            className={clsx(
+              'w-full flex items-center gap-2 px-4 py-2.5 text-sm uppercase font-bold text-left transition-colors duration-150 cursor-pointer',
+              item.danger ? 'text-white hover:bg-[#dc2626]' : 'text-white hover:bg-white/10'
+            )}
+          >
+            {item.icon}
+            {item.label}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

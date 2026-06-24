@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.1.1...v2.2.0) (2026-06-24)
+
+### Features
+
+- **auth:** require click-to-confirm before logout ([1bf7fc1](https://github.com/gleegs/arcend-launcher-v2/commit/1bf7fc1bab3605c3ea5580a6e04a6c1ca834f54f))
+- **ui:** add black hover border to the play menu kebab button ([7ae7cf7](https://github.com/gleegs/arcend-launcher-v2/commit/7ae7cf787cb1c8aaf7af2045750acb2a0137085a))
+- **ui:** add bottom-left info panel and remove launcher console ([386547c](https://github.com/gleegs/arcend-launcher-v2/commit/386547c136fb5f2d25f2096bef96b4b4e29dcb71))
+- **ui:** add notebook-pen icon to the propose-arc button ([26c3ef8](https://github.com/gleegs/arcend-launcher-v2/commit/26c3ef84fee9f8f00e2c47e4dc0e86d75e5d73be))
+- **ui:** add proposal arc variant (arc-undefined) ([025f27d](https://github.com/gleegs/arcend-launcher-v2/commit/025f27dacdc53b97e95686bd29724f01d3adc561))
+- **ui:** add selected-arc connector tab in the sidebar gap ([a84718a](https://github.com/gleegs/arcend-launcher-v2/commit/a84718a82fda9aced8a7d0568db01be6e79716de))
+- **ui:** add server/article/logs info panel in the bottom-left ([a662e7f](https://github.com/gleegs/arcend-launcher-v2/commit/a662e7f78a02db197aa17038588e52d00f271374))
+- **ui:** add white hover border to the play menu kebab circle ([e3d8f0c](https://github.com/gleegs/arcend-launcher-v2/commit/e3d8f0c522c95ed8af19fad3b8164016f5e53ef5))
+- **ui:** adjust time-of-day cover ranges ([55d1d12](https://github.com/gleegs/arcend-launcher-v2/commit/55d1d12fd600233d25a93e3e6f94455fa5bd3c57))
+- **ui:** animate dropdown menu open/close with a transition ([3686b86](https://github.com/gleegs/arcend-launcher-v2/commit/3686b8688291013788cde441b7cbf0e12268a42a))
+- **ui:** auto-scroll logs tab to bottom on new entries ([94872a1](https://github.com/gleegs/arcend-launcher-v2/commit/94872a15b53b0a792768bb7d6627045151f0a176))
+- **ui:** auto-switch hero cover at time-of-day boundaries ([76038c9](https://github.com/gleegs/arcend-launcher-v2/commit/76038c99f4fa9897810875bbe05fc2b81deed4ba))
+- **ui:** cross-fade the hero background between covers ([3e34ba1](https://github.com/gleegs/arcend-launcher-v2/commit/3e34ba18d81103d8b9538cb140539fd757e99be8))
+- **ui:** default info panel to the latest-article tab ([14a5438](https://github.com/gleegs/arcend-launcher-v2/commit/14a543893d272235005455ff4f64795954fddc83))
+- **ui:** give play button and kebab independent hover states ([4a8e578](https://github.com/gleegs/arcend-launcher-v2/commit/4a8e57892cb8d6f7d04de1e4e39bfbcabe4f170b))
+- **ui:** link version badge to the changelog page ([b1d6eb5](https://github.com/gleegs/arcend-launcher-v2/commit/b1d6eb581e3871a622097997539220655f186c26))
+- **ui:** point propose-arc button to the Discord channel ([7882d1d](https://github.com/gleegs/arcend-launcher-v2/commit/7882d1d0e13dc489fb9dd4d5e505fc26bdbcfed5))
+- **ui:** position play menu kebab absolutely over the play button ([c88b0f5](https://github.com/gleegs/arcend-launcher-v2/commit/c88b0f5c6b1c66bcccccd558c89ab9855cdfc2bb))
+- **ui:** proposal arc shows only the latest-article tab ([d0bf8f7](https://github.com/gleegs/arcend-launcher-v2/commit/d0bf8f75fa986d7c78d932e199640cb29c34540b))
+- **ui:** rework install progress bar layout and route mods to logs ([6352f39](https://github.com/gleegs/arcend-launcher-v2/commit/6352f398140e4f39b352ff2d09f708d14c7cb2a7))
+- **ui:** select hero cover based on time of day ([7bc7bab](https://github.com/gleegs/arcend-launcher-v2/commit/7bc7babd3ff2341d1955bcfcb23df31bb8e0e392))
+- **ui:** show play menu kebab as a white circle inside the play button ([db8e707](https://github.com/gleegs/arcend-launcher-v2/commit/db8e7075dac95ecf382f05908b89a25e3f726dbd))
+- **ui:** show play menu kebab as a white circle inside the play button ([9aab8a1](https://github.com/gleegs/arcend-launcher-v2/commit/9aab8a1874ca16c3b2d63fce6879ef7be4bbfc2f))
+- **ui:** slide the selected-arc connector between arcs ([f27e67f](https://github.com/gleegs/arcend-launcher-v2/commit/f27e67fe1c7d0e45cd910b12c8a3725d00113c0d))
+- **ui:** use per-arc logo from Supabase logo_url ([4ddf157](https://github.com/gleegs/arcend-launcher-v2/commit/4ddf157fa46be35a2bd7b6de31bad4724bbb557f))
+- **window:** custom JS window dragging to allow custom cursor ([d3e7623](https://github.com/gleegs/arcend-launcher-v2/commit/d3e7623c45fc16cab59a48885793c795a6949dfc))
+
+### Bug Fixes
+
+- **auth:** don't arm logout confirm on the post-login activation click ([ad6979e](https://github.com/gleegs/arcend-launcher-v2/commit/ad6979e43d121b7cc0ef35c6b13677724c022a5c))
+- **auth:** gate logout confirm on real hover ([ec7bb0f](https://github.com/gleegs/arcend-launcher-v2/commit/ec7bb0f73a11f1fa1ec0f320aff2f7adfe0d61d9))
+- **config:** load .env file for Supabase keys via Vite loadEnv ([ed3ba3b](https://github.com/gleegs/arcend-launcher-v2/commit/ed3ba3b51fbab472b01e9ab95c7fb22ba2f2df21))
+- **images:** revalidate cached images in the background ([01ff2c1](https://github.com/gleegs/arcend-launcher-v2/commit/01ff2c1ae671376f9e9bc173d27a325089280869))
+- **ui:** use correct proposal arc slug (arcend-undefined) ([a414f83](https://github.com/gleegs/arcend-launcher-v2/commit/a414f8321c8494e35c074d0f220fa440449bba65))
+- **window:** prevent image/text selection while dragging the window ([a7e549d](https://github.com/gleegs/arcend-launcher-v2/commit/a7e549dae8292ea6274d7159aa383a17c8326177))
+
 ### [2.1.1](https://github.com/gleegs/arcend-launcher-v2/compare/v2.1.0...v2.1.1) (2026-06-21)
 
 ### Bug Fixes

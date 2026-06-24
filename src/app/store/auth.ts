@@ -5,7 +5,7 @@ interface CachedProfile {
   name: string
 }
 
-type AuthState =
+export type AuthState =
   | { status: 'online'; profile: CachedProfile }
   | { status: 'offline'; profile: CachedProfile }
   | { status: 'unauthenticated' }

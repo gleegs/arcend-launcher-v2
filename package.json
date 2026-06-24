@@ -1,7 +1,7 @@
 {
   "name": "arcend-launcher",
   "productName": "Arcend Launcher",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Arcend Game Launcher",
   "license": "UNLICENSED",
   "main": ".vite/build/main.js",
@@ -60,7 +60,6 @@
     "commitizen": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
     "electron": "^42.3.0",
-    "electron-builder": "^26.8.1",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -76,7 +75,6 @@
     "typescript": "^5.9.3",
     "universalify": "^2.0.1",
     "vite": "^5.4.21",
-    "vite-plugin-svgr": "^5.2.0",
     "vitest": "^4.1.8"
   },
   "dependencies": {
@@ -86,6 +84,7 @@
     "dotenv": "^17.4.2",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
+    "lucide-react": "^1.21.0",
     "minecraft-launcher-core": "^3.18.2",
     "msmc": "^5.0.5",
     "react": "^19.2.6",

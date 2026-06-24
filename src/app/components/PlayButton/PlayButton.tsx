@@ -7,11 +7,8 @@ import { useArcSettingsStore } from '../../store/arcSettings'
 import { useAuthStore } from '../../store/auth'
 import { useProgressStore } from '../../store/progress'
 import { remoteArcToMetadata } from '../../../electron/types/arc'
-import DownloadIcon from '../../assets/icon/download.svg?react'
-import PlayIcon from '../../assets/icon/play-icon.svg?react'
-import EllipsisIcon from '../../assets/icon/ellipsis-vertical.svg?react'
-import SettingsIcon from '../../assets/icon/settings-icon.svg?react'
-import TrashIcon from '../../assets/icon/trash-icon.svg?react'
+import { Download, Play, EllipsisVertical, Settings, Trash2, NotebookPen } from 'lucide-react'
+import { isProposalArc, PROPOSE_ARC_DISCORD_URL } from '../../lib/proposalArc'
 
 export default function PlayButton() {
   const selectedArc = useArcStore((s) => s.selectedArc)
@@ -44,6 +41,22 @@ export default function PlayButton() {
   }, [install.active, install.percent, install.error, selectedArc, setArcInstalled])
 
   if (!selectedArc) return null
+
+  // Arc « à proposer » : pas d'installation/paramètres, juste un lien Discord.
+  if (isProposalArc(selectedArc.slug)) {
+    return (
+      <a
+        href={PROPOSE_ARC_DISCORD_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-[22rem] py-2 flex justify-center items-center text-3xl font-black uppercase gap-3 bg-black rounded-full border-2 border-transparent hover:border-white shadow-button transition-colors duration-250 cursor-pointer"
+        style={{ WebkitAppRegion: 'no-drag' }}
+      >
+        Proposer un arc
+        <NotebookPen color="#fff0e6" width={26} height={26} />
+      </a>
+    )
+  }
 
   const handleInstall = async () => {
     startInstall()
@@ -91,49 +104,47 @@ export default function PlayButton() {
     const menuItems: MenuItem[] = [
       {
         label: 'Paramètres',
-        icon: <SettingsIcon color="#fff0e6" width={16} height={16} />,
+        icon: <Settings color="#fff0e6" width={16} height={16} />,
         onClick: () => toggleArcSettings(),
       },
       {
         label: confirmUninstall ? 'Confirmer ?' : 'Désinstaller',
         danger: true,
         keepOpenOnClick: !confirmUninstall,
-        icon: <TrashIcon color="#fff" width={16} height={16} />,
+        icon: <Trash2 color="#fff" width={16} height={16} />,
         onClick: handleUninstallClick,
       },
     ]
 
     return (
-      <div
-        className=" w-80 flex items-stretch rounded-full border-2 border-transparent hover:border-white bg-black shadow-button transition-colors duration-250 cursor-pointer"
-        style={{ WebkitAppRegion: 'no-drag' }}
-      >
+      <div className="relative w-80">
         <button
           onClick={handlePlay}
           disabled={!canPlay}
           className={clsx(
-            'flex flex-1 items-center justify-center gap-3 pl-6 pr-5 py-2 text-3xl font-black uppercase rounded-l-full cursor-pointer',
+            'w-full flex items-center justify-center gap-3 py-2 pr-8 text-3xl font-black uppercase rounded-full border-2 border-transparent hover:border-white bg-black shadow-button transition-colors duration-250 cursor-pointer',
             !canPlay && 'opacity-50 cursor-not-allowed'
           )}
           style={{ WebkitAppRegion: 'no-drag' }}
         >
           {label}
-          <PlayIcon color="#fff0e6" width={26} height={26} />
+          <Play color="#fff0e6" width={26} height={26} />
         </button>
-        <div className="w-px bg-white/25 my-3" aria-hidden />
-        <DropdownMenu
-          items={menuItems}
-          onClose={() => setConfirmUninstall(false)}
-          trigger={
-            <button
-              type="button"
-              className="flex items-center h-full px-4 cursor-pointer rounded-r-full transition-colors duration-150"
-              style={{ WebkitAppRegion: 'no-drag' }}
-            >
-              <EllipsisIcon color="#fff0e6" />
-            </button>
-          }
-        />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2">
+          <DropdownMenu
+            items={menuItems}
+            onClose={() => setConfirmUninstall(false)}
+            trigger={
+              <button
+                type="button"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white border-2 border-transparent hover:border-black cursor-pointer transition-colors duration-250"
+                style={{ WebkitAppRegion: 'no-drag' }}
+              >
+                <EllipsisVertical color="#151013" width={20} height={20} />
+              </button>
+            }
+          />
+        </div>
       </div>
     )
   }
@@ -144,14 +155,12 @@ export default function PlayButton() {
       disabled={isLoading || (selectedArc.installed && !canPlay)}
       className={clsx(
         'w-80 py-2 flex justify-center items-center text-3xl font-black uppercase gap-3 border-2',
-        isLaunching && '!opacity-100 border-0 hover:border-0'
+        isLoading && '!opacity-100 border-0 hover:border-0'
       )}
     >
       {label}
-      {selectedArc.installed && !isLoading && <PlayIcon color="#fff0e6" width={26} height={26} />}
-      {!selectedArc.installed && !isLoading && (
-        <DownloadIcon color="#fff0e6" width={26} height={26} />
-      )}
+      {selectedArc.installed && !isLoading && <Play color="#fff0e6" width={26} height={26} />}
+      {!selectedArc.installed && !isLoading && <Download color="#fff0e6" width={26} height={26} />}
     </Button>
   )
 }
