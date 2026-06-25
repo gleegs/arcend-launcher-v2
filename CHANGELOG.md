@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.2.1](https://github.com/gleegs/arcend-launcher-v2/compare/v2.2.0...v2.2.1) (2026-06-25)
+
+### Bug Fixes
+
+- account skin head by username + dev-mode label ([#58](https://github.com/gleegs/arcend-launcher-v2/issues/58)) ([e5ff8f5](https://github.com/gleegs/arcend-launcher-v2/commit/e5ff8f575c02bcfe1caee59b9071435d54964469))
+
 ## [2.2.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.1.1...v2.2.0) (2026-06-24)
 
 ### Features
