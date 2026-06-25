@@ -51,7 +51,7 @@ export default function AuthButton() {
         >
           <span className="uppercase font-black text-xs">{profile.name}</span>
           <img
-            src={`https://mc-heads.net/avatar/${profile.id}`}
+            src={`https://mc-heads.net/avatar/${encodeURIComponent(profile.name)}`}
             alt={profile.name}
             className="w-5 h-5 rounded-sm"
           />
