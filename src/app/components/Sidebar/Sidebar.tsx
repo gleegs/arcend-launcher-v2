@@ -104,6 +104,11 @@ export default function Sidebar() {
         </div>
       </div>
       <div className="space-y-1">
+        {import.meta.env.DEV && (
+          <span className="block text-center text-[10px] font-black uppercase text-red-600">
+            Dev mode
+          </span>
+        )}
         <span className="uppercase text-xs text-center block">Version</span>
         <a
           href="https://www.arcend.fr/changelog"
