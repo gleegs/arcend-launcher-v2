@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.2.1...v2.3.0) (2026-06-26)
+
+### Features
+
+- log panel improvements, packwiz log surfacing, UI polish ([4b74048](https://github.com/gleegs/arcend-launcher-v2/commit/4b740486cd0d5b00b87580310be6d665943b581e))
+
 ### [2.2.1](https://github.com/gleegs/arcend-launcher-v2/compare/v2.2.0...v2.2.1) (2026-06-25)
 
 ### Bug Fixes
