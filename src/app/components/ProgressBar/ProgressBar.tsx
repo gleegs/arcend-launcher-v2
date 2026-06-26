@@ -75,7 +75,7 @@ export default function ProgressBar({ percent, label, error = null }: ProgressBa
 
   return (
     <div
-      className="flex flex-col gap-1.5 w-72"
+      className="progress-in flex flex-col gap-1.5 w-72"
       style={{ WebkitAppRegion: 'no-drag' }}
       role="status"
       aria-live="polite"

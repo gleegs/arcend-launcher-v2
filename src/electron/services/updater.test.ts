@@ -53,7 +53,7 @@ describe('updater service', () => {
 
       expect(mockUpdateElectronApp).toHaveBeenCalledOnce()
       const opts = mockUpdateElectronApp.mock.calls[0][0]
-      expect(opts.repo).toBe('gleegs/arcend-launcher-v2')
+      expect(opts.repo).toBe('gleegs/arcend-launcher')
       expect(opts.notifyUser).toBe(false)
     })
 

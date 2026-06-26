@@ -9,9 +9,38 @@ import { arcsDir, arcRegistryPath } from '../lib/paths'
 import { ensurePackwiz, getJarPath } from './packwiz'
 import { ensureJava, getJavaExecutable } from './java'
 import type { ArcInstallation, ArcRegistry, ArcInstallProgress, ArcMetadata } from '../types/arc'
+import type { LogEntry, LogLevel } from '../types/launcher'
 
 function getEmptyRegistry(): ArcRegistry {
   return { installations: {} }
+}
+
+// Ids de logs basés sur l'horloge pour ne pas entrer en collision avec ceux du
+// launcher (petits entiers) ni du renderer (négatifs).
+let packwizLogId = Date.now()
+
+function classifyPackwizLine(line: string): LogLevel {
+  const upper = line.toUpperCase()
+  if (/EXCEPTION|FAILED|\bERROR\b|EXCLUDED|UNABLE|CANNOT|REFUSED|TIMED? ?OUT/.test(upper)) {
+    return 'error'
+  }
+  if (/\bWARN/.test(upper)) return 'warn'
+  return 'info'
+}
+
+// Envoie une ligne de la sortie packwiz vers les logs du renderer (onglet Logs).
+function sendPackwizLog(level: LogLevel, message: string): void {
+  const win = getMainWindow()
+  if (win && !win.isDestroyed()) {
+    const entry: LogEntry = {
+      id: packwizLogId++,
+      timestamp: Date.now(),
+      level,
+      message,
+      source: 'launcher',
+    }
+    win.webContents.send(IpcChannels.LAUNCH_ON_LOG, entry)
+  }
 }
 
 function sendProgress(progress: ArcInstallProgress): void {
@@ -152,7 +181,6 @@ async function runPackwiz(
     process.stdout.on('data', (data) => {
       const chunk = data.toString()
       stdout += chunk
-      if (!onProgress) return
 
       pendingLine += chunk
       const lines = pendingLine.split('\n')
@@ -162,23 +190,38 @@ async function runPackwiz(
 
       for (const line of lines) {
         const progress = extractPackwizProgress(line)
-        if (progress && progress.current > lastReportedCurrent) {
-          lastReportedCurrent = progress.current
-          onProgress(progress)
+        if (progress) {
+          // Ligne de progression « (x/y) … » : on la consomme pour le percent
+          // mais on ne la log pas (bruit : ~1 ligne par mod).
+          if (onProgress && progress.current > lastReportedCurrent) {
+            lastReportedCurrent = progress.current
+            onProgress(progress)
+          }
+        } else if (line.trim()) {
+          // Lignes de statut / erreurs → logs (onglet Logs).
+          sendPackwizLog(classifyPackwizLine(line), `[packwiz] ${line.trim()}`)
         }
       }
     })
 
     process.stderr.on('data', (data) => {
-      stderr += data.toString()
+      const chunk = data.toString()
+      stderr += chunk
+      for (const line of chunk.split('\n')) {
+        if (line.trim()) sendPackwizLog('error', `[packwiz] ${line.trim()}`)
+      }
     })
 
     process.on('close', (code) => {
       // Flush d'une éventuelle ligne restante sans \n final.
-      if (onProgress && pendingLine.length > 0) {
+      if (pendingLine.length > 0) {
         const progress = extractPackwizProgress(pendingLine)
-        if (progress && progress.current > lastReportedCurrent) {
-          onProgress(progress)
+        if (progress) {
+          if (onProgress && progress.current > lastReportedCurrent) {
+            onProgress(progress)
+          }
+        } else if (pendingLine.trim()) {
+          sendPackwizLog(classifyPackwizLine(pendingLine), `[packwiz] ${pendingLine.trim()}`)
         }
       }
       if (code === 0) {

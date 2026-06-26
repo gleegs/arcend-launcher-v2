@@ -107,15 +107,13 @@ const App = () => {
           <InfoPanel />
         </div>
         <div className="absolute bottom-0 right-0 p-8 flex flex-col items-end gap-3">
-          <div className="flex items-center gap-4">
-            {(installActive || installError) && (
-              <ProgressBar percent={installPercent} label={installLabel} error={installError} />
-            )}
-            {(launchActive || launchError) && (
-              <ProgressBar percent={launchPercent} label={launchLabel} error={launchError} />
-            )}
-            <PlayButton />
-          </div>
+          {(installActive || installError) && (
+            <ProgressBar percent={installPercent} label={installLabel} error={installError} />
+          )}
+          {(launchActive || launchError) && (
+            <ProgressBar percent={launchPercent} label={launchLabel} error={launchError} />
+          )}
+          <PlayButton />
         </div>
         <SettingsPanel />
         <ArcSettingsPanel />

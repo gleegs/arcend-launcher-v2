@@ -16,7 +16,7 @@ function formatTime(timestamp: number): string {
 export default function LogRow({ entry }: { entry: LogEntry }) {
   return (
     <div className="px-2 py-0.5 leading-tight break-all">
-      <span className="text-white/40 select-none">{formatTime(entry.timestamp)} </span>
+      <span className="text-white/40">{formatTime(entry.timestamp)} </span>
       <span className={clsx('font-medium', LEVEL_COLORS[entry.level])}>{entry.message}</span>
     </div>
   )

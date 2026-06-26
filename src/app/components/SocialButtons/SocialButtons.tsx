@@ -1,7 +1,7 @@
 import { Globe } from 'lucide-react'
 import DiscordIcon from '../DiscordIcon/DiscordIcon'
 
-const DISCORD_URL = 'https://discord.gg/CgMdQsptNW'
+const DISCORD_URL = 'https://discord.gg/Pt4EQjN2gm'
 const WEBSITE_URL = 'https://www.arcend.fr'
 
 const linkClassName =

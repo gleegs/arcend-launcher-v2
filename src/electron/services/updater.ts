@@ -4,7 +4,7 @@ import { getMainWindow } from './window'
 import { IpcChannels } from '../types/ipc'
 import type { UpdateStatus } from '../types/updater'
 
-const REPO = 'gleegs/arcend-launcher-v2'
+const REPO = 'gleegs/arcend-launcher'
 
 let updateVersion: string | null = null
 let initialized = false

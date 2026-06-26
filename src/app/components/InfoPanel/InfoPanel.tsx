@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { clsx } from 'clsx'
-import { ArrowRight, Users, Map, RefreshCw } from 'lucide-react'
+import { ArrowRight, Users, Map, RefreshCw, Maximize2, Minimize2 } from 'lucide-react'
 import { useArcStore } from '../../store/arc'
 import { useLogStore } from '../../store/log'
 import LogRow from '../LogRow/LogRow'
@@ -40,6 +40,7 @@ function computeArcProgress(start: string | null, end: string | null): number {
 export default function InfoPanel() {
   const [tab, setTab] = useState<TabId>('article')
   const [article, setArticle] = useState<LatestArticle | null>(null)
+  const [logsExpanded, setLogsExpanded] = useState(false)
   const selectedArc = useArcStore((s) => s.selectedArc)
   const logs = useLogStore((s) => s.logs)
 
@@ -66,7 +67,7 @@ export default function InfoPanel() {
     if (el && logsAtBottomRef.current) {
       el.scrollTop = el.scrollHeight
     }
-  }, [logs, activeTab])
+  }, [logs, activeTab, logsExpanded])
 
   useEffect(() => {
     window.electronAPI
@@ -86,7 +87,13 @@ export default function InfoPanel() {
   }, [])
 
   return (
-    <div className="w-[400px]" style={{ WebkitAppRegion: 'no-drag' }}>
+    <div
+      className={clsx(
+        'transition-[width] duration-300 ease-out',
+        activeTab === 'logs' && logsExpanded ? 'w-[680px]' : 'w-[400px]'
+      )}
+      style={{ WebkitAppRegion: 'no-drag' }}
+    >
       {/* Tabs */}
       <div className="flex">
         {tabs.map((t, i) => (
@@ -112,7 +119,8 @@ export default function InfoPanel() {
       {/* Body */}
       <div
         className={clsx(
-          'relative -mt-px h-[156px] overflow-hidden rounded-[4px] rounded-tl-none p-3 shadow-glass-lg',
+          'relative -mt-px overflow-hidden rounded-[4px] rounded-tl-none p-3 shadow-glass-lg transition-[height] duration-300 ease-out',
+          activeTab === 'logs' && logsExpanded ? 'h-[440px]' : 'h-[156px]',
           activeTab === 'logs' ? 'bg-black text-white' : 'bg-white text-black'
         )}
       >
@@ -210,10 +218,25 @@ export default function InfoPanel() {
           ))}
 
         {activeTab === 'logs' && (
+          <button
+            type="button"
+            onClick={() => setLogsExpanded((v) => !v)}
+            className="absolute right-4 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white text-black cursor-pointer border-2 border-transparent hover:border-white hover:scale-110 transition-all duration-250"
+            aria-label={logsExpanded ? 'Réduire les logs' : 'Agrandir les logs'}
+          >
+            {logsExpanded ? (
+              <Minimize2 width={12} height={12} />
+            ) : (
+              <Maximize2 width={12} height={12} />
+            )}
+          </button>
+        )}
+
+        {activeTab === 'logs' && (
           <div
             ref={logsRef}
             onScroll={handleLogsScroll}
-            className="console-scroll h-full overflow-y-auto font-mono text-[11px]"
+            className="console-scroll -mr-[5px] h-full select-text cursor-text overflow-y-auto font-mono text-[11px]"
           >
             {logs.length === 0 ? (
               <div className="px-2 py-0.5 text-xs text-white/60">Aucun log</div>

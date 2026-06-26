@@ -48,6 +48,21 @@
   animation: cover-fade-in 0.3s ease-out;
 }
 
+@keyframes progress-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.progress-in {
+  animation: progress-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 .ram-slider {
   -webkit-appearance: none;
   appearance: none;
@@ -65,6 +80,12 @@
   border-radius: 50%;
   background: var(--color-white);
   cursor: pointer;
+}
+
+.console-scroll::selection,
+.console-scroll *::selection {
+  background-color: var(--color-white);
+  color: var(--color-black);
 }
 
 .console-scroll::-webkit-scrollbar {

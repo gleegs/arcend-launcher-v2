@@ -15,7 +15,15 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({ setupIcon: 'build/icon_setup.ico', setupExe: 'Arcend Launcher Setup.exe' }),
+    new MakerSquirrel({
+      setupIcon: 'build/icon_setup.ico',
+      setupExe: 'Arcend Launcher Setup.exe',
+      // Icône affichée dans « Programmes et fonctionnalités » (Ajouter/supprimer
+      // des programmes). Squirrel exige une URL vers un .ico ; sans elle, il
+      // utilise l'icône Electron par défaut.
+      iconUrl:
+        'https://raw.githubusercontent.com/gleegs/arcend-launcher/main/build/uninstall-icon.ico',
+    }),
     new MakerZIP({}, ['darwin']),
     new MakerDeb({
       options: {
@@ -38,7 +46,7 @@ const config: ForgeConfig = {
     new PublisherGithub({
       repository: {
         owner: 'gleegs',
-        name: 'arcend-launcher-v2',
+        name: 'arcend-launcher',
       },
       authToken: process.env.GITHUB_TOKEN,
       prerelease: true,
