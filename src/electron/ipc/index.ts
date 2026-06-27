@@ -5,6 +5,7 @@ import { registerJavaIpc } from './java.ipc'
 import { registerPackwizIpc } from './packwiz.ipc'
 import { registerArcIpc } from './arc.ipc'
 import { registerArticleIpc } from './article.ipc'
+import { registerServerIpc } from './server.ipc'
 import { registerLauncherIpc } from './launcher.ipc'
 import { registerShellIpc } from './shell.ipc'
 import { registerAppIpc } from './app.ipc'
@@ -18,6 +19,7 @@ export function registerAllIpcHandlers(): void {
   registerPackwizIpc()
   registerArcIpc()
   registerArticleIpc()
+  registerServerIpc()
   registerLauncherIpc()
   registerShellIpc()
   registerAppIpc()

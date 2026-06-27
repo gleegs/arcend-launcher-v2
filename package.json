@@ -84,6 +84,7 @@
     "dotenv": "^17.4.2",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^11.0.2",
+    "gamedig": "^5.3.3",
     "lucide-react": "^1.21.0",
     "minecraft-launcher-core": "^3.18.2",
     "msmc": "^5.0.5",

@@ -4,6 +4,7 @@ import type { ArcInstallation, ArcInstallProgress, ArcMetadata, RemoteArc } from
 import type { LaunchOptions, LaunchProgress, LogEntry } from './launcher'
 import type { UpdateStatus, UpdateDownloadedInfo } from './updater'
 import type { LatestArticle } from './article'
+import type { ServerStatus } from './server'
 
 export interface WindowBounds {
   x?: number
@@ -67,6 +68,7 @@ export const IpcChannels = {
   ARC_FETCH_REMOTE: 'arc:fetchRemote',
   ARC_FETCH_ACTIVE: 'arc:fetchActive',
   ARTICLE_FETCH_LATEST: 'article:fetchLatest',
+  SERVER_FETCH_STATUS: 'server:fetchStatus',
   LAUNCH_GAME: 'launch:game',
   LAUNCH_IS_RUNNING: 'launch:isRunning',
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
@@ -121,6 +123,7 @@ export interface ElectronApi {
   arcFetchRemote: () => Promise<IpcResult<RemoteArc[]>>
   arcFetchActive: () => Promise<IpcResult<RemoteArc | null>>
   articleFetchLatest: () => Promise<IpcResult<LatestArticle | null>>
+  serverFetchStatus: () => Promise<IpcResult<ServerStatus>>
   launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
@@ -135,3 +138,4 @@ export interface ElectronApi {
 export type { ArcMetadata, RemoteArc } from './arc'
 export type { ArcModLoader } from './arc'
 export type { LatestArticle } from './article'
+export type { ServerStatus } from './server'
