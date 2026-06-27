@@ -198,6 +198,7 @@ describe('applyArcProgress', () => {
 
 describe('applyLaunchProgress', () => {
   const PREV: LaunchState = {
+    status: 'launching',
     active: true,
     percent: 42,
     label: 'précédent',

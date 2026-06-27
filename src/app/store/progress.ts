@@ -20,6 +20,10 @@ export interface InstallState {
 
 export interface LaunchState {
   active: boolean
+  /** Statut brut du lancement ('idle' au repos). Permet de couvrir toute la
+   *  session (préparation + running) là où `active` repasse à false dès que le
+   *  jeu démarre. */
+  status: LaunchStatus | 'idle'
   /** Pourcentage [0, 100]. Pendant la phase launching, interpolé par l'asymptote. */
   percent: number
   label: string
@@ -151,6 +155,7 @@ const INSTALL_PREPARING: InstallState = {
 
 const LAUNCH_IDLE: LaunchState = {
   active: false,
+  status: 'idle',
   percent: 0,
   label: '',
   sublabel: null,
@@ -376,6 +381,7 @@ export function applyArcProgress(
 export function applyLaunchProgress(progress: LaunchProgress, prev: LaunchState): LaunchState {
   if (progress.status === 'error') {
     return {
+      status: 'error',
       active: false,
       percent: 0,
       label: LAUNCH_LABELS.error,
@@ -385,6 +391,7 @@ export function applyLaunchProgress(progress: LaunchProgress, prev: LaunchState)
   }
   if (progress.status === 'running' || progress.status === 'closed') {
     return {
+      status: progress.status,
       active: false,
       percent: 100,
       label: LAUNCH_LABELS[progress.status],
@@ -395,6 +402,7 @@ export function applyLaunchProgress(progress: LaunchProgress, prev: LaunchState)
   // Status actifs : le percent est piloté par l'asymptote temporelle, on
   // conserve donc prev.percent et on ne met à jour que le label.
   return {
+    status: progress.status,
     active: true,
     percent: prev.percent,
     label: LAUNCH_LABELS[progress.status],

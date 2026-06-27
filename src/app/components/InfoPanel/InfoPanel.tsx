@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { clsx } from 'clsx'
-import { ArrowRight, Users, Map, RefreshCw, Maximize2, Minimize2 } from 'lucide-react'
+import { ArrowRight, Users, Map, Maximize2, Minimize2 } from 'lucide-react'
 import { useArcStore } from '../../store/arc'
 import { useLogStore } from '../../store/log'
+import { useProgressStore } from '../../store/progress'
 import LogRow from '../LogRow/LogRow'
 import { isProposalArc } from '../../lib/proposalArc'
 import type { LatestArticle } from '../../../electron/types/article'
+import type { ServerStatus } from '../../../electron/types/server'
 
 type TabId = 'article' | 'serveur' | 'logs'
 
@@ -14,10 +16,6 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'serveur', label: 'Serveur' },
   { id: 'logs', label: 'Logs' },
 ]
-
-// TODO: remplacer par les vraies données serveur (ping MC / API).
-const MOCK_PLAYERS = 19
-const MOCK_SERVER_ONLINE = true
 
 const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: '2-digit', month: 'long' })
 
@@ -43,6 +41,8 @@ export default function InfoPanel() {
   const [logsExpanded, setLogsExpanded] = useState(false)
   const selectedArc = useArcStore((s) => s.selectedArc)
   const logs = useLogStore((s) => s.logs)
+  const launchStatus = useProgressStore((s) => s.launch.status)
+  const [server, setServer] = useState<ServerStatus | null>(null)
 
   const progress = computeArcProgress(selectedArc?.startDate ?? null, selectedArc?.endDate ?? null)
 
@@ -86,6 +86,30 @@ export default function InfoPanel() {
       .catch(() => undefined)
   }, [])
 
+  // Le statut serveur est rafraîchi toutes les 30 s, mais on suspend le polling
+  // pendant toute la session de jeu (préparation du lancement jusqu'à « running »)
+  // car le launcher n'est plus actif. Il reprend quand le jeu se ferme (« closed »)
+  // et que le launcher réapparaît.
+  const gameActive =
+    launchStatus !== 'idle' && launchStatus !== 'closed' && launchStatus !== 'error'
+
+  useEffect(() => {
+    if (gameActive) return
+    const fetchServer = () =>
+      window.electronAPI
+        .serverFetchStatus()
+        .then((res) => {
+          if (res.ok && res.data) setServer(res.data)
+        })
+        .catch(() => undefined)
+    fetchServer()
+    const id = setInterval(fetchServer, 30_000)
+    return () => clearInterval(id)
+  }, [gameActive])
+
+  const online = server?.online ?? false
+  const playerCount = server?.players ?? 0
+
   return (
     <div
       className={clsx(
@@ -125,20 +149,10 @@ export default function InfoPanel() {
         )}
       >
         {activeTab === 'serveur' && (
-          <button
-            type="button"
-            className="absolute right-4 top-4 flex h-6 w-6 items-center justify-center rounded-full bg-black text-white cursor-pointer border-2 border-transparent hover:border-black hover:scale-110 transition-all duration-250"
-            aria-label="Rafraîchir"
-          >
-            <RefreshCw width={14} height={14} />
-          </button>
-        )}
-
-        {activeTab === 'serveur' && (
           <div className="flex h-full flex-col justify-between">
             <div>
               <div className="flex items-center gap-1.5 text-[16px] font-black uppercase leading-none">
-                {MOCK_PLAYERS} Joueurs
+                {playerCount} Joueurs
                 <Users width={16} height={16} />
               </div>
               <div className="mt-0.5 text-[10px] font-bold uppercase text-black/50">Connectés</div>
@@ -146,13 +160,13 @@ export default function InfoPanel() {
 
             <div>
               <div className="flex items-center gap-1.5 text-[16px] font-black uppercase leading-none">
-                {MOCK_SERVER_ONLINE ? 'En ligne' : 'Hors ligne'}
+                {online ? 'En ligne' : 'Hors ligne'}
                 <span
                   className={clsx(
                     'inline-block h-2.5 w-2.5 rounded-full',
-                    MOCK_SERVER_ONLINE && 'animate-pulse'
+                    online && 'animate-pulse'
                   )}
-                  style={{ backgroundColor: MOCK_SERVER_ONLINE ? 'var(--color-green)' : '#dc2626' }}
+                  style={{ backgroundColor: online ? 'var(--color-green)' : '#dc2626' }}
                 />
               </div>
               <div className="mt-0.5 text-[10px] font-bold uppercase text-black/50">
