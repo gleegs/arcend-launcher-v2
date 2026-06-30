@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.1](https://github.com/gleegs/arcend-launcher-v2/compare/v2.3.0...v2.3.1) (2026-06-30)
+
+### Features
+
+- cancellable launch + logs cursor polish ([8acb885](https://github.com/gleegs/arcend-launcher-v2/commit/8acb8857b18d05af46987b0a4c5885c58ca59182))
+- **server:** display live server status and player count ([db9265d](https://github.com/gleegs/arcend-launcher-v2/commit/db9265d4be914cd22873bae076a43339821c1555))
+- **server:** display live server status and player count ([#59](https://github.com/gleegs/arcend-launcher-v2/issues/59)) ([b828a3e](https://github.com/gleegs/arcend-launcher-v2/commit/b828a3e5dd07f9c0bb2328c2a11c928928e47c00))
+
 ## [2.3.0](https://github.com/gleegs/arcend-launcher-v2/compare/v2.2.1...v2.3.0) (2026-06-26)
 
 ### Features
