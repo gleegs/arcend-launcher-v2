@@ -70,6 +70,7 @@ export const IpcChannels = {
   ARTICLE_FETCH_LATEST: 'article:fetchLatest',
   SERVER_FETCH_STATUS: 'server:fetchStatus',
   LAUNCH_GAME: 'launch:game',
+  LAUNCH_CANCEL: 'launch:cancel',
   LAUNCH_IS_RUNNING: 'launch:isRunning',
   LAUNCH_ON_PROGRESS: 'launch:onProgress',
   LAUNCH_ON_LOG: 'launch:onLog',
@@ -125,6 +126,7 @@ export interface ElectronApi {
   articleFetchLatest: () => Promise<IpcResult<LatestArticle | null>>
   serverFetchStatus: () => Promise<IpcResult<ServerStatus>>
   launchGame: (options: LaunchOptions) => Promise<IpcResult<void>>
+  launchCancel: () => Promise<IpcResult<void>>
   launchIsRunning: () => Promise<IpcResult<boolean>>
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => () => void
   onLog: (callback: (entry: LogEntry) => void) => () => void

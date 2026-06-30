@@ -7,7 +7,15 @@ import { useArcSettingsStore } from '../../store/arcSettings'
 import { useAuthStore } from '../../store/auth'
 import { useProgressStore } from '../../store/progress'
 import { remoteArcToMetadata } from '../../../electron/types/arc'
-import { Download, Play, EllipsisVertical, Settings, Trash2, NotebookPen } from 'lucide-react'
+import {
+  Download,
+  Play,
+  Square,
+  EllipsisVertical,
+  Settings,
+  Trash2,
+  NotebookPen,
+} from 'lucide-react'
 import { isProposalArc, PROPOSE_ARC_DISCORD_URL } from '../../lib/proposalArc'
 
 export default function PlayButton() {
@@ -25,6 +33,7 @@ export default function PlayButton() {
   const resetLaunch = useProgressStore((s) => s.resetLaunch)
 
   const [confirmUninstall, setConfirmUninstall] = useState(false)
+  const [cancelling, setCancelling] = useState(false)
 
   const isInstalling = install.active
   const isLaunching = launch.active
@@ -68,6 +77,7 @@ export default function PlayButton() {
   }
 
   const handlePlay = async () => {
+    setCancelling(false)
     resetLaunch()
     const { maxMemory } = getArcSettings(selectedArc.slug)
     const result = await window.electronAPI.launchGame({
@@ -79,6 +89,16 @@ export default function PlayButton() {
     if (!result.ok) {
       resetLaunch()
     }
+  }
+
+  const handleStop = async () => {
+    if (cancelling) return
+    // On NE remet PAS l'UI sur « Jouer » tout de suite : c'est le statut
+    // `closed` renvoyé par le main (une fois la synchro/le process coupé) qui
+    // éteint l'état de lancement. Un resetLaunch() immédiat ferait clignoter le
+    // bouton vers « Jouer » et le spam relancerait le jeu.
+    setCancelling(true)
+    await window.electronAPI.launchCancel()
   }
 
   const handleUninstallClick = async () => {
@@ -99,6 +119,24 @@ export default function PlayButton() {
       : selectedArc.installed
         ? 'Jouer'
         : 'Installer'
+
+  // Pendant le lancement, le même bouton devient un bouton « Arrêter » qui
+  // annule la synchro/le démarrage en cours (bordure rouge au survol).
+  if (isLaunching) {
+    return (
+      <Button
+        onClick={handleStop}
+        disabled={cancelling}
+        className={clsx(
+          'flex w-80 items-center justify-center gap-3 border-2 py-2 text-3xl font-black uppercase',
+          cancelling ? 'opacity-70' : '!opacity-100 hover:!border-red-500'
+        )}
+      >
+        {cancelling ? 'Annulation…' : 'Arrêter'}
+        <Square color="#fff0e6" width={22} height={22} fill="#fff0e6" />
+      </Button>
+    )
+  }
 
   if (showKebab) {
     const menuItems: MenuItem[] = [

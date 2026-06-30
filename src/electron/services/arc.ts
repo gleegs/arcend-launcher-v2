@@ -88,15 +88,17 @@ export function getInstalledArcs(): ArcInstallation[] {
   )
 }
 
-function getDirectorySize(dirPath: string): number {
+// Async (fs.promises) pour ne pas bloquer le process principal : un modpack
+// fait des milliers de fichiers, un parcours sync figerait l'UI.
+async function getDirectorySize(dirPath: string): Promise<number> {
   let totalSize = 0
-  const files = fs.readdirSync(dirPath)
+  const files = await fs.promises.readdir(dirPath, { withFileTypes: true })
   for (const file of files) {
-    const filePath = path.join(dirPath, file)
-    const stat = fs.statSync(filePath)
-    if (stat.isDirectory()) {
-      totalSize += getDirectorySize(filePath)
+    const filePath = path.join(dirPath, file.name)
+    if (file.isDirectory()) {
+      totalSize += await getDirectorySize(filePath)
     } else {
+      const stat = await fs.promises.stat(filePath)
       totalSize += stat.size
     }
   }
@@ -160,7 +162,8 @@ function computeModsPercent(current: number, total: number): number {
 async function runPackwiz(
   mcPath: string,
   packwizUrl: string,
-  onProgress?: (progress: PackwizProgress) => void
+  onProgress?: (progress: PackwizProgress) => void,
+  signal?: AbortSignal
 ): Promise<void> {
   const packwizJar = getJarPath()
   const javaPath = getJavaExecutable('21')
@@ -168,7 +171,8 @@ async function runPackwiz(
   return new Promise((resolve, reject) => {
     const args = ['-Dfile.encoding=UTF-8', '-jar', packwizJar, '--no-gui', packwizUrl]
 
-    const process = spawn(javaPath, args, { cwd: mcPath })
+    // `signal` permet d'annuler la synchro (le process est tué à l'abort).
+    const process = spawn(javaPath, args, { cwd: mcPath, signal })
 
     let stdout = ''
     let stderr = ''
@@ -304,7 +308,7 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
     const resolvedMetadata = await resolveMetadata(metadata)
 
     if (fs.existsSync(arcPath)) {
-      fs.rmSync(arcPath, { recursive: true, force: true })
+      await fs.promises.rm(arcPath, { recursive: true, force: true })
     }
     fs.mkdirSync(mcPath, { recursive: true })
 
@@ -325,7 +329,7 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
     const arcJsonPath = path.join(arcPath, 'arc.json')
     fs.writeFileSync(arcJsonPath, JSON.stringify(resolvedMetadata, null, 2), 'utf-8')
 
-    const size = getDirectorySize(arcPath)
+    const size = await getDirectorySize(arcPath)
 
     const installation: ArcInstallation = {
       arcId,
@@ -352,6 +356,23 @@ export async function installArc(arcId: string, metadata: ArcMetadata): Promise<
     })
     throw error
   }
+}
+
+/**
+ * Re-synchronise les mods d'un arc déjà installé avec son `pack.toml` distant
+ * (packwiz). Utilisé comme vérification du modpack à chaque lancement :
+ * restaure/met à jour les mods et retire ceux qui ne sont plus dans le pack.
+ * La sortie packwiz (statuts + erreurs) est routée vers les logs.
+ */
+export async function syncArcModpack(arcId: string, signal?: AbortSignal): Promise<void> {
+  const installation = getRegistry().installations[arcId]
+  if (!installation) {
+    throw new Error(`Arc "${arcId}" n'est pas installé.`)
+  }
+  const mcPath = path.join(getArcPath(arcId), 'minecraft')
+  await ensureJava('21')
+  await ensurePackwiz()
+  await runPackwiz(mcPath, installation.metadata.packwizUrl, undefined, signal)
 }
 
 export function uninstallArc(arcId: string): void {

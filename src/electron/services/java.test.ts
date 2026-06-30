@@ -27,6 +27,7 @@ const {
   mockFsRmdirSync,
   mockFsUnlinkSync,
   mockFsRmSync,
+  mockFsPromisesRm,
   mockCreateWriteStream,
 } = vi.hoisted(() => ({
   mockFsExistsSync: vi.fn(),
@@ -39,6 +40,7 @@ const {
   mockFsRmdirSync: vi.fn(),
   mockFsUnlinkSync: vi.fn(),
   mockFsRmSync: vi.fn(),
+  mockFsPromisesRm: vi.fn(),
   mockCreateWriteStream: vi.fn(),
 }))
 
@@ -55,6 +57,9 @@ vi.mock('node:fs', () => {
     unlinkSync: (...args: unknown[]) => mockFsUnlinkSync(...args),
     rmSync: (...args: unknown[]) => mockFsRmSync(...args),
     createWriteStream: (...args: unknown[]) => mockCreateWriteStream(...args),
+    promises: {
+      rm: (...args: unknown[]) => mockFsPromisesRm(...args),
+    },
   }
   return { __esModule: true, default: fns, ...fns }
 })
@@ -123,6 +128,7 @@ describe('java service', () => {
     mockFsRmdirSync.mockReset()
     mockFsUnlinkSync.mockReset()
     mockFsRmSync.mockReset()
+    mockFsPromisesRm.mockReset().mockResolvedValue(undefined)
     mockCreateWriteStream.mockReset()
     mockGetMainWindow.mockReset()
     mockAdmZipInstances.length = 0

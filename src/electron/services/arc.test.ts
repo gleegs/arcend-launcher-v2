@@ -40,6 +40,9 @@ const {
   mockFsRmSync,
   mockFsReaddirSync,
   mockFsStatSync,
+  mockFsPromisesReaddir,
+  mockFsPromisesStat,
+  mockFsPromisesRm,
   mockSpawn,
   mockHttpsGet,
   mockHttpGet,
@@ -51,6 +54,9 @@ const {
   mockFsRmSync: vi.fn(),
   mockFsReaddirSync: vi.fn(),
   mockFsStatSync: vi.fn(),
+  mockFsPromisesReaddir: vi.fn(),
+  mockFsPromisesStat: vi.fn(),
+  mockFsPromisesRm: vi.fn(),
   mockSpawn: vi.fn(),
   mockHttpsGet: vi.fn(),
   mockHttpGet: vi.fn(),
@@ -65,6 +71,11 @@ vi.mock('node:fs', () => {
     rmSync: (...args: unknown[]) => mockFsRmSync(...args),
     readdirSync: (...args: unknown[]) => mockFsReaddirSync(...args),
     statSync: (...args: unknown[]) => mockFsStatSync(...args),
+    promises: {
+      readdir: (...args: unknown[]) => mockFsPromisesReaddir(...args),
+      stat: (...args: unknown[]) => mockFsPromisesStat(...args),
+      rm: (...args: unknown[]) => mockFsPromisesRm(...args),
+    },
   }
   return { __esModule: true, default: fns, ...fns }
 })
@@ -162,6 +173,9 @@ describe('arc service', () => {
     mockFsRmSync.mockReset()
     mockFsReaddirSync.mockReset()
     mockFsStatSync.mockReset()
+    mockFsPromisesReaddir.mockReset().mockResolvedValue([])
+    mockFsPromisesStat.mockReset().mockResolvedValue({ size: 0 })
+    mockFsPromisesRm.mockReset().mockResolvedValue(undefined)
     mockSpawn.mockReset()
     mockHttpsGet.mockReset()
     mockHttpGet.mockReset()

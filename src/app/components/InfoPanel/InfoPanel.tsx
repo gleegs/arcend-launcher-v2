@@ -250,12 +250,16 @@ export default function InfoPanel() {
           <div
             ref={logsRef}
             onScroll={handleLogsScroll}
-            className="console-scroll -mr-[5px] h-full select-text cursor-text overflow-y-auto font-mono text-[11px]"
+            className="console-scroll -mr-[5px] h-full select-text overflow-y-auto font-mono text-[11px]"
           >
             {logs.length === 0 ? (
               <div className="px-2 py-0.5 text-xs text-white/60">Aucun log</div>
             ) : (
-              logs.map((entry) => <LogRow key={entry.id} entry={entry} />)
+              <div className="cursor-text">
+                {logs.map((entry) => (
+                  <LogRow key={entry.id} entry={entry} />
+                ))}
+              </div>
             )}
           </div>
         )}

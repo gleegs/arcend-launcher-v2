@@ -208,7 +208,7 @@ async function extractJre(zipPath: string, version: string): Promise<string> {
   sendProgress({ version, percent: 0, status: 'extracting' })
 
   if (fs.existsSync(installPath)) {
-    fs.rmSync(installPath, { recursive: true, force: true })
+    await fs.promises.rm(installPath, { recursive: true, force: true })
   }
 
   const zip = new AdmZip(zipPath)
@@ -220,8 +220,17 @@ async function extractJre(zipPath: string, version: string): Promise<string> {
   for (const entry of entries) {
     zip.extractEntryTo(entry, installPath, true, true)
     extracted++
-    const percent = Math.floor((extracted / totalEntries) * 100)
-    sendProgress({ version, percent, status: 'extracting' })
+    // Throttle la progression et rend la main à la boucle d'événements toutes
+    // les ~25 entrées : sinon l'extraction sync bloque le process principal
+    // (UI/IPC/déplacement de fenêtre figés) pendant toute la durée.
+    if (extracted % 25 === 0 || extracted === totalEntries) {
+      sendProgress({
+        version,
+        percent: Math.floor((extracted / totalEntries) * 100),
+        status: 'extracting',
+      })
+      await new Promise((resolve) => setImmediate(resolve))
+    }
   }
 
   const extractedDirs = fs.readdirSync(installPath)

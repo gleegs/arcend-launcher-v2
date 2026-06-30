@@ -102,6 +102,7 @@ const electronApi: ElectronApi = {
     ipcRenderer.invoke(IpcChannels.SERVER_FETCH_STATUS) as Promise<IpcResult<ServerStatus>>,
   launchGame: (options: LaunchOptions) =>
     ipcRenderer.invoke(IpcChannels.LAUNCH_GAME, options) as Promise<IpcResult<void>>,
+  launchCancel: () => ipcRenderer.invoke(IpcChannels.LAUNCH_CANCEL) as Promise<IpcResult<void>>,
   launchIsRunning: () =>
     ipcRenderer.invoke(IpcChannels.LAUNCH_IS_RUNNING) as Promise<IpcResult<boolean>>,
   onLaunchProgress: (callback: (progress: LaunchProgress) => void) => {

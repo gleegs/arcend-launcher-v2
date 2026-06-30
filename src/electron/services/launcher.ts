@@ -3,13 +3,14 @@ import path from 'node:path'
 import crypto from 'node:crypto'
 import https from 'node:https'
 import http from 'node:http'
+import { spawn, type ChildProcess } from 'node:child_process'
 import { Client, type ILauncherOptions, type IUser } from 'minecraft-launcher-core'
 import { getMainWindow, hideWindow, restoreWindow } from './window'
 import { IpcChannels } from '../types/ipc'
 import type { CachedProfile } from '../types/ipc'
 import { getConfig } from './store'
 import { auth, decryptToken } from './auth'
-import { getArcPath, getRegistry as getArcRegistry } from './arc'
+import { getArcPath, getRegistry as getArcRegistry, syncArcModpack } from './arc'
 import { ensureJava, getJavaExecutable } from './java'
 import type {
   LaunchOptions,
@@ -20,6 +21,8 @@ import type {
 } from '../types/launcher'
 
 let activeLauncher: Client | null = null
+let activeGameChild: ChildProcess | null = null
+let launchAbort: AbortController | null = null
 
 let logIdCounter = 0
 
@@ -154,10 +157,26 @@ async function ensureModLoaderInstaller(
 }
 
 export async function launchGame(options: LaunchOptions): Promise<void> {
-  if (activeLauncher) {
+  if (activeLauncher || launchAbort) {
     throw new Error("Un jeu est déjà en cours d'exécution.")
   }
 
+  // Permet d'annuler le lancement (synchro packwiz et/ou process du jeu) via
+  // cancelLaunch(). Le signal est propagé à packwiz et coupe son process.
+  const abort = new AbortController()
+  launchAbort = abort
+
+  try {
+    await runLaunch(options, abort)
+  } finally {
+    // Quel que soit le chemin de sortie (jeu fermé, erreur, annulation), on
+    // libère l'état de lancement pour permettre un nouvel essai.
+    launchAbort = null
+    activeGameChild = null
+  }
+}
+
+async function runLaunch(options: LaunchOptions, abort: AbortController): Promise<void> {
   const { arcId, mode, maxMemory = '4G', minMemory = '2G' } = options
 
   sendProgress({ status: 'validating_arc', percent: 0 })
@@ -178,6 +197,34 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
   }
 
   sendLog('info', 'Arc validé', 'launcher')
+
+  // Synchronisation du modpack à chaque lancement : packwiz met les mods en
+  // conformité avec le pack.toml du serveur (détail dans les logs). En cas
+  // d'échec, on n'enchaîne pas sur un modpack incorrect.
+  sendProgress({ status: 'validating_arc', percent: 5 })
+  sendLog('info', 'Synchronisation du modpack…', 'launcher')
+  try {
+    await syncArcModpack(arcId, abort.signal)
+    sendLog('info', 'Modpack à jour', 'launcher')
+  } catch (error) {
+    // Annulation utilisateur : cancelLaunch() a déjà nettoyé l'état et envoyé
+    // la progression, on sort sans signaler d'erreur.
+    if (abort.signal.aborted) {
+      return
+    }
+    sendLog(
+      'error',
+      `Échec de la synchronisation du modpack : ${error instanceof Error ? error.message : String(error)}`,
+      'launcher'
+    )
+    const userMessage = 'Échec de la synchronisation du modpack (voir les logs)'
+    sendProgress({ status: 'error', percent: 0, error: userMessage })
+    throw new Error(userMessage)
+  }
+
+  if (abort.signal.aborted) {
+    return
+  }
 
   sendProgress({ status: 'validating_auth', percent: 10 })
   sendLog(
@@ -207,6 +254,12 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
     )
   }
 
+  // Annulation pendant l'auth : on s'arrête sans émettre d'autre progression
+  // (sinon on réactiverait la barre après le `closed` envoyé par cancelLaunch).
+  if (abort.signal.aborted) {
+    return
+  }
+
   sendProgress({ status: 'preparing_launch', percent: 30 })
   sendLog('info', 'Préparation du lancement...', 'launcher')
 
@@ -219,11 +272,22 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
     sendLog('info', 'Mod loader prêt', 'launcher')
   }
 
+  if (abort.signal.aborted) {
+    return
+  }
+
   const resolvedJavaVersion = javaVersion || '21'
   sendLog('info', `Vérification de Java ${resolvedJavaVersion}...`, 'launcher')
   await ensureJava(resolvedJavaVersion)
   const javaPath = getJavaExecutable(resolvedJavaVersion)
   sendLog('info', `Java : ${javaPath}`, 'launcher')
+
+  // Dernier point d'annulation avant que MCLC ne prenne la main : une fois la
+  // préparation MCLC lancée (download assets/libs), elle n'est plus
+  // interruptible — on ne peut que tuer le process du jeu une fois spawné.
+  if (abort.signal.aborted) {
+    return
+  }
 
   const launcher = new Client()
   activeLauncher = launcher
@@ -285,21 +349,83 @@ export async function launchGame(options: LaunchOptions): Promise<void> {
     sendLog('info', `Mémoire : ${minMemory} / ${maxMemory}`, 'launcher')
     sendProgress({ status: 'launching', percent: 60 })
 
-    launcher.launch(launchOpts).catch((err: Error) => {
-      activeLauncher = null
-      restoreWindow()
-
-      sendLog('error', `Erreur lors du lancement : ${err.message}`, 'launcher')
-
-      sendProgress({
-        status: 'error',
-        percent: 0,
-        error: err.message,
+    launcher
+      .launch(launchOpts)
+      .then((child) => {
+        activeGameChild = (child as ChildProcess | null) ?? null
+        // Annulation arrivée pendant que MCLC préparait/démarrait le jeu : le
+        // process vient d'être spawné, on le tue immédiatement (avant que la
+        // fenêtre du jeu n'ait le temps de s'afficher).
+        if (abort.signal.aborted && activeGameChild) {
+          sendLog('warn', 'Lancement annulé : arrêt du process du jeu', 'launcher')
+          killGameProcess(activeGameChild)
+          activeGameChild = null
+        }
       })
+      .catch((err: Error) => {
+        activeLauncher = null
+        restoreWindow()
 
-      reject(new Error(`Erreur lors du lancement : ${err.message}`))
-    })
+        // Annulation utilisateur : cancelLaunch() a déjà envoyé la progression.
+        if (abort.signal.aborted) {
+          resolve()
+          return
+        }
+
+        sendLog('error', `Erreur lors du lancement : ${err.message}`, 'launcher')
+
+        sendProgress({
+          status: 'error',
+          percent: 0,
+          error: err.message,
+        })
+
+        reject(new Error(`Erreur lors du lancement : ${err.message}`))
+      })
   })
+}
+
+/**
+ * Tue le process du jeu de manière fiable. `child.kill()` (SIGTERM) ne termine
+ * pas toujours la JVM Minecraft sous Windows ; on passe par `taskkill /T /F`
+ * pour couper tout l'arbre de process de force.
+ */
+function killGameProcess(child: ChildProcess): void {
+  try {
+    if (process.platform === 'win32' && child.pid) {
+      spawn('taskkill', ['/PID', String(child.pid), '/T', '/F'])
+    } else {
+      child.kill('SIGKILL')
+    }
+  } catch {
+    // process déjà terminé
+  }
+}
+
+export function cancelLaunch(): void {
+  // Toujours tracé : permet de vérifier dans l'onglet Logs que le main reçoit
+  // bien la demande (si ce message n'apparaît pas, le process principal tourne
+  // sur du vieux code — relancer `npm start`).
+  sendLog('warn', 'Annulation du lancement demandée', 'launcher')
+
+  if (!activeLauncher && !launchAbort) {
+    sendLog('info', 'Aucun lancement actif à annuler', 'launcher')
+    return
+  }
+
+  // Coupe la synchro packwiz en cours (via le signal) et le process du jeu
+  // s'il a déjà démarré.
+  launchAbort?.abort()
+  if (activeGameChild) {
+    sendLog('warn', 'Arrêt du process du jeu', 'launcher')
+    killGameProcess(activeGameChild)
+    activeGameChild = null
+  }
+  activeLauncher = null
+
+  sendLog('warn', 'Lancement annulé', 'launcher')
+  sendProgress({ status: 'closed', percent: 0, exitCode: null })
+  restoreWindow()
 }
 
 export function isGameRunning(): boolean {

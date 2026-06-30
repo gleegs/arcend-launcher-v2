@@ -28,10 +28,12 @@ vi.mock('./auth', () => ({
 
 const mockGetArcPath = vi.fn()
 const mockGetArcRegistry = vi.fn()
+const mockSyncArcModpack = vi.fn()
 
 vi.mock('./arc', () => ({
   getArcPath: (...args: unknown[]) => mockGetArcPath(...args),
   getRegistry: (...args: unknown[]) => mockGetArcRegistry(...args),
+  syncArcModpack: (...args: unknown[]) => mockSyncArcModpack(...args),
 }))
 
 const mockEnsureJava = vi.fn()
@@ -176,6 +178,7 @@ function setupArcMocks() {
     installations: { 'test-arc': sampleInstallation },
   })
   mockGetArcPath.mockReturnValue(sampleArcPath)
+  mockSyncArcModpack.mockResolvedValue(undefined)
   mockFsExistsSync.mockImplementation((p: string) => {
     if (p === path.join(sampleArcPath, 'minecraft')) return true
     return false
@@ -198,6 +201,7 @@ describe('launcher service', () => {
     mockDecryptToken.mockReset()
     mockGetArcPath.mockReset()
     mockGetArcRegistry.mockReset()
+    mockSyncArcModpack.mockReset()
     mockEnsureJava.mockReset()
     mockGetJavaExecutable.mockReset()
     mockFsExistsSync.mockReset()

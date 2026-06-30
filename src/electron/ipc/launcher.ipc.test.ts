@@ -11,10 +11,12 @@ vi.mock('electron', () => ({
 }))
 
 const mockLaunchGame = vi.fn()
+const mockCancelLaunch = vi.fn()
 const mockIsGameRunning = vi.fn()
 
 vi.mock('../services/launcher', () => ({
   launchGame: (...args: unknown[]) => mockLaunchGame(...args),
+  cancelLaunch: (...args: unknown[]) => mockCancelLaunch(...args),
   isGameRunning: (...args: unknown[]) => mockIsGameRunning(...args),
 }))
 
@@ -22,16 +24,27 @@ describe('registerLauncherIpc', () => {
   beforeEach(async () => {
     Object.keys(handlers).forEach((k) => delete handlers[k])
     mockLaunchGame.mockReset()
+    mockCancelLaunch.mockReset()
     mockIsGameRunning.mockReset()
     vi.resetModules()
     const { registerLauncherIpc } = await import('./launcher.ipc')
     registerLauncherIpc()
   })
 
-  it('registers exactly 2 launcher channels', () => {
+  it('registers exactly 3 launcher channels', () => {
     expect(handlers['launch:game']).toBeDefined()
+    expect(handlers['launch:cancel']).toBeDefined()
     expect(handlers['launch:isRunning']).toBeDefined()
-    expect(Object.keys(handlers)).toHaveLength(2)
+    expect(Object.keys(handlers)).toHaveLength(3)
+  })
+
+  it('launch:cancel calls cancelLaunch and returns { ok: true, data }', async () => {
+    mockCancelLaunch.mockReturnValue(undefined)
+
+    const result = await handlers['launch:cancel']()
+
+    expect(mockCancelLaunch).toHaveBeenCalled()
+    expect(result).toEqual({ ok: true, data: undefined })
   })
 
   it('launch:game calls launchGame with typed arguments and returns { ok: true, data }', async () => {
